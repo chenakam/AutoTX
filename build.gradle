@@ -25,3 +25,10 @@ dependencies {
 }
 
 mainClassName = 'App'
+
+compileScala { // or: tasks.withType(ScalaCompile)
+    scalaCompileOptions.additionalParameters = ["-feature"]
+}
+
+// switch from the Ant compiler to the incremental Zinc compiler, which is also used by sbt.
+scalaCompileOptions.useAnt = false
