@@ -14,33 +14,37 @@
  * limitations under the License.
  */
 
-package hobby.chenai.nakam.autotx.core.token
+package hobby.chenai.nakam.autotx.core.coin
 
 /**
   * @author Chenai Nakam(chenai.nakam@gmail.com)
-  * @version 1.0, 29/05/2017
+  * @version 1.0, 30/05/2017
   */
-object BtcZone extends AbsTokenZone {
-  override type TOKEN = Token
+object EthZone extends AbsCoinZone {
+  override type COIN = Token
   override type WRAPPER = Wrapper
 
-  override def make(count: Long) = new Token(count)
+  override def make(count: Long) = new Token(count, "ETH")
 
-  class Token private[BtcZone](count: Long) extends AbsToken(count: Long, unitName = "BTC")
+  class Token private[EthZone](count: Long, unitName: String) extends AbsToken(count: Long, unitName: String) {
+    override def unit = ETH
+
+    override def equals(obj: scala.Any) = obj match {
+      case that: Token => that.canEqual(this) && that.count == this.count
+      case _ => false
+    }
+
+    override def canEqual(that: Any) = that.isInstanceOf[Token]
+  }
 
   // 既是单位数据也是枚举
-  lazy val CONG = 1 CONG
-  lazy val BTC = 1 BTC
-  lazy protected override val UNIT = BTC
+  lazy val ETH = 1 ETH
 
   override def make(count: Double) = new Wrapper(count)
 
   class Wrapper(count: Double) extends AbsNumWrapper(count: Double) {
-    implicit def CONG: TOKEN = count minUnit
-
-    implicit def BTC: TOKEN = count * 100000000 CONG // 一亿聪
+    implicit def ETH: COIN = count minUnit
   }
 
-  // 不可以写在父类里，否则对于多个不同的币种就不知道转换给谁了。
-  implicit def wrapBtcNum(count: Double): WRAPPER = make(count)
+  implicit def wrapEthNum(count: Double): WRAPPER = make(count)
 }
