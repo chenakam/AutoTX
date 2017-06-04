@@ -31,4 +31,4 @@ compileScala { // or: tasks.withType(ScalaCompile)
 }
 
 // switch from the Ant compiler to the incremental Zinc compiler, which is also used by sbt.
-scalaCompileOptions.useAnt = false
+//scalaCompileOptions.useAnt = false
