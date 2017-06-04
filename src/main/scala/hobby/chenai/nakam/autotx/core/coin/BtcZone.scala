@@ -16,20 +16,25 @@
 
 package hobby.chenai.nakam.autotx.core.coin
 
+import scala.language.{existentials, implicitConversions, postfixOps}
+
 /**
   * @author Chenai Nakam(chenai.nakam@gmail.com)
   * @version 1.0, 29/05/2017
   */
 object BtcZone extends AbsCoinZone {
   override type COIN = Token
-  override type WRAPPER = Wrapper
+  override type UNIT = COIN with Unt
 
-  override def make(count: Long) = new Token(count, "BTC")
+  override def make(count: Long, unt: UNIT) = new Token(count) {
+    override def unit = unt
 
-  class Token private[BtcZone](count: Long, unitName: String) extends AbsToken(count: Long, unitName: String) {
-    override def unit = BTC
+    override def unitName = unt.unitName
+  }
 
-    override def equals(obj: scala.Any) = obj match {
+
+  abstract class Token private[BtcZone](count: Long) extends AbsToken(count: Long, name = "BTC") {
+    override def equals(obj: Any) = obj match {
       case that: Token => that.canEqual(this) && that.count == this.count
       case _ => false
     }
@@ -38,19 +43,22 @@ object BtcZone extends AbsCoinZone {
   }
 
   // 既是单位数据也是枚举
-  lazy val CONG = new Token(1, "CONG") {
+  lazy val CONG: UNIT = new Token(1) with Unt {
+    override def unit = this
+
+    override val unitName = "CONG"
+  }
+  lazy val BTC: UNIT = new Token(100000000) with Unt { // 一亿聪
     override def unit = this
   }
-  lazy val BTC = 1 BTC
+  lazy override val UNIT = BTC
 
-  override def make(count: Double) = new Wrapper(count)
+  class ImpDsl(count: Double) {
+    implicit def CONG: COIN = BtcZone.CONG * count
 
-  class Wrapper(count: Double) extends AbsNumWrapper(count: Double) {
-    implicit def CONG: COIN = count minUnit
-
-    implicit def BTC: COIN = count * 100000000 CONG // 一亿聪
+    implicit def BTC: COIN = BtcZone.BTC * count
   }
 
   // 不可以写在父类里，否则对于多个不同的币种就不知道转换给谁了。
-  implicit def wrapBtcNum(count: Double): WRAPPER = make(count)
+  implicit def wrapBtcNum(count: Double): ImpDsl = new ImpDsl(count)
 }

@@ -23,66 +23,101 @@ import hobby.chenai.nakam.autotx.core.exch.AbsExchZone
   * @version 1.0, 25/05/2017
   */
 abstract class AbsCoinZone {
+  // COIN表示的是同一个对象（如BtcZone）下的路径依赖类型，BTC, CONG等属于BtcZone.COIN（或BtcZone.Token）类的实例，
+  // 可以new BtcZone.COIN()创建新实例，但不是AbsCoinZone#AbsCoin的实例，不过后者可以用于模式匹配，从属范围更广。
   type COIN <: AbsCoin
-  type WRAPPER <: AbsNumWrapper
+  type UNIT <: COIN with Unt
 
-  def make(count: Long): COIN
+  def make(count: Long, unit: UNIT): COIN
 
-  def make(count: Double): WRAPPER
+  val UNIT: UNIT
 
-  abstract class AbsCoin(protected val count: Long, val unitName: String) extends Equals {
-    val isMoney: Boolean
+  abstract class AbsCoin(private[core] val count: Long, val group: String) extends Equals with Ordered[COIN] {
+    val isCash: Boolean
 
-    def unit: COIN
+    def unit: UNIT
 
-    def toUnit: Double = this / unit // 小数点后超出最小单位的肯定都是0
+    def unitName: String = group
 
-    def toMinUnit: Long = count
+    def value: Double = value(unit)
 
-    def +(that: COIN): COIN = make(this.count + that.count)
+    def value(unit: AbsCoinZone#Unt): Double = {
+      requireSameGroup(unit)
+      this / unit.asInstanceOf[UNIT]
+    }
 
-    def -(that: COIN): COIN = make(this.count - that.count)
+    def +(that: COIN): COIN = make(this.count + that.count, unit)
 
-    def *(x: Double): COIN = make((this.count.toDouble * x).toLong)
+    def -(that: COIN): COIN = make(this.count - that.count, unit)
 
-    def /(x: Double): COIN = make((this.count.toDouble / x).toLong)
+    // 由于toString.formatted也会进行round操作，如果这里再进行round会越算越多：
+    // 例如6.45 FEN, round后的count = 65(给最低单位多保留了1位，即64.5, round(64.5) = 65),
+    // 最终toString的时候round(6.5) = 7. 因此这里直接进行toLong舍弃小数。
+    def *(x: Double): COIN = make((this.count.toDouble * x).toLong /*round*/ , unit)
+
+    def /(x: Double): COIN = make((this.count.toDouble / x).toLong /*round*/ , unit)
 
     def /(that: COIN): Double = this.count.toDouble / that.count
 
-    /*override def equals(any: scala.Any) = any match {
-      // COIN 会被擦除，子类实现
-      case that: COIN => that.canEqual(this) && that.count == this.count
-      case _ => false
-    }*/
+    /**
+      * 将单位标准化。由于某些预定义的[作为枚举的]常量将自己本身作为了标准单位。
+      */
+    def std: COIN = if ((this eq unit) || !(unit eq UNIT)) mod(UNIT) else this.asInstanceOf[COIN]
 
-    // 虽然COIN表示的是同一个对象（如BtcZone）下的路径依赖类型，即同一类对象（如BTC, CONG等），是可以进行比较的。
-    // 但不能用COIN, 会被擦除，所以不能用isInstanceOf[COIN], 但也不能用AbsCoinZone#AbsCoin, 范围更广。
-    // 子类实现。
+    /**
+      * 转换到参数指定单位。
+      */
+    // 注意unit的参数类型，在某些情况下，即使我们知道是同一个对象（如CnyZone单例对象）下的路径依赖类型，
+    // 但无法用类型参数进行规约，导致编译器无法认为是同一个路径依赖类型。
+    // 因此这里使用了更宽泛的类型并进行了类型转换，这意味着，如果在运行时类型确实不是同一个对象路径下的，那么会抛异常。
+    def mod(unit: AbsCoinZone#Unt): COIN = {
+      requireSameGroup(unit)
+      make(count, unit.asInstanceOf[UNIT])
+    }
+
+    protected def requireSameGroup(unit: AbsCoinZone#Unt): Unit = {
+      require(unit.group == this.group, s"unit not in group $group but ${unit.group}")
+    }
+
+    override def compare(that: COIN) = this.count compare that.count
+
+    // COIN 会被擦除，子类实现。
+    // override def equals(any: scala.Any)
     // override def canEqual(that: Any)
 
-    override def hashCode() = 41 * (41 + count.hashCode()) + unitName.hashCode
+    override def hashCode() = 41 * (41 + count.hashCode()) + group.hashCode
 
-    def to(that: AbsCoinZone#AbsCoin)(implicit exchange: AbsExchZone#AbsExchange):
-    AbsCoinZone#AbsCoin = exchange.ex.applyOrElse((this, that), (x: (AbsCoinZone#AbsCoin, _)) => x._1)
+    /**
+      * 在不同货币之间换算。
+      *
+      * @param that     目标单位。注意这个参数的类型与其它不同，一般参数类型COIN用于
+      *                 同一个路径依赖类型，而本参数可以接受多个不同的路径依赖类型。
+      * @param exchange 交易平台。
+      * @return
+      */
+    def to(that: AbsCoinZone#Unt)(implicit exchange: AbsExchZone#AbsExchange)
+    : AbsCoinZone#AbsCoin = exchange.applyExch(this, that)
 
-    private def decimals(n: Double): Int = {
+    protected def decimals: Int = decimals(unit.count)
+
+    protected final def decimals(n: Double): Int = {
       if (n == 1) 0 else 1 + decimals(n / 10)
     }
 
+    protected def format: String = value formatted s"%.${decimals}f"
+
     override def toString = if (this eq unit) unitName
-    else toUnit formatted s"%.${decimals(unit.count)}f" + " " + unitName
+    else format + " " + unitName
   }
 
-  abstract class AbsMoney(count: Long, unitName: String) extends AbsCoin(count: Long, unitName: String) {
-    final lazy val isMoney = true
+  abstract class AbsCash(count: Long, name: String) extends AbsCoin(count: Long, name: String) {
+    final lazy val isCash = true
   }
 
-  abstract class AbsToken(count: Long, unitName: String) extends AbsCoin(count: Long, unitName: String) {
-    final lazy val isMoney = false
+  abstract class AbsToken(count: Long, name: String) extends AbsCoin(count: Long, name: String) {
+    final lazy val isCash = false
   }
 
-  abstract class AbsNumWrapper(count: Double) {
-    implicit def minUnit: COIN = make(count.toLong /*最小单位后的小数直接舍弃*/)
-  }
-
+  // 不能用Unit, 会与系统类型冲突。
+  trait Unt extends AbsCoin
 }

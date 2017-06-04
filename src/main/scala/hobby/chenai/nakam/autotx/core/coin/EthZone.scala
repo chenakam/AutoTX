@@ -16,20 +16,26 @@
 
 package hobby.chenai.nakam.autotx.core.coin
 
+import scala.language.{existentials, implicitConversions, postfixOps}
+
 /**
   * @author Chenai Nakam(chenai.nakam@gmail.com)
   * @version 1.0, 30/05/2017
   */
 object EthZone extends AbsCoinZone {
   override type COIN = Token
-  override type WRAPPER = Wrapper
+  override type UNIT = COIN with Unt
 
-  override def make(count: Long) = new Token(count, "ETH")
+  override def make(count: Long, unt: UNIT) = new Token(count) {
+    override def unit = unt
 
-  class Token private[EthZone](count: Long, unitName: String) extends AbsToken(count: Long, unitName: String) {
-    override def unit = ETH
+    override def unitName = unt.unitName
+  }
 
-    override def equals(obj: scala.Any) = obj match {
+  abstract class Token private[EthZone](count: Long) extends AbsToken(count: Long, name = "ETH") {
+    override protected def decimals: Int = super.decimals - 1
+
+    override def equals(obj: Any) = obj match {
       case that: Token => that.canEqual(this) && that.count == this.count
       case _ => false
     }
@@ -37,14 +43,15 @@ object EthZone extends AbsCoinZone {
     override def canEqual(that: Any) = that.isInstanceOf[Token]
   }
 
-  // 既是单位数据也是枚举
-  lazy val ETH = 1 ETH
+  // 以太的单位比较混乱，暂保留7位，输出时保留6位(decimals - 1)。如果小数位数太多，则留给整数的位数就会减少。
+  lazy val ETH: UNIT = new Token(10000000) with Unt {
+    override def unit = this
+  }
+  lazy override val UNIT = ETH
 
-  override def make(count: Double) = new Wrapper(count)
-
-  class Wrapper(count: Double) extends AbsNumWrapper(count: Double) {
-    implicit def ETH: COIN = count minUnit
+  class ImpDsl(count: Double) {
+    implicit def ETH: COIN = EthZone.ETH * count
   }
 
-  implicit def wrapEthNum(count: Double): WRAPPER = make(count)
+  implicit def wrapEthNum(count: Double): ImpDsl = new ImpDsl(count)
 }

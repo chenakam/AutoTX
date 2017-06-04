@@ -16,20 +16,33 @@
 
 package hobby.chenai.nakam.autotx.core.coin
 
+import scala.language.{existentials, implicitConversions, postfixOps}
+
 /**
   * @author Chenai Nakam(chenai.nakam@gmail.com)
   * @version 1.0, 30/05/2017
   */
 object CnyZone extends AbsCoinZone {
   override type COIN = RMB
-  override type WRAPPER = Wrapper
+  override type UNIT = COIN with Unt
 
-  override def make(count: Long) = new RMB(count, "CNY")
+  override def make(count: Long, unt: UNIT) = new RMB(count) {
+    override def unit = unt
 
-  class RMB private[CnyZone](count: Long, unitName: String) extends AbsMoney(count: Long, unitName: String) {
-    override def unit = CNY
+    override def unitName = unt.unitName
+  }
 
-    override def equals(obj: scala.Any) = obj match {
+  abstract class RMB private[CnyZone](count: Long) extends AbsCash(count: Long, name = "CNY") {
+    override protected def decimals: Int = {
+      val d = super.decimals
+      if (d >= 3) d - 3 else d
+    }
+
+    override def toString = if (unit eq FEN_3) {
+      format.toDouble / CNY.count + " " + CNY.unitName
+    } else super.toString
+
+    override def equals(obj: Any) = obj match {
       case that: RMB => that.canEqual(this) && that.count == this.count
       case _ => false
     }
@@ -37,24 +50,35 @@ object CnyZone extends AbsCoinZone {
     override def canEqual(that: Any) = that.isInstanceOf[RMB]
   }
 
-  lazy val FEN = new RMB(1, "FEN") {
+  // SC云储币精确到0.00001
+  lazy val FEN_3: UNIT = new RMB(1) with Unt {
+    override def unit = this
+
+    override val unitName = "FEN-3"
+  }
+  // 更高精度, 不过decimals会去掉3位，toString时会格式化掉。
+  lazy val FEN: UNIT = new RMB(1000) with Unt {
+    override def unit = this
+
+    override val unitName = "FEN"
+  }
+  lazy val JIAO: UNIT = new RMB(10000) with Unt {
+    override def unit = this
+
+    override val unitName = "JIAO"
+  }
+  lazy val CNY: UNIT = new RMB(100000) with Unt {
     override def unit = this
   }
-  lazy val JIAO = new RMB(10, "JIAO") {
-    override def unit = this
-  }
-  lazy val CNY = 1 CNY
+  lazy override val UNIT = CNY
 
-  override def make(count: Double) = new Wrapper(count)
+  class ImpDsl(count: Double) {
+    implicit def FEN: COIN = CnyZone.FEN * count
 
-  class Wrapper(count: Double) extends AbsNumWrapper(count: Double) {
-    // 以下方法会递归的进行new Wrapper(x).xxx的调用
-    implicit def FEN: COIN = count minUnit
+    implicit def JIAO: COIN = CnyZone.JIAO * count
 
-    implicit def JIAO: COIN = count * 10 FEN
-
-    implicit def CNY: COIN = count * 10 JIAO
+    implicit def CNY: COIN = CnyZone.CNY * count
   }
 
-  implicit def wrapCnyNum(count: Double): WRAPPER = make(count)
+  implicit def wrapCnyNum(count: Double): ImpDsl = new ImpDsl(count)
 }
