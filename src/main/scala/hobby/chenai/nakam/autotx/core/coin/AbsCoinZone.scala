@@ -23,6 +23,7 @@ import hobby.chenai.nakam.autotx.core.exch.AbsExchZone
   * @version 1.0, 25/05/2017
   */
 abstract class AbsCoinZone {
+  zoneIns =>
   // COIN表示的是同一个对象（如BtcZone）下的路径依赖类型，BTC, CONG等属于BtcZone.COIN（或BtcZone.Token）类的实例，
   // 可以new BtcZone.COIN()创建新实例，但不是AbsCoinZone#AbsCoin的实例，不过后者可以用于模式匹配，从属范围更广。
   type COIN <: AbsCoin
@@ -42,7 +43,7 @@ abstract class AbsCoinZone {
     def value: Double = value(unit)
 
     def value(unit: AbsCoinZone#Unt): Double = {
-      requireSameGroup(unit)
+      requireTypeSame(unit)
       this / unit.asInstanceOf[UNIT]
     }
 
@@ -71,12 +72,12 @@ abstract class AbsCoinZone {
     // 但无法用类型参数进行规约，导致编译器无法认为是同一个路径依赖类型。
     // 因此这里使用了更宽泛的类型并进行了类型转换，这意味着，如果在运行时类型确实不是同一个对象路径下的，那么会抛异常。
     def mod(unit: AbsCoinZone#Unt): COIN = {
-      requireSameGroup(unit)
+      requireTypeSame(unit)
       make(count, unit.asInstanceOf[UNIT])
     }
 
-    protected def requireSameGroup(unit: AbsCoinZone#Unt): Unit = {
-      require(unit.group == this.group, s"unit not in group $group but ${unit.group}")
+    protected def requireTypeSame(unit: AbsCoinZone#Unt): Unit = {
+      require(unit.pathIns == zoneIns, s"unit type mismatch: require $group but ${unit.group}")
     }
 
     override def compare(that: COIN) = this.count compare that.count
@@ -119,5 +120,7 @@ abstract class AbsCoinZone {
   }
 
   // 不能用Unit, 会与系统类型冲突。
-  trait Unt extends AbsCoin
+  trait Unt extends AbsCoin {
+    val pathIns = zoneIns
+  }
 }
