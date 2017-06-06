@@ -16,23 +16,74 @@
 
 package hobby.chenai.nakam.autotx.core
 
-import hobby.chenai.nakam.autotx.core.token.AbsTokenZone
+import hobby.chenai.nakam.autotx.core.coin.AbsCoinZone
+import hobby.chenai.nakam.autotx.core.exch.AbsExchZone
+import hobby.chenai.nakam.autotx.core.exch.YunBiZone._
+
+import scala.language.implicitConversions
 
 /**
   * @author Chenai Nakam(chenai.nakam@gmail.com)
   * @version 1.0, 29/05/2017
   */
 object DSL {
-  val ~>: = DSL
+  val ~>: = Ops
 
-  def buy(token: AbsTokenZone#AbsToken) = new Ops(token)
-
-  class Ops(val token: AbsTokenZone#AbsToken) {
-    println(token)
-
-    implicit def on(exchange: Exchange): Ops = this
-
-    def use(token: AbsTokenZone#AbsMoney) = this
+  def symbols[E](count: Int)(implicit elem: E = " ", list: List[E] = Nil): List[E] = {
+    if (count <= 0) list
+    else elem :: symbols(count - 1)(elem, list)
   }
 
+  def fill2Length(any: Any, length: Int)(prefix$suf: Boolean = true): String = {
+    val syms = symbols(length - any.toString.length)().mkString("")
+    if (prefix$suf) syms + any else any + syms
+  }
+
+  object Action extends Enumeration {
+    type ACTION = Act
+    private[Action] class Act(val msg: String, val symbol: String) extends Val {
+      override def toString() = prefix + " " + msg
+
+      lazy val prefix = symbols(9 - msg.length)(symbol).mkString("")
+      lazy val suffix = symbols(3)(symbol).mkString("")
+    }
+    val BUY = new Act("buy", "<")
+    val SALE = new Act("sale", ">")
+    val CANCEL = new Act("cancel", "!")
+  }
+
+  import Action._
+
+  object Ops {
+    def buy(token: AbsCoinZone#AbsCoin) = new Ops(BUY, token)
+
+    def sale(token: AbsCoinZone#AbsCoin) = new Ops(SALE, token)
+
+    def cancel(token: AbsCoinZone#AbsCoin) = new Ops(CANCEL, token)
+  }
+
+  class Ops(val action: ACTION, val token: AbsCoinZone#AbsCoin) {
+    private var exchange: AbsExchZone#AbsExchange = _
+    private var cash: AbsCoinZone#AbsCash = _
+
+    def on(exchange: AbsExchZone#AbsExchange): Ops = {
+      this.exchange = exchange
+      this
+    }
+
+    def use(cash: AbsCoinZone#AbsCash): Ops = {
+      this.cash = cash
+      this
+    }
+
+    def ~~=(): Ops = {
+      println(s"$action: ${fill2Length(token, 15)()} on ${exchange.name}" +
+        s" use ${fill2Length(cash, 15)()} ${action.suffix} scheduling...")
+      this
+    }
+  }
+
+  implicit val exchange: AbsExchZone#AbsExchange = YUNBI
+
+  //  implicit def to()
 }
