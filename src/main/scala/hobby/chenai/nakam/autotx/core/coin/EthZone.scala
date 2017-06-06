@@ -26,13 +26,16 @@ object EthZone extends AbsCoinZone {
   override type COIN = Token
   override type UNIT = COIN with Unt
 
+  override val name = "ETH"
+  lazy override val UNIT = ETH
+
   override def make(count: Long, unt: UNIT) = new Token(count) {
     override def unit = unt
 
     override def unitName = unt.unitName
   }
 
-  abstract class Token private[EthZone](count: Long) extends AbsToken(count: Long, name = "ETH") {
+  abstract class Token private[EthZone](count: Long) extends AbsToken(count: Long) {
     override protected def decimals: Int = super.decimals - 1
 
     override def equals(obj: Any) = obj match {
@@ -47,7 +50,6 @@ object EthZone extends AbsCoinZone {
   lazy val ETH: UNIT = new Token(10000000) with Unt {
     override def unit = this
   }
-  lazy override val UNIT = ETH
 
   class ImpDsl(count: Double) {
     implicit def ETH: COIN = EthZone.ETH * count

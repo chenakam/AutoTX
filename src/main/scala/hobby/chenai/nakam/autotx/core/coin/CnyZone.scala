@@ -26,13 +26,18 @@ object CnyZone extends AbsCoinZone {
   override type COIN = RMB
   override type UNIT = COIN with Unt
 
-  override def make(count: Long, unt: UNIT) = new RMB(count) {
+  override val name = "CNY"
+  lazy override val UNIT = CNY
+
+  override def make(count: Long, unt: UNIT) = new RMB(
+    count // if (unt == FEN_3) count else count / 1000 * 1000 // 可以这样重构FEN以上的精度
+  ) {
     override def unit = unt
 
     override def unitName = unt.unitName
   }
 
-  abstract class RMB private[CnyZone](count: Long) extends AbsCash(count: Long, name = "CNY") {
+  abstract class RMB private[CnyZone](count: Long) extends AbsCash(count: Long) {
     override protected def decimals: Int = {
       val d = super.decimals
       if (d >= 3) d - 3 else d
@@ -70,7 +75,6 @@ object CnyZone extends AbsCoinZone {
   lazy val CNY: UNIT = new RMB(100000) with Unt {
     override def unit = this
   }
-  lazy override val UNIT = CNY
 
   class ImpDsl(count: Double) {
     implicit def FEN: COIN = CnyZone.FEN * count

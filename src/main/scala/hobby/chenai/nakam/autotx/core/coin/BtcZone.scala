@@ -26,6 +26,9 @@ object BtcZone extends AbsCoinZone {
   override type COIN = Token
   override type UNIT = COIN with Unt
 
+  override val name = "BTC"
+  lazy override val UNIT = BTC
+
   override def make(count: Long, unt: UNIT) = new Token(count) {
     override def unit = unt
 
@@ -33,7 +36,7 @@ object BtcZone extends AbsCoinZone {
   }
 
 
-  abstract class Token private[BtcZone](count: Long) extends AbsToken(count: Long, name = "BTC") {
+  abstract class Token private[BtcZone](count: Long) extends AbsToken(count: Long) {
     override def equals(obj: Any) = obj match {
       case that: Token => that.canEqual(this) && that.count == this.count
       case _ => false
@@ -51,7 +54,6 @@ object BtcZone extends AbsCoinZone {
   lazy val BTC: UNIT = new Token(100000000) with Unt { // 一亿聪
     override def unit = this
   }
-  lazy override val UNIT = BTC
 
   class ImpDsl(count: Double) {
     implicit def CONG: COIN = BtcZone.CONG * count
