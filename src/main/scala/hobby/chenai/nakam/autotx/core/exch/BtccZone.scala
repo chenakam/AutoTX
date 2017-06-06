@@ -24,7 +24,6 @@ import hobby.chenai.nakam.autotx.core.coin.CnyZone._
   * @version 1.0, 04/06/2017
   */
 object BtccZone extends AbsExchZone {
-
   class Exchange extends AbsExchange("YUNBI", CNY, BTC)
 
   lazy val BTCC = new Exchange

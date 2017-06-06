@@ -25,7 +25,6 @@ import hobby.chenai.nakam.autotx.core.coin.EthZone._
   * @version 1.0, 31/05/2017
   */
 object YunBiZone extends AbsExchZone {
-
   class Exchange extends AbsExchange("YUNBI", CNY, BTC, ETH)
 
   lazy val YUNBI = new Exchange
