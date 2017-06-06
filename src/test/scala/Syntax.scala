@@ -263,7 +263,17 @@ object Syntax {
 
   ~>: sale (10 BTC) on YUNBI use (160000 CNY) ~~=
 
-  ~>: cancel (10 BTC) on YUNBI use (160000 CNY) ~~=
+  ~>: cancel (1 BTC) on YUNBI use ((160000 CNY) / 1000000000).mod(FEN_3) ~~=
+
+  \("(1 CONG) to FEN_3: " + ((1 CONG) to FEN_3))
+  \("(1 CONG) to FEN: " + ((1 CONG) to FEN))
+  \("(1 CONG) to CNY: " + ((1 CONG) to CNY))
+
+  \(CONG)
+  \(BTC)
+  \(CNY)
+  \(FEN)
+  \(FEN_3)
 
 
   \(FeeSrc.CNY.id + FeeSrc.CNY.toString())
