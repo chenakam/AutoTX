@@ -69,7 +69,7 @@ abstract class AbsCoinZone {
     /**
       * 将单位标准化。由于某些预定义的[作为枚举的]常量将自己本身作为了标准单位。
       */
-    def std: COIN = if ((this eq unit) || !(unit eq UNIT)) mod(UNIT) else this.asInstanceOf[COIN]
+    def std: COIN = if (unit eq UNIT) this.asInstanceOf[COIN] else mod(UNIT)
 
     /**
       * 转换到参数指定单位。
@@ -83,7 +83,7 @@ abstract class AbsCoinZone {
     }
 
     protected def requireGroupSame(unit: AbsCoinZone#Unt): Unit = {
-      require(unit.group == group, s"unit group mismatch: require $group but ${unit.group}")
+      require(unit.group == group, s"unit group mismatch. require: $group, found: ${unit.group}")
     }
 
     override def compare(that: COIN) = this.count compare that.count
@@ -107,14 +107,13 @@ abstract class AbsCoinZone {
 
     protected def decimals: Int = decimals(unit.count)
 
-    protected final def decimals(n: Double): Int = {
-      if (n == 1) 0 else 1 + decimals(n / 10)
-    }
+    protected final def decimals(n: Double): Int = if (n == 1) 0 else 1 + decimals(n / 10)
 
     protected def format: String = value formatted s"%.${decimals}f"
 
-    override def toString = if (this eq unit) unitName
-    else format + " " + unitName
+    override final def toString = if (unit eq this) unitName else toString$
+
+    protected def toString$: String = format + " " + unitName
   }
 
   abstract class AbsCash(count: Long) extends AbsCoin(count: Long) {

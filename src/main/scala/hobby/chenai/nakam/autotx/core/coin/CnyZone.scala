@@ -38,14 +38,11 @@ object CnyZone extends AbsCoinZone {
   }
 
   abstract class RMB private[CnyZone](count: Long) extends AbsCash(count: Long) {
-    override protected def decimals: Int = {
-      val d = super.decimals
-      if (d >= 3) d - 3 else d
-    }
+    override def value = if (unit eq FEN_3) value(CNY) else super.value
 
-    override def toString = if (unit eq FEN_3) {
-      format.toDouble / CNY.count + " " + CNY.unitName
-    } else super.toString
+    override protected def decimals: Int = if (unit eq FEN_3) decimals(CNY.count) else super.decimals - 3
+
+    protected override def toString$ = if (unit eq FEN_3) format + " " + CNY.unitName else super.toString$
 
     override def equals(obj: Any) = obj match {
       case that: RMB => that.canEqual(this) && that.count == this.count
@@ -77,6 +74,8 @@ object CnyZone extends AbsCoinZone {
   }
 
   class ImpDsl(count: Double) {
+    implicit def FEN_3: COIN = CnyZone.FEN_3 * count
+
     implicit def FEN: COIN = CnyZone.FEN * count
 
     implicit def JIAO: COIN = CnyZone.JIAO * count
