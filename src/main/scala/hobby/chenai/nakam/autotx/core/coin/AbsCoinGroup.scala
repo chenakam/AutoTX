@@ -22,7 +22,7 @@ import hobby.chenai.nakam.autotx.core.exch.AbsExchZone
   * @author Chenai Nakam(chenai.nakam@gmail.com)
   * @version 1.0, 25/05/2017
   */
-abstract class AbsCoinZone {
+abstract class AbsCoinGroup {
   zoneSelf =>
 
   // COIN表示的是同一个对象（如BtcZone）下的路径依赖类型，BTC, CONG等属于BtcZone.COIN（或BtcZone.Token）类的实例，
@@ -48,7 +48,7 @@ abstract class AbsCoinZone {
 
     def value: Double = value(unit)
 
-    def value(unit: AbsCoinZone#Unt): Double = {
+    def value(unit: AbsCoinGroup#Unt): Double = {
       requireGroupSame(unit)
       this / unit.asInstanceOf[UNIT]
     }
@@ -77,12 +77,12 @@ abstract class AbsCoinZone {
     // 注意unit的参数类型，在某些情况下，即使我们知道是同一个对象（如CnyZone单例对象）下的路径依赖类型，
     // 但无法用类型参数进行规约，导致编译器无法认为是同一个路径依赖类型。
     // 因此这里使用了更宽泛的类型并进行了类型转换，这意味着，如果在运行时类型确实不是同一个对象路径下的，那么会抛异常。
-    def mod(unit: AbsCoinZone#Unt): COIN = {
+    def mod(unit: AbsCoinGroup#Unt): COIN = {
       requireGroupSame(unit)
       make(count, unit.asInstanceOf[UNIT])
     }
 
-    protected def requireGroupSame(unit: AbsCoinZone#Unt): Unit = {
+    protected def requireGroupSame(unit: AbsCoinGroup#Unt): Unit = {
       require(unit.group == group, s"unit group mismatch. require: $group, found: ${unit.group}")
     }
 
@@ -102,8 +102,8 @@ abstract class AbsCoinZone {
       * @param exchange 交易平台。
       * @return
       */
-    def to(that: AbsCoinZone#Unt)(implicit exchange: AbsExchZone#AbsExchange)
-    : AbsCoinZone#AbsCoin = exchange.applyExch(this, that)
+    def to(that: AbsCoinGroup#Unt)(implicit exchange: AbsExchZone#AbsExchange)
+    : AbsCoinGroup#AbsCoin = exchange.applyExch(this, that)
 
     protected def decimals: Int = decimals(unit.count)
 
@@ -125,6 +125,5 @@ abstract class AbsCoinZone {
   }
 
   // 不能用Unit, 会与系统类型冲突。
-  trait Unt extends AbsCoin {
-  }
+  trait Unt extends AbsCoin
 }

@@ -22,7 +22,7 @@ import scala.language.{existentials, implicitConversions, postfixOps}
   * @author Chenai Nakam(chenai.nakam@gmail.com)
   * @version 1.0, 29/05/2017
   */
-object BtcZone extends AbsCoinZone {
+object BtcGroup extends AbsCoinGroup {
   override type COIN = Token
   override type UNIT = COIN with Unt
 
@@ -35,8 +35,7 @@ object BtcZone extends AbsCoinZone {
     override def unitName = unt.unitName
   }
 
-
-  abstract class Token private[BtcZone](count: Long) extends AbsToken(count: Long) {
+  abstract class Token private[BtcGroup](count: Long) extends AbsToken(count: Long) {
     override def equals(obj: Any) = obj match {
       case that: Token => that.canEqual(this) && that.count == this.count
       case _ => false
@@ -56,9 +55,9 @@ object BtcZone extends AbsCoinZone {
   }
 
   class ImpDsl(count: Double) {
-    implicit def CONG: COIN = BtcZone.CONG * count
+    implicit def CONG: COIN = BtcGroup.CONG * count
 
-    implicit def BTC: COIN = BtcZone.BTC * count
+    implicit def BTC: COIN = BtcGroup.BTC * count
   }
 
   // 不可以写在父类里，否则对于多个不同的币种就不知道转换给谁了。

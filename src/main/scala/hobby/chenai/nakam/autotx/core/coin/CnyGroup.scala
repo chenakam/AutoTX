@@ -22,7 +22,7 @@ import scala.language.{existentials, implicitConversions, postfixOps}
   * @author Chenai Nakam(chenai.nakam@gmail.com)
   * @version 1.0, 30/05/2017
   */
-object CnyZone extends AbsCoinZone {
+object CnyGroup extends AbsCoinGroup {
   override type COIN = RMB
   override type UNIT = COIN with Unt
 
@@ -37,7 +37,7 @@ object CnyZone extends AbsCoinZone {
     override def unitName = unt.unitName
   }
 
-  abstract class RMB private[CnyZone](count: Long) extends AbsCash(count: Long) {
+  abstract class RMB private[CnyGroup](count: Long) extends AbsCash(count: Long) {
     override def value = if (unit eq FEN_3) value(CNY) else super.value
 
     override protected def decimals: Int = if (unit eq FEN_3) decimals(CNY.count) else super.decimals - 3
@@ -74,13 +74,13 @@ object CnyZone extends AbsCoinZone {
   }
 
   class ImpDsl(count: Double) {
-    implicit def FEN_3: COIN = CnyZone.FEN_3 * count
+    implicit def FEN_3: COIN = CnyGroup.FEN_3 * count
 
-    implicit def FEN: COIN = CnyZone.FEN * count
+    implicit def FEN: COIN = CnyGroup.FEN * count
 
-    implicit def JIAO: COIN = CnyZone.JIAO * count
+    implicit def JIAO: COIN = CnyGroup.JIAO * count
 
-    implicit def CNY: COIN = CnyZone.CNY * count
+    implicit def CNY: COIN = CnyGroup.CNY * count
   }
 
   implicit def wrapCnyNum(count: Double): ImpDsl = new ImpDsl(count)

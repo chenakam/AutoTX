@@ -22,7 +22,7 @@ import scala.language.{existentials, implicitConversions, postfixOps}
   * @author Chenai Nakam(chenai.nakam@gmail.com)
   * @version 1.0, 30/05/2017
   */
-object EthZone extends AbsCoinZone {
+object EthGroup extends AbsCoinGroup {
   override type COIN = Token
   override type UNIT = COIN with Unt
 
@@ -35,7 +35,7 @@ object EthZone extends AbsCoinZone {
     override def unitName = unt.unitName
   }
 
-  abstract class Token private[EthZone](count: Long) extends AbsToken(count: Long) {
+  abstract class Token private[EthGroup](count: Long) extends AbsToken(count: Long) {
     override protected def decimals: Int = super.decimals - 1
 
     override def equals(obj: Any) = obj match {
@@ -52,7 +52,7 @@ object EthZone extends AbsCoinZone {
   }
 
   class ImpDsl(count: Double) {
-    implicit def ETH: COIN = EthZone.ETH * count
+    implicit def ETH: COIN = EthGroup.ETH * count
   }
 
   implicit def wrapEthNum(count: Double): ImpDsl = new ImpDsl(count)
