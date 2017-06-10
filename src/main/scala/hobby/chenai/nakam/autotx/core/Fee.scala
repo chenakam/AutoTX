@@ -32,7 +32,9 @@ class Fee[GT <: AbsCoinGroup, GF <: AbsCoinGroup](protected val tokenGroup: GT, 
     * @param percentage 按比例收取的费用。
     */
   class Rule(val quota: COIN, val percentage: Double) {
+    implicit val type2 = @:.apply _
+
     def costs(amount: tokenGroup.COIN)(implicit ex: AbsExchZone#AbsExchange): COIN =
-      quota + @:(amount to quota.unit) * percentage
+      quota + (amount to quota.unit) * percentage
   }
 }
