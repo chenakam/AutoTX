@@ -23,7 +23,7 @@ import hobby.chenai.nakam.autotx.core.exch.AbsExchZone
   * @version 1.0, 25/05/2017
   */
 abstract class AbsCoinGroup {
-  zoneSelf =>
+  groupSelf =>
 
   // COIN表示的是同一个对象（如BtcZone）下的路径依赖类型，BTC, CONG等属于BtcZone.COIN（或BtcZone.Token）类的实例，
   // 可以new BtcZone.COIN()创建新实例，但不是AbsCoinZone#AbsCoin的实例，不过后者可以用于模式匹配，从属范围更广。
@@ -38,9 +38,11 @@ abstract class AbsCoinGroup {
   override def toString = name
 
   abstract class AbsCoin(private[core] val count: Long) extends Equals with Ordered[COIN] {
+    import @:._
+
     val isCash: Boolean
 
-    val group = zoneSelf
+    val group = groupSelf
 
     def unit: UNIT
 
@@ -50,7 +52,7 @@ abstract class AbsCoinGroup {
 
     def value(unit: AbsCoinGroup#Unt): Double = {
       requireGroupSame(unit)
-      this / unit.asInstanceOf[UNIT]
+      this / unit
     }
 
     def +(that: COIN): COIN = make(this.count + that.count, unit)
@@ -69,7 +71,7 @@ abstract class AbsCoinGroup {
     /**
       * 将单位标准化。由于某些预定义的[作为枚举的]常量将自己本身作为了标准单位。
       */
-    def std: COIN = if (unit eq UNIT) this.asInstanceOf[COIN] else mod(UNIT)
+    def std: COIN = if (unit eq UNIT) this else mod(UNIT)
 
     /**
       * 转换到参数指定单位。
@@ -79,7 +81,7 @@ abstract class AbsCoinGroup {
     // 因此这里使用了更宽泛的类型并进行了类型转换，这意味着，如果在运行时类型确实不是同一个对象路径下的，那么会抛异常。
     def mod(unit: AbsCoinGroup#Unt): COIN = {
       requireGroupSame(unit)
-      make(count, unit.asInstanceOf[UNIT])
+      make(count, unit)
     }
 
     protected def requireGroupSame(unit: AbsCoinGroup#Unt): Unit = {
@@ -122,6 +124,23 @@ abstract class AbsCoinGroup {
 
   abstract class AbsToken(count: Long) extends AbsCoin(count: Long) {
     final lazy val isCash = false
+  }
+
+  object @: {
+    //    class TypeTo[T >: UNIT <: COIN] extends (AbsCoinGroup#AbsCoin => T) {
+    //      def apply(coin: AbsCoinGroup#AbsCoin): T = coin.asInstanceOf[T]
+    //    }
+    //    implicit val @: = new TypeTo[COIN]
+
+    implicit def apply[T >: UNIT <: COIN](coin: AbsCoinGroup#AbsCoin): T = coin.asInstanceOf[T]
+
+    //    /** 转换当前对象到目标类型。 */
+    // 能被用作前缀标识符的只有+、-、!和~。优先级：~（处于最高的行列）、+/-、!。
+    //    implicit def unary_~[T >: UNIT <: COIN]: T = asInstanceOf[T]
+
+    //    /** 转换参数对象到当前对象类型。 */
+    // 由于方法unary_~在前置调用的时候，无法传类型参数，只能用本方法的方案。
+    //    implicit def @:[T >: UNIT <: COIN](coin: AbsCoinGroup#AbsCoin): T = coin.asInstanceOf[T]
   }
 
   // 不能用Unit, 会与系统类型冲突。
