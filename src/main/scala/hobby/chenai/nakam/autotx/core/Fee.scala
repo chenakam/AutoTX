@@ -16,14 +16,14 @@
 
 package hobby.chenai.nakam.autotx.core
 
-import hobby.chenai.nakam.autotx.core.coin.AbsCoinGroup
+import hobby.chenai.nakam.autotx.core.coin.{AbsCashGroup, AbsCoinGroup, AbsTokenGroup}
 import hobby.chenai.nakam.autotx.core.exch.AbsExchZone
 
 /**
   * @author Chenai Nakam(chenai.nakam@gmail.com)
   * @version 1.0, 25/05/2017
   */
-class Fee[GT <: AbsCoinGroup, GF <: AbsCoinGroup](protected val tokenGroup: GT, protected val feeGroup: GF) {
+class Fee[+GT <: AbsTokenGroup, +GF <: AbsCoinGroup](protected val tokenGroup: GT, protected val feeGroup: GF) {
   import feeGroup._
 
   /** 假定手续费只收一种货币。如果需要多个，可以创建多个本对象。
@@ -34,7 +34,7 @@ class Fee[GT <: AbsCoinGroup, GF <: AbsCoinGroup](protected val tokenGroup: GT, 
   class Rule(val quota: COIN, val percentage: Double) {
     implicit val type2 = @:.apply _
 
-    def costs(amount: tokenGroup.COIN)(implicit ex: AbsExchZone#AbsExchange): COIN =
+    def costs(amount: tokenGroup.COIN)(implicit ex: AbsExchZone[AbsTokenGroup, AbsCashGroup]#AbsExchange): COIN =
       quota + (amount to quota.unit) * percentage
   }
 }
