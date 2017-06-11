@@ -22,7 +22,7 @@ import scala.language.{existentials, implicitConversions, postfixOps}
   * @author Chenai Nakam(chenai.nakam@gmail.com)
   * @version 1.0, 30/05/2017
   */
-object CnyGroup extends AbsCoinGroup {
+object CnyGroup extends AbsCashGroup {
   override type COIN = RMB
   override type UNIT = COIN with Unt
 

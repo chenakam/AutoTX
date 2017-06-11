@@ -62,9 +62,9 @@ abstract class AbsCoinGroup {
     // 由于toString.formatted也会进行round操作，如果这里再进行round会越算越多：
     // 例如6.45 FEN, round后的count = 65(给最低单位多保留了1位，即64.5, round(64.5) = 65),
     // 最终toString的时候round(6.5) = 7. 因此这里直接进行toLong舍弃小数。
-    def *(x: Double): COIN = make((this.count.toDouble * x).toLong /*round*/ , unit)
+    def *(x: Double): COIN = make((this.count * x).toLong /*round*/ , unit)
 
-    def /(x: Double): COIN = make((this.count.toDouble / x).toLong /*round*/ , unit)
+    def /(x: Double): COIN = make((this.count / x).toLong /*round*/ , unit)
 
     def /(that: COIN): Double = this.count.toDouble / that.count
 
@@ -104,7 +104,7 @@ abstract class AbsCoinGroup {
       * @param exchange 交易平台。
       * @return
       */
-    def to(that: AbsCoinGroup#Unt)(implicit exchange: AbsExchZone#AbsExchange)
+    def to(that: AbsCoinGroup#Unt)(implicit exchange: AbsExchZone[AbsTokenGroup, AbsCashGroup]#AbsExchange)
     : AbsCoinGroup#AbsCoin = exchange.applyExch(this, that)
 
     protected def decimals: Int = decimals(unit.count)
@@ -116,14 +116,6 @@ abstract class AbsCoinGroup {
     override final def toString = if (unit eq this) unitName else toString$
 
     protected def toString$: String = format + " " + unitName
-  }
-
-  abstract class AbsCash(count: Long) extends AbsCoin(count: Long) {
-    final lazy val isCash = true
-  }
-
-  abstract class AbsToken(count: Long) extends AbsCoin(count: Long) {
-    final lazy val isCash = false
   }
 
   object @: {

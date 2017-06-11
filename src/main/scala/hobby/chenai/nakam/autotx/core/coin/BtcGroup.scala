@@ -22,7 +22,7 @@ import scala.language.{existentials, implicitConversions, postfixOps}
   * @author Chenai Nakam(chenai.nakam@gmail.com)
   * @version 1.0, 29/05/2017
   */
-object BtcGroup extends AbsCoinGroup {
+object BtcGroup extends AbsTokenGroup {
   override type COIN = Token
   override type UNIT = COIN with Unt
 
