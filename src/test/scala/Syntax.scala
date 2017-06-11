@@ -14,15 +14,13 @@
  * limitations under the License.
  */
 
+import hobby.chenai.nakam.autotx.core.Fee
 import hobby.chenai.nakam.autotx.core.DSL._
-import hobby.chenai.nakam.autotx.core.FeeSrc
-import hobby.chenai.nakam.autotx.core.coin.BtcZone._
-import hobby.chenai.nakam.autotx.core.coin.CnyZone._
-import hobby.chenai.nakam.autotx.core.coin.EthZone._
-import hobby.chenai.nakam.autotx.core.coin.{AbsCoinZone, BtcZone, CnyZone}
-import hobby.chenai.nakam.autotx.core.exch.YunBiZone._
-
-import scala.collection.immutable.List
+import hobby.chenai.nakam.autotx.core.coin._
+import hobby.chenai.nakam.autotx.core.coin.BtcGroup._
+import hobby.chenai.nakam.autotx.core.coin.CnyGroup._
+import hobby.chenai.nakam.autotx.core.coin.EthGroup._
+import hobby.chenai.nakam.autotx.core.exch.YunBiZone.YUNBI
 
 /**
   * @author Chenai Nakam(chenai.nakam@gmail.com)
@@ -38,19 +36,13 @@ object Syntax {
   val f2: (Int, Int) => Int = (x: Int, y: Int) => x + y
   val f3 = (x: Int, y: Int) => x + y
 
-  //  buy 1000 BTC from YUNBI
-
-  def \(x: Any) = println(x)
-
-  def ln() = \("")
-
-  YUNBI.updateCashRate(BTC, 17000)
-  YUNBI.updateCashRate(ETH, 1650)
+  YUNBI.updateCashPricingRate(BTC, 17000)
+  YUNBI.updateCashPricingRate(ETH, 1650)
 
   \(CONG == BTC)
   \(BTC == BTC)
   \("BTC equals CNY: " + (CONG equals FEN))
-  \(BTC.isInstanceOf[BtcZone.Token])
+  \(BTC.isInstanceOf[BtcGroup.Token])
   \(BTC.getClass eq CONG.getClass)
   \(BTC.getClass eq JIAO.getClass)
   \(BTC.getClass + ", " + JIAO.getClass)
@@ -71,28 +63,22 @@ object Syntax {
   matchText(2 CNY)
 
 
-  def matchText(token: AbsCoinZone#AbsCoin) = token match {
+  def matchText(token: AbsCoinGroup#AbsCoin) = token match {
     case BTC => println(token + " matches BTC object")
-    case _: BtcZone.COIN => println(token + " matches BtcZone.COIN type")
-    //    case _: BtcZone.Token => println(token + " matches BtcZone.Token type")
-    case _: AbsCoinZone#AbsCoin => println(token + " matches AbsTokenZone#AbsCoin type")
+    case _: BtcGroup.COIN => println(token + " matches BtcZone.COIN type")
+    //case _: BtcZone.Token => println(token + " matches BtcZone.Token type")
+    case _: AbsCoinGroup#AbsCoin => println(token + " matches AbsTokenZone#AbsCoin type")
     case _ => println(token + "matches nothing")
   }
 
-  \(CNY.getClass == JIAO.getClass)
-  \((1 CNY).getClass == JIAO.getClass)
-  \(BTC.getClass == CNY.getClass)
-
-  //  \((1 BTC).type == CNY.type)
-
-  \("CNY.isInstanceOf[CnyZone.RMB]:" + CNY.isInstanceOf[CnyZone.RMB])
-  \("CNY.isInstanceOf[AbsCoinZone#AbsCash]:" + CNY.isInstanceOf[AbsCoinZone#AbsCash])
+  \("CNY.isInstanceOf[CnyZone.RMB]:" + CNY.isInstanceOf[CnyGroup.RMB])
+  \("CNY.isInstanceOf[AbsCoinZone#AbsCash]:" + CNY.isInstanceOf[AbsCashGroup#AbsCash])
 
   //  require(CNY.getClass == (1 JIAO).getClass, s"${CNY unitName}不支持${JIAO.unitName}")
 
   \(CNY.getClass + ", class: " + JIAO.getClass)
 
-  type CASH = CnyZone.COIN
+  type CASH = CnyGroup.COIN
 
   def typeMatch(any: Any) = any match {
     case _: CASH => \ _
@@ -114,11 +100,18 @@ object Syntax {
         Cat[A, A, A, A, A]]
     }*/
 
-  class A[+T]
+  class A[+T] {
+  }
 
   class B[+T] extends A[T]
 
-  class C[T] extends B[T]
+  class C[T] extends B[T] {
+    def method[N <: Y](t: T, n: N): N = n
+  }
+
+  class D[T] extends C[T]
+
+  class E extends D
 
   class X
 
@@ -157,124 +150,32 @@ object Syntax {
 
     val seq: Seq[A[X]] = List(new A[Y], new B[Y])*/
 
+  def test[T: D, M >: T, N <: Y](t: T, m: M, n: N): N = implicitly[C[T]].method(t, n)
 
-  val a = "a"
-  val b = List(1, 2, 3, 4, "a")
+  def meow[H <: C[X], I >: H, J >: H <: Any, K >: H <: I](): Unit = {}
 
 
-  \(s"$a[${b.mkString(", ")}]")
-
-  val tokens = Array[AbsCoinZone#AbsCoin](BTC, CONG, CNY, JIAO, FEN, ETH)
-
-  \(CONG == BTC)
-  \(Array(CONG).contains(BTC))
-  \(tokens.groupBy(_.std.unit).keySet.mkString("groupBy:[", ", ", "]"))
-
-  \((for (t <- tokens) yield (t.std unit).asInstanceOf[AbsCoinZone#AbsCoin]).distinct.mkString("yield:[", ", ", "]"))
+  object EthFee extends Fee(EthGroup, CnyGroup) {
+    import feeGroup._
+    lazy val BUY = new Rule(1 CNY, 0.0001)
+  }
 
   ln()
-  ln
+  ln()
+
+  \("buy.costs(1 ETH): " + EthFee.BUY.costs(1 ETH))
 
 
-  \("(0 BTC) to BTC: " + ((0 BTC) to BTC))
-  \("(0 BTC) to CONG: " + ((0 BTC) to CONG))
-  \("(0 BTC) to CNY: " + ((0 BTC) to CNY))
-  \("(0 BTC) to FEN: " + ((0 BTC) to FEN))
-  \("(0 BTC) to ETH: " + ((0 BTC) to ETH))
+  def matchIf(x: Any) = x match {
+    case _ if x.isInstanceOf[B[_]] => \("x isInstanceOf B")
+    case 10 => \("=> 10")
+    case i: Int if i == 10 => \("x == 10")
+    case s@_ if s == "string" => \("x == string")
+    case a => \(a)
+  }
 
-  ln
-
-  \("(1 BTC) to BTC: " + ((1 BTC) to BTC))
-  \("(1 BTC) to CONG: " + ((1 BTC) to CONG))
-  \("(1 BTC) to CNY: " + ((1 BTC) to CNY))
-  \("(1 BTC) to FEN: " + ((1 BTC) to FEN))
-  \("(1 BTC) to ETH: " + ((1 BTC) to ETH))
-
-  ln
-
-  \("(0.1 BTC) to BTC: " + ((0.1 BTC) to BTC))
-  \("(0.1 BTC) to CONG: " + ((0.1 BTC) to CONG))
-  \("(0.1 BTC) to CNY: " + ((0.1 BTC) to CNY))
-  \("(0.1 BTC) to FEN: " + ((0.1 BTC) to FEN))
-  \("(0.1 BTC) to ETH: " + ((0.1 BTC) to ETH))
-
-  ln
-
-  \("5.44 JIAO: " + (5.44 JIAO))
-  \("5.45 JIAO: " + (5.45 JIAO))
-  \("1.494 FEN: " + (1.494 FEN))
-  \("1.495 FEN: " + (1.495 FEN))
-  \("1.44 FEN: " + (1.44 FEN))
-  \("1.45 FEN: " + (1.45 FEN))
-  \("1.4 FEN: " + (1.4 FEN))
-  \("1.5 FEN: " + (1.5 FEN))
-
-  ln
-
-  \("(1.12 CNY) > (112 FEN): " + ((1.12 CNY) > (112 FEN)))
-  \("(1.12 CNY) == (112 FEN): " + ((1.12 CNY) == (112 FEN)))
-  \("(1.12 CNY) == (112.1 FEN): " + ((1.12 CNY) == (112.1 FEN)))
-  \("(1.12 CNY) < (112.1 FEN): " + ((1.12 CNY) < (112.1 FEN)))
-
-  ln
-
-  \("(980 FEN) to (2 CONG).unit: " + ((980 FEN) to (2 CONG).unit))
-  \("(980 FEN) to (2 CONG).std.unit: " + ((980 FEN) to (2 CONG).std.unit))
-  \("(980 FEN) to JIAO: " + ((980 FEN) to JIAO))
-  \("(5.4 JIAO) to ETH: " + ((5.4 JIAO) to ETH))
-  \("(5.4 JIAO) to ETH to CNY: " + ((5.4 JIAO) to ETH to CNY))
-  \("(5.45 JIAO) to ETH to CNY to BTC to JIAO: " + ((5.45 JIAO) to ETH to CNY to BTC to JIAO))
-  // CONG 的精度太高，转换次数过多，会有损失。
-  \("(5.51 CONG) to ETH to BTC to FEN to CONG: " + ((5.51 CONG) to ETH to BTC to FEN to CONG))
-  \("(5.51 CONG) to ETH: " + ((5.51 CONG) to ETH))
-
-  ln
-
-  // CONG 的精度太高，会有损失
-  //  BTCC.updateCashRate(BTC, 20000000)
-  //  BTCC.updateCashRate(ETH, 165000)
-  //
-  //  implicit val exchangeBtcc = BTCC
-
-  \("(5.44 JIAO) to ETH to CNY to BTC to JIAO: " + ((5.44 JIAO) to ETH to CNY to BTC to JIAO))
-  val jiao = (5.4506789 JIAO) to ETH to CNY to BTC to JIAO
-  \("(5.45 JIAO) to ETH to CNY to BTC to JIAO: " + jiao.value(CNY))
-  \("(5.45 JIAO) to ETH to CNY to BTC to JIAO to FEN_3: " + (jiao to FEN_3))
-  \("(5.49 CONG) to ETH to BTC to FEN to CONG: " + ((5.49 CONG) to ETH to BTC to FEN to CONG))
-  \("(5.51 CONG) to ETH to BTC to FEN to CONG: " + ((5.51 CONG) to ETH to BTC to FEN to CONG))
-  \("(5.51 CONG) to ETH: " + ((5.51 CONG) to ETH))
-
-  ln
-
-  \("(1 CNY) == (10 FEN): " + ((1 CNY) == (10 FEN)))
-  \("(1 CNY) > (10 FEN): " + ((1 CNY) > (10 FEN)))
-  \("(1 CNY) == (10 JIAO): " + ((1 CNY) == (10 JIAO)))
-  \("(1 CNY) < (10 JIAO): " + ((1 CNY) < (10 JIAO)))
-  \("(1 BTC) == (1 CNY): " + ((1 BTC) == (1 CNY)))
-  \("(0.00050 BTC) == (50000 CONG): " + ((0.00050 BTC) == (50000 CONG)))
-  \("(1.12 CNY) == (112 FEN): " + ((1.12 CNY) == (112 FEN)))
-  \("(1.12 CNY) >= (112 FEN): " + ((1.12 CNY) >= (112 FEN)))
-  \("(1.12 CNY) > (112 FEN): " + ((1.12 CNY) > (112 FEN)))
-  \("(1.12 CNY) != (112 FEN): " + ((1.12 CNY) != (112 FEN)))
-  \("(1.12 CNY) < (112.1 FEN): " + ((1.12 CNY) < (112.1 FEN)))
-
-
-  ~>: buy (10 BTC) on YUNBI use (160000 CNY) ~~=
-
-  ~>: sale (10 BTC) on YUNBI use (160000 CNY) ~~=
-
-  ~>: cancel (1 BTC) on YUNBI use ((160000 CNY) / 1000000000).mod(FEN_3) ~~=
-
-  \("(1 CONG) to FEN_3: " + ((1 CONG) to FEN_3))
-  \("(1 CONG) to FEN: " + ((1 CONG) to FEN))
-  \("(1 CONG) to CNY: " + ((1 CONG) to CNY))
-
-  \(CONG)
-  \(BTC)
-  \(CNY)
-  \(FEN)
-  \(FEN_3)
-
-
-  \(FeeSrc.CNY.id + FeeSrc.CNY.toString())
+  matchIf(new B[X])
+  matchIf(10)
+  matchIf("string")
+  matchIf('c')
 }

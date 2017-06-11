@@ -16,10 +16,9 @@
 
 package hobby.chenai.nakam.autotx.core
 
-import hobby.chenai.nakam.autotx.core.coin.AbsCoinZone
+import hobby.chenai.nakam.autotx.core.coin.{AbsCashGroup, AbsCoinGroup, AbsTokenGroup}
 import hobby.chenai.nakam.autotx.core.exch.AbsExchZone
 import hobby.chenai.nakam.autotx.core.exch.YunBiZone._
-
 import scala.language.implicitConversions
 
 /**
@@ -28,6 +27,10 @@ import scala.language.implicitConversions
   */
 object DSL {
   val ~>: = Ops
+
+  def \(x: Any) = println(x)
+
+  def ln() = \("")
 
   def symbols[E](count: Int)(implicit elem: E = " ", list: List[E] = Nil): List[E] = {
     if (count <= 0) list
@@ -55,23 +58,23 @@ object DSL {
   import Action._
 
   object Ops {
-    def buy(token: AbsCoinZone#AbsCoin) = new Ops(BUY, token)
+    def buy(token: AbsCoinGroup#AbsCoin) = new Ops(BUY, token)
 
-    def sale(token: AbsCoinZone#AbsCoin) = new Ops(SALE, token)
+    def sale(token: AbsCoinGroup#AbsCoin) = new Ops(SALE, token)
 
-    def cancel(token: AbsCoinZone#AbsCoin) = new Ops(CANCEL, token)
+    def cancel(token: AbsCoinGroup#AbsCoin) = new Ops(CANCEL, token)
   }
 
-  class Ops(val action: ACTION, val token: AbsCoinZone#AbsCoin) {
-    private var exchange: AbsExchZone#AbsExchange = _
-    private var cash: AbsCoinZone#AbsCash = _
+  class Ops(val action: ACTION, val token: AbsCoinGroup#AbsCoin) {
+    private var exchange: AbsExchZone[AbsTokenGroup, AbsCashGroup]#AbsExchange = _
+    private var cash: AbsCashGroup#AbsCash = _
 
-    def on(exchange: AbsExchZone#AbsExchange): Ops = {
+    def on(exchange: AbsExchZone[AbsTokenGroup, AbsCashGroup]#AbsExchange): Ops = {
       this.exchange = exchange
       this
     }
 
-    def use(cash: AbsCoinZone#AbsCash): Ops = {
+    def use(cash: AbsCashGroup#AbsCash): Ops = {
       this.cash = cash
       this
     }
@@ -83,7 +86,5 @@ object DSL {
     }
   }
 
-  implicit val exchange: AbsExchZone#AbsExchange = YUNBI
-
-  //  implicit def to()
+  implicit val exchange: AbsExchZone[AbsTokenGroup, AbsCashGroup]#AbsExchange = YUNBI
 }
