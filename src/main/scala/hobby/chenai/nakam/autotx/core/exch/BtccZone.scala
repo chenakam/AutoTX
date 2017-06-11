@@ -16,15 +16,16 @@
 
 package hobby.chenai.nakam.autotx.core.exch
 
-import hobby.chenai.nakam.autotx.core.coin.BtcZone._
-import hobby.chenai.nakam.autotx.core.coin.CnyZone._
+import hobby.chenai.nakam.autotx.core.coin.{BtcGroup, CnyGroup}
+import hobby.chenai.nakam.autotx.core.coin.BtcGroup._
+import hobby.chenai.nakam.autotx.core.coin.CnyGroup._
 
 /**
   * @author Chenai Nakam(chenai.nakam@gmail.com)
   * @version 1.0, 04/06/2017
   */
-object BtccZone extends AbsExchZone {
-  class Exchange extends AbsExchange("YUNBI", CNY, BTC)
+object BtccZone extends AbsExchZone(BtcGroup, CnyGroup) {
+  class Exchange extends AbsExchange("BTCC", BTC, CNY, BTC)
 
   lazy val BTCC = new Exchange
 }
