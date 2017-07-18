@@ -47,16 +47,17 @@ trait NumFmt {
   }
 
   /**
-    * @return 原始数字的格式化表示
+    * @return 原始数字的格式化表示。
     */
   def original = formatted()(null)
 
   protected def format(fixedFracDigits: Int, round: Boolean, fmtr: NumberFormat): String = {
-    if (fmtr == null) valueFixedFD(fixedFracDigits, round)
-    else fmtr.format(valueFixedFD(fixedFracDigits, round))
+    if (fmtr == null) valueFfd(fixedFracDigits, round)
+    else fmtr.format(valueFfd(fixedFracDigits, round))
   } + " " + unitNameFmt
 
-  final def valueFixedFD(fixedFracDigits: Int, round: Boolean = false): Double = NumFmt.cut2FixedFD(value, fixedFracDigits, round)
+  final def valueFfd(fixedFracDigits: Int, round: Boolean = false): Double =
+    NumFmt.cut2FixedFracDigits(value, fixedFracDigits, round)
 
   protected def value: Double
 
@@ -74,7 +75,7 @@ trait NumFmt {
 }
 
 object NumFmt {
-  final def cut2FixedFD(value: Double, fixedFracDigits: Int, round: Boolean = false): Double = {
+  final def cut2FixedFracDigits(value: Double, fixedFracDigits: Int, round: Boolean = false): Double = {
     if (fixedFracDigits < 0) value
     else {
       val r = math.pow(10, fixedFracDigits)
