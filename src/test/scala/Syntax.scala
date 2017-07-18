@@ -17,10 +17,11 @@
 import hobby.chenai.nakam.autotx.core.Fee
 import hobby.chenai.nakam.autotx.core.DSL._
 import hobby.chenai.nakam.autotx.core.coin._
-import hobby.chenai.nakam.autotx.core.coin.BtcGroup._
+import hobby.chenai.nakam.autotx.core.coin.BtcGroup.{SAT, _}
 import hobby.chenai.nakam.autotx.core.coin.CnyGroup._
 import hobby.chenai.nakam.autotx.core.coin.EthGroup._
 import hobby.chenai.nakam.autotx.core.exch.YunBiZone.YUNBI
+import Syntax.{A, ABCD}
 
 /**
   * @author Chenai Nakam(chenai.nakam@gmail.com)
@@ -39,19 +40,19 @@ object Syntax {
   YUNBI.updateCashPricingRate(BTC, 17000)
   YUNBI.updateCashPricingRate(ETH, 1650)
 
-  \(CONG == BTC)
+  \(SAT == BTC)
   \(BTC == BTC)
-  \("BTC equals CNY: " + (CONG equals FEN))
+  \("BTC equals CNY: " + (SAT equals FEN))
   \(BTC.isInstanceOf[BtcGroup.Token])
-  \(BTC.getClass eq CONG.getClass)
+  \(BTC.getClass eq SAT.getClass)
   \(BTC.getClass eq JIAO.getClass)
   \(BTC.getClass + ", " + JIAO.getClass)
-  \(CONG)
+  \(SAT)
   \(BTC)
-  \(CONG * 1000 + (2 BTC))
-  \((10000 CONG) + (1000 CONG))
+  \(SAT * 1000 + (2 BTC))
+  \((10000 SAT) + (1000 SAT))
   \(1 BTC)
-  \("CONG == (1 CONG)? " + (CONG == (1 CONG)))
+  \("SAT == (1 SAT)? " + (SAT == (1 SAT)))
   \(JIAO)
   \(JIAO == (1 JIAO))
   \("JIAO canEqual CNY: " + (JIAO canEqual CNY))
@@ -178,4 +179,37 @@ object Syntax {
   matchIf(10)
   matchIf("string")
   matchIf('c')
+
+  ln()
+  ln()
+
+  ~>: buy (10000 SAT) on YUNBI use (1 CNY) ~>=
+
+  ~>: buy (98 BTC) on YUNBI ~>= ()
+
+  ~>: buy (98 BTC) ~>=
+
+  \((12.34567890 CNY) formatted())
+  \((12.34567890987 FEN_3) formatted 25)
+  \((1234020000 FEN_3) formatted 25)
+  \((12345678900000023L SAT) to BTC formatted 25)
+  \((23L SAT).formatted(25, 4)(SAT.formatter))
+
+
+  case class O(var s: String, var i: Int) {
+    def test: String = s
+  }
+
+  O("", 0) match {
+    case s O 5 => s
+    case _ => ""
+  }
+
+  trait ABCD {
+    protected implicit def ^(s: String): O = ???
+  }
+}
+
+class BCDE extends A with ABCD {
+  "" test
 }

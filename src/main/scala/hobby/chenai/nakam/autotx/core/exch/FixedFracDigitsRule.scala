@@ -16,19 +16,14 @@
 
 package hobby.chenai.nakam.autotx.core.exch
 
-import hobby.chenai.nakam.autotx.core.coin.{BtcGroup => B, CnyGroup => C}
-import hobby.chenai.nakam.autotx.core.coin.BtcGroup._
-import hobby.chenai.nakam.autotx.core.coin.CnyGroup._
-import hobby.chenai.nakam.autotx.core.coin.EthGroup._
-
 /**
+  * 接受小数位规则。
+  *
+  * 对于不同的币种，交易时接受的Token小数位和法币小数位各有不同。
+  *
   * @author Chenai Nakam(chenai.nakam@gmail.com)
-  * @version 1.0, 31/05/2017
+  * @version 1.0, 18/07/2017
   */
-object YunBiZone extends AbsExchZone(B, C) {
-  // 云币的手续费是这么收的：买到的或卖出的，从收入里面按比例扣除。即：买到的币扣币，卖出的钱扣钱。
-  // 对于手续费，没有接受几位小数一说。
-  class Exchange extends AbsExchange("YUNBI", BTC, CNY, BTC, ETH, SAT)
+class FixedFracDigitsRule(token:) {
 
-  lazy val YUNBI = new Exchange
 }

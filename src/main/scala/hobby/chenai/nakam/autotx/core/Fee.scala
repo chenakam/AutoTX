@@ -30,11 +30,18 @@ class Fee[+GT <: AbsTokenGroup, +GF <: AbsCoinGroup](protected val tokenGroup: G
     *
     * @param quota      固定费用。注意方法 `costs()` 的返回值的单位与本单位相同。
     * @param percentage 按比例收取的费用。
+    * @param baseline   费用基准线。
     */
-  class Rule(val quota: COIN, val percentage: Double) {
-    implicit val type2 = @:.apply _
+  class Rule(val quota: COIN, val percentage: Double, val baseline: COIN) {
+    import quota.t2
 
+    /** 计算交易费。
+      *
+      * @param amount 交易的数量
+      * @param ex     交易所
+      * @return 交易总费用。注意单位 `unit` 将与 `baseline` 相同。
+      */
     def costs(amount: tokenGroup.COIN)(implicit ex: AbsExchZone[AbsTokenGroup, AbsCashGroup]#AbsExchange): COIN =
-      quota + (amount to quota.unit) * percentage
+      baseline max (quota + (amount to quota.unit) * percentage)
   }
 }

@@ -16,3 +16,8 @@ include 'services:webservice'
 */
 
 rootProject.name = 'AutoTX'
+
+include ':lang'
+
+
+//project(':lang').projectDir = new File('lang')

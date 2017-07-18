@@ -26,23 +26,17 @@ object CnyGroup extends AbsCashGroup {
   override type COIN = RMB
   override type UNIT = COIN with Unt
 
-  override val name = "CNY"
-  lazy override val UNIT = CNY
+  lazy override val unitStd = CNY
 
   override def make(count: Long, unt: UNIT) = new RMB(
     count // if (unt == FEN_3) count else count / 1000 * 1000 // 可以这样重构FEN以上的精度
   ) {
     override def unit = unt
-
-    override def unitName = unt.unitName
   }
 
   abstract class RMB private[CnyGroup](count: Long) extends AbsCash(count: Long) {
-    override def value = if (unit eq FEN_3) value(CNY) else super.value
-
-    override protected def decimals: Int = if (unit eq FEN_3) decimals(CNY.count) else super.decimals - 3
-
-    protected override def toString$ = if (unit eq FEN_3) format + " " + CNY.unitName else super.toString$
+    // TODO:
+//    override val value = if (unit eq FEN_3) mod(CNY).value else super.value
 
     override def equals(obj: Any) = obj match {
       case that: RMB => that.canEqual(this) && that.count == this.count
@@ -52,25 +46,27 @@ object CnyGroup extends AbsCashGroup {
     override def canEqual(that: Any) = that.isInstanceOf[RMB]
   }
 
+  private trait CNU extends Unt {
+    override val decmlFmt: Int = super.decmlFmt - 3
+  }
+
   // SC云储币精确到0.00001
   lazy val FEN_3: UNIT = new RMB(1) with Unt {
-    override def unit = this
+    override val name = "FEN-3"
 
-    override val unitName = "FEN-3"
+    override def nameFmt = CNY.nameFmt
+
+    override val decmlFmt: Int = decimals(CNY.count)
   }
   // 更高精度, 不过decimals会去掉3位，toString时会格式化掉。
-  lazy val FEN: UNIT = new RMB(1000) with Unt {
-    override def unit = this
-
-    override val unitName = "FEN"
+  lazy val FEN: UNIT = new RMB(1000) with CNU {
+    override val name = "FEN"
   }
-  lazy val JIAO: UNIT = new RMB(10000) with Unt {
-    override def unit = this
-
-    override val unitName = "JIAO"
+  lazy val JIAO: UNIT = new RMB(10000) with CNU {
+    override val name = "JIAO"
   }
-  lazy val CNY: UNIT = new RMB(100000) with Unt {
-    override def unit = this
+  lazy val CNY: UNIT = new RMB(100000) with CNU {
+    override val name = "CNY"
   }
 
   class ImpDsl(count: Double) {

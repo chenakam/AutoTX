@@ -17,6 +17,7 @@
 package hobby.chenai.nakam.autotx.core.exch
 
 import hobby.chenai.nakam.autotx.core.coin.{AbsCashGroup, AbsCoinGroup, AbsTokenGroup}
+import hobby.chenai.nakam.util.NumFmt
 import java.util.concurrent.ConcurrentHashMap
 import scala.language.postfixOps
 
@@ -40,6 +41,13 @@ abstract class AbsExchZone[+GPT <: AbsTokenGroup, +GPC <: AbsCashGroup](val pric
 
     println(toString)
 
+    /**
+      *
+      * @param coin
+      * @return
+      */
+    def fixedFracDigits(coin: AbsCoinGroup#AbsCoin): Int = if (coin.isCash) ??? else -1
+
     def applyExch(src: AbsCoinGroup#AbsCoin, dst: AbsCoinGroup#Unt): AbsCoinGroup#AbsCoin = {
       // pricingToken已经在supportTokens里面了
       if ((supportTokens.contains(src.std.unit) || (src.group eq pricingCash.group))
@@ -53,35 +61,35 @@ abstract class AbsExchZone[+GPT <: AbsTokenGroup, +GPC <: AbsCashGroup](val pric
       */
     protected lazy val ex: (AbsCoinGroup#AbsCoin, AbsCoinGroup#AbsCoin, Boolean) PartialFunction AbsCoinGroup#AbsCoin = {
       // pricingCash => pricingCash // 到这里不会出现两个不一样的法币
-      case (cash: AbsCashGroup#AbsCash, dst: AbsCashGroup#AbsCash, _) => cash mod dst.unit
+      case (cash: AbsCashGroup#AbsCash, dst: AbsCashGroup#AbsCash, _) => dst.unit << cash
       // token => pricingCash
       case (token: AbsTokenGroup#AbsToken, dst: AbsCashGroup#AbsCash, promise) =>
         if (promise /*注意这个promise不能把任务再转给token(btc)定价，不然会出现死递归*/ || cashPriRateMap.containsKey(token))
-          dst.std.unit * (token.std.value * getExRate(token, token$cash = false)) mod dst.unit
+          dst.unit << (dst.std.unit * (token.std.valueFixedFD(fixedFracDigits(token)) * getExRate(token, false)))
         else token
       // pricingCash => token
       case (cash: AbsCashGroup#AbsCash, dst: AbsTokenGroup#AbsToken, promise) =>
         if (promise || cashPriRateMap.containsKey(dst))
-          dst.std.unit * (cash.std.value / getExRate(dst, token$cash = false)) mod dst.unit
+          dst.unit << dst.std.unit * (cash.std.valueFixedFD(fixedFracDigits(cash)) / getExRate(dst, token$cash = false))
         else cash
       // pricingToken => pricingToken // 与cash不同，cash就一种，不需要判断。
       case (token: AbsTokenGroup#AbsToken, dst: AbsTokenGroup#AbsToken, _)
-        if (token.group eq pricingToken.group) && (dst.group eq pricingToken.group) => token mod dst.unit
+        if (token.group eq pricingToken.group) && (dst.group eq pricingToken.group) => dst.unit << token
       // token => pricingToken
       case (token: AbsTokenGroup#AbsToken, dst: AbsTokenGroup#AbsToken, promise) if dst.group eq pricingToken.group =>
         if (tokenPriRateMap.containsKey(token))
-          dst.std.unit * (token.std.value * getExRate(token, token$cash = true)) mod dst.unit
+          dst.unit << dst.std.unit * (token.std.valueFixedFD(fixedFracDigits(token.std.unit)) * getExRate(token, true))
         else if (promise) ex.apply(ex.apply(token, pricingCash, promise), dst, promise)
         else token
       // pricingToken => token
       case (token: AbsTokenGroup#AbsToken, dst: AbsTokenGroup#AbsToken, promise) if token.group eq pricingToken.group =>
         if (tokenPriRateMap.containsKey(dst))
-          dst.std.unit * (token.std.value / getExRate(dst, token$cash = true)) mod dst.unit
+          dst.unit << dst.std.unit * (token.std.valueFixedFD(fixedFracDigits(token)) / getExRate(dst, token$cash = true))
         else if (promise) ex.apply(ex.apply(token, pricingCash, promise), dst, promise)
         else token
       // token => token
       case (src: AbsTokenGroup#AbsToken, dst: AbsTokenGroup#AbsToken, promise) =>
-        if (dst.group == src.group) src mod dst.unit
+        if (dst.group == src.group) dst.unit << src
         else {
           val ptf = tokenPriRateMap.containsKey(src)
           val ptt = tokenPriRateMap.containsKey(dst)
@@ -103,7 +111,7 @@ abstract class AbsExchZone[+GPT <: AbsTokenGroup, +GPC <: AbsCashGroup](val pric
     private lazy val tokenPriRateMap = new ConcurrentHashMap[AbsCoinGroup#Unt, Double]()
 
     def updateCashPricingRate(token: AbsTokenGroup#UNIT, rate: Double): Double = {
-      cashPriRateMap.put(requireSupports(token), rate)
+      cashPriRateMap.put(requireSupports(token), NumFmt.cut2FixedFD(rate, x))
     }
 
     def updateTokenPricingRate(token: AbsTokenGroup#UNIT, rate: Double): Double = {

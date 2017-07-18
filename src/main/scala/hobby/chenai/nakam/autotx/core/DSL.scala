@@ -37,7 +37,7 @@ object DSL {
     else elem :: symbols(count - 1)(elem, list)
   }
 
-  def fill2Length(any: Any, length: Int)(prefix$suf: Boolean = true): String = {
+  def fill2Length(any: Any, length: Int, prefix$suf: Boolean = true): String = {
     val syms = symbols(length - any.toString.length)().mkString("")
     if (prefix$suf) syms + any else any + syms
   }
@@ -66,7 +66,7 @@ object DSL {
   }
 
   class Ops(val action: ACTION, val token: AbsCoinGroup#AbsCoin) {
-    private var exchange: AbsExchZone[AbsTokenGroup, AbsCashGroup]#AbsExchange = _
+    private implicit var exchange: AbsExchZone[AbsTokenGroup, AbsCashGroup]#AbsExchange = DSL.exchange
     private var cash: AbsCashGroup#AbsCash = _
 
     def on(exchange: AbsExchZone[AbsTokenGroup, AbsCashGroup]#AbsExchange): Ops = {
@@ -79,9 +79,10 @@ object DSL {
       this
     }
 
-    def ~~=(): Ops = {
-      println(s"$action: ${fill2Length(token, 15)()} on ${exchange.name}" +
-        s" use ${fill2Length(cash, 15)()} ${action.suffix} scheduling...")
+    def ~>=(): Ops = {
+      println(s"$action: ${token.formatted(15, exchange.fixedFracDigits(cash))} on ${exchange.name}" +
+        s" use ${(if (cash == null) token to exchange.pricingCash else cash) formatted(15, exchange.fixedFracDigits(cash))}" +
+        s" ${action.suffix} scheduling...")
       this
     }
   }

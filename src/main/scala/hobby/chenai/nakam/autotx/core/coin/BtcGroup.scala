@@ -26,13 +26,10 @@ object BtcGroup extends AbsTokenGroup {
   override type COIN = Token
   override type UNIT = COIN with Unt
 
-  override val name = "BTC"
-  lazy override val UNIT = BTC
+  override def unitStd = BTC
 
   override def make(count: Long, unt: UNIT) = new Token(count) {
     override def unit = unt
-
-    override def unitName = unt.unitName
   }
 
   abstract class Token private[BtcGroup](count: Long) extends AbsToken(count: Long) {
@@ -45,17 +42,15 @@ object BtcGroup extends AbsTokenGroup {
   }
 
   // 既是单位数据也是枚举
-  lazy val CONG: UNIT = new Token(1) with Unt {
-    override def unit = this
-
-    override val unitName = "CONG"
+  lazy val SAT: UNIT = new Token(1) with Unt {
+    override val name = "SAT"
   }
   lazy val BTC: UNIT = new Token(100000000) with Unt { // 一亿聪
-    override def unit = this
+    override val name = "BTC"
   }
 
   class ImpDsl(count: Double) {
-    implicit def CONG: COIN = BtcGroup.CONG * count
+    implicit def SAT: COIN = BtcGroup.SAT * count
 
     implicit def BTC: COIN = BtcGroup.BTC * count
   }

@@ -26,18 +26,13 @@ object EthGroup extends AbsTokenGroup {
   override type COIN = Token
   override type UNIT = COIN with Unt
 
-  override val name = "ETH"
-  lazy override val UNIT = ETH
+  override def unitStd = ETH
 
   override def make(count: Long, unt: UNIT) = new Token(count) {
     override def unit = unt
-
-    override def unitName = unt.unitName
   }
 
   abstract class Token private[EthGroup](count: Long) extends AbsToken(count: Long) {
-    override protected def decimals: Int = super.decimals - 1
-
     override def equals(obj: Any) = obj match {
       case that: Token => that.canEqual(this) && that.count == this.count
       case _ => false
@@ -48,7 +43,8 @@ object EthGroup extends AbsTokenGroup {
 
   // 以太的单位比较混乱，暂保留7位，输出时保留6位(decimals - 1)。如果小数位数太多，则留给整数的位数就会减少。
   lazy val ETH: UNIT = new Token(10000000) with Unt {
-    override def unit = this
+    override val name = "ETH"
+    override val decmlFmt: Int = super.decmlFmt - 1
   }
 
   class ImpDsl(count: Double) {

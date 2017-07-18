@@ -17,6 +17,8 @@
 package hobby.chenai.nakam.autotx.core.coin
 
 import hobby.chenai.nakam.autotx.core.exch.AbsExchZone
+import hobby.chenai.nakam.lang.TypeBring
+import hobby.chenai.nakam.util.NumFmt
 
 /**
   * @author Chenai Nakam(chenai.nakam@gmail.com)
@@ -30,15 +32,14 @@ abstract class AbsCoinGroup {
   type COIN <: AbsCoin
   type UNIT <: COIN with Unt
 
-  val name: String
-  val UNIT: UNIT
+  def unitStd: UNIT
 
   def make(count: Long, unit: UNIT): COIN
 
-  override def toString = name
+  override def toString = s"GROUP[${unitStd.name}]"
 
-  abstract class AbsCoin(private[core] val count: Long) extends Equals with Ordered[COIN] {
-    import @:._
+  abstract class AbsCoin(private[core] val count: Long) extends NumFmt
+    with Equals with Ordered[COIN] with TypeBring[UNIT, COIN, AbsCoinGroup#AbsCoin] {
 
     val isCash: Boolean
 
@@ -46,14 +47,7 @@ abstract class AbsCoinGroup {
 
     def unit: UNIT
 
-    def unitName: String = group.name
-
-    def value: Double = value(unit)
-
-    def value(unit: AbsCoinGroup#Unt): Double = {
-      requireGroupSame(unit)
-      this / unit
-    }
+    def value: Double = this / unit
 
     def +(that: COIN): COIN = make(this.count + that.count, unit)
 
@@ -71,7 +65,7 @@ abstract class AbsCoinGroup {
     /**
       * 将单位标准化。由于某些预定义的[作为枚举的]常量将自己本身作为了标准单位。
       */
-    def std: COIN = if (unit eq UNIT) this else mod(UNIT)
+    def std: COIN = if (unit eq unitStd) this else mod(unitStd)
 
     /**
       * 转换到参数指定单位。
@@ -79,16 +73,17 @@ abstract class AbsCoinGroup {
     // 注意unit的参数类型，在某些情况下，即使我们知道是同一个对象（如CnyZone单例对象）下的路径依赖类型，
     // 但无法用类型参数进行规约，导致编译器无法认为是同一个路径依赖类型。
     // 因此这里使用了更宽泛的类型并进行了类型转换，这意味着，如果在运行时类型确实不是同一个对象路径下的，那么会抛异常。
-    def mod(unit: AbsCoinGroup#Unt): COIN = {
-      requireGroupSame(unit)
-      make(count, unit)
-    }
+    def mod(unit: UNIT): COIN = if (unit eq this.unit) this else make(count, unit)
 
-    protected def requireGroupSame(unit: AbsCoinGroup#Unt): Unit = {
-      require(unit.group == group, s"unit group mismatch. require: $group, found: ${unit.group}")
-    }
+    //    protected def requireGroupSame(unit: AbsCoinGroup#Unt): Unit = {
+    //      require(unit.group == group, s"unit group mismatch. require: $group, found: ${unit.group}")
+    //    }
 
     override def compare(that: COIN) = this.count compare that.count
+
+    def min(that: COIN): COIN = if (this < that) this else that.mod(unit)
+
+    def max(that: COIN): COIN = if (this > that) this else that.mod(unit)
 
     // COIN 会被擦除，子类实现。
     // override def equals(any: scala.Any)
@@ -102,39 +97,30 @@ abstract class AbsCoinGroup {
       * @param that     目标单位。注意这个参数的类型与其它不同，一般参数类型COIN用于
       *                 同一个路径依赖类型，而本参数可以接受多个不同的路径依赖类型。
       * @param exchange 交易平台。
-      * @return
+      * @return 若兑换成功，则返回值与 `that` 同类型；若不成功，则直接返回本对象。因此返回值的类型不确定。
       */
     def to(that: AbsCoinGroup#Unt)(implicit exchange: AbsExchZone[AbsTokenGroup, AbsCashGroup]#AbsExchange)
-    : AbsCoinGroup#AbsCoin = exchange.applyExch(this, that)
+    : AbsCoinGroup#AbsCoin = if (that.group eq this.group) mod(that) else exchange.applyExch(this, that)
 
-    protected def decimals: Int = decimals(unit.count)
+    //    protected def format: String = value formatted s"%.${unit.decmlFmt}f"
 
-    protected final def decimals(n: Double): Int = if (n == 1) 0 else 1 + decimals(n / 10)
+    override final def toString = if (unit eq this) unit.name else formatted(-1, unit.decmlFmt)(null)
 
-    protected def format: String = value formatted s"%.${decimals}f"
-
-    override final def toString = if (unit eq this) unitName else toString$
-
-    protected def toString$: String = format + " " + unitName
-  }
-
-  object @: {
-    //    class TypeTo[T >: UNIT <: COIN] extends (AbsCoinGroup#AbsCoin => T) {
-    //      def apply(coin: AbsCoinGroup#AbsCoin): T = coin.asInstanceOf[T]
-    //    }
-    //    implicit val @: = new TypeTo[COIN]
-
-    implicit def apply[T >: UNIT <: COIN](coin: AbsCoinGroup#AbsCoin): T = coin.asInstanceOf[T]
-
-    //    /** 转换当前对象到目标类型。 */
-    // 能被用作前缀标识符的只有+、-、!和~。优先级：~（处于最高的行列）、+/-、!。
-    //    implicit def unary_~[T >: UNIT <: COIN]: T = asInstanceOf[T]
-
-    //    /** 转换参数对象到当前对象类型。 */
-    // 由于方法unary_~在前置调用的时候，无法传类型参数，只能用本方法的方案。
-    //    implicit def @:[T >: UNIT <: COIN](coin: AbsCoinGroup#AbsCoin): T = coin.asInstanceOf[T]
+    override protected def unitNameFmt = unit.nameFmt
   }
 
   // 不能用Unit, 会与系统类型冲突。
-  trait Unt extends AbsCoin
+  trait Unt extends AbsCoin {
+    override final def unit = this
+
+    def name: String
+
+    def nameFmt: String = name
+
+    def decmlFmt: Int = decimals(count)
+
+    def decimals(n: Double): Int = if (n == 1) 0 else 1 + decimals(n / 10)
+
+    def <<(coin: AbsCoinGroup#AbsCoin): COIN = coin mod unit
+  }
 }

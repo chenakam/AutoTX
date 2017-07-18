@@ -17,6 +17,7 @@
 import hobby.chenai.nakam.autotx.core.DSL._
 import hobby.chenai.nakam.autotx.core.coin.BtcGroup._
 import hobby.chenai.nakam.autotx.core.coin.CnyGroup._
+import hobby.chenai.nakam.autotx.core.coin.CnyGroup
 import hobby.chenai.nakam.autotx.core.coin.EthGroup._
 import hobby.chenai.nakam.autotx.core.exch.YunBiZone.YUNBI
 /**
@@ -31,7 +32,7 @@ object CoinUnit {
   YUNBI.updateCashPricingRate(ETH, 1650)
 
   \("(0 BTC) to BTC: " + ((0 BTC) to BTC))
-  \("(0 BTC) to CONG: " + ((0 BTC) to CONG))
+  \("(0 BTC) to SAT: " + ((0 BTC) to SAT))
   \("(0 BTC) to CNY: " + ((0 BTC) to CNY))
   \("(0 BTC) to FEN: " + ((0 BTC) to FEN))
   \("(0 BTC) to ETH: " + ((0 BTC) to ETH))
@@ -39,7 +40,7 @@ object CoinUnit {
   ln
 
   \("(1 BTC) to BTC: " + ((1 BTC) to BTC))
-  \("(1 BTC) to CONG: " + ((1 BTC) to CONG))
+  \("(1 BTC) to SAT: " + ((1 BTC) to SAT))
   \("(1 BTC) to CNY: " + ((1 BTC) to CNY))
   \("(1 BTC) to FEN: " + ((1 BTC) to FEN))
   \("(1 BTC) to ETH: " + ((1 BTC) to ETH))
@@ -47,7 +48,7 @@ object CoinUnit {
   ln
 
   \("(0.1 BTC) to BTC: " + ((0.1 BTC) to BTC))
-  \("(0.1 BTC) to CONG: " + ((0.1 BTC) to CONG))
+  \("(0.1 BTC) to SAT: " + ((0.1 BTC) to SAT))
   \("(0.1 BTC) to CNY: " + ((0.1 BTC) to CNY))
   \("(0.1 BTC) to FEN: " + ((0.1 BTC) to FEN))
   \("(0.1 BTC) to ETH: " + ((0.1 BTC) to ETH))
@@ -72,31 +73,31 @@ object CoinUnit {
 
   ln
 
-  \("(980 FEN) to (2 CONG).unit: " + ((980 FEN) to (2 CONG).unit))
-  \("(980 FEN) to (2 CONG).std.unit: " + ((980 FEN) to (2 CONG).std.unit))
+  \("(980 FEN) to (2 SAT).unit: " + ((980 FEN) to (2 SAT).unit))
+  \("(980 FEN) to (2 SAT).std.unit: " + ((980 FEN) to (2 SAT).std.unit))
   \("(980 FEN) to JIAO: " + ((980 FEN) to JIAO))
   \("(5.4 JIAO) to ETH: " + ((5.4 JIAO) to ETH))
   \("(5.4 JIAO) to ETH to CNY: " + ((5.4 JIAO) to ETH to CNY))
   \("(5.45 JIAO) to ETH to CNY to BTC to JIAO: " + ((5.45 JIAO) to ETH to CNY to BTC to JIAO))
-  // CONG 的精度太高，转换次数过多，会有损失。
-  \("(5.51 CONG) to ETH to BTC to FEN to CONG: " + ((5.51 CONG) to ETH to BTC to FEN to CONG))
-  \("(5.51 CONG) to ETH: " + ((5.51 CONG) to ETH))
+  // SAT 的精度太高，转换次数过多，会有损失。
+  \("(5.51 SAT) to ETH to BTC to FEN to SAT: " + ((5.51 SAT) to ETH to BTC to FEN to SAT))
+  \("(5.51 SAT) to ETH: " + ((5.51 SAT) to ETH))
 
   ln
 
-  // CONG 的精度太高，会有损失
+  // SAT 的精度太高，会有损失
   //  BTCC.updateCashRate(BTC, 20000000)
   //  BTCC.updateCashRate(ETH, 165000)
   //
   //  implicit val exchangeBtcc = BTCC
 
   \("(5.44 JIAO) to ETH to CNY to BTC to JIAO: " + ((5.44 JIAO) to ETH to CNY to BTC to JIAO))
-  val jiao = (5.4506789 JIAO) to ETH to CNY to BTC to JIAO
-  \("(5.45 JIAO) to ETH to CNY to BTC to JIAO: " + jiao.value(CNY))
+  val jiao: CnyGroup.COIN = CNY.^((5.4506789 JIAO) to ETH to CNY to BTC to JIAO)
+//  \("(5.45 JIAO) to ETH to CNY to BTC to JIAO: " + jiao.value(CNY))
   \("(5.45 JIAO) to ETH to CNY to BTC to JIAO to FEN_3: " + (jiao to FEN_3))
-  \("(5.49 CONG) to ETH to BTC to FEN to CONG: " + ((5.49 CONG) to ETH to BTC to FEN to CONG))
-  \("(5.51 CONG) to ETH to BTC to FEN to CONG: " + ((5.51 CONG) to ETH to BTC to FEN to CONG))
-  \("(5.51 CONG) to ETH: " + ((5.51 CONG) to ETH))
+  \("(5.49 SAT) to ETH to BTC to FEN to SAT: " + ((5.49 SAT) to ETH to BTC to FEN to SAT))
+  \("(5.51 SAT) to ETH to BTC to FEN to SAT: " + ((5.51 SAT) to ETH to BTC to FEN to SAT))
+  \("(5.51 SAT) to ETH: " + ((5.51 SAT) to ETH))
 
   ln
 
@@ -105,7 +106,7 @@ object CoinUnit {
   \("(1 CNY) == (10 JIAO): " + ((1 CNY) == (10 JIAO)))
   \("(1 CNY) < (10 JIAO): " + ((1 CNY) < (10 JIAO)))
   \("(1 BTC) == (1 CNY): " + ((1 BTC) == (1 CNY)))
-  \("(0.00050 BTC) == (50000 CONG): " + ((0.00050 BTC) == (50000 CONG)))
+  \("(0.00050 BTC) == (50000 SAT): " + ((0.00050 BTC) == (50000 SAT)))
   \("(1.12 CNY) == (112 FEN): " + ((1.12 CNY) == (112 FEN)))
   \("(1.12 CNY) >= (112 FEN): " + ((1.12 CNY) >= (112 FEN)))
   \("(1.12 CNY) > (112 FEN): " + ((1.12 CNY) > (112 FEN)))
@@ -114,11 +115,11 @@ object CoinUnit {
 
   ln()
 
-  \("(1 CONG) to FEN_3: " + ((1 CONG) to FEN_3))
-  \("(1 CONG) to FEN: " + ((1 CONG) to FEN))
-  \("(1 CONG) to CNY: " + ((1 CONG) to CNY))
+  \("(1 SAT) to FEN_3: " + ((1 SAT) to FEN_3))
+  \("(1 SAT) to FEN: " + ((1 SAT) to FEN))
+  \("(1 SAT) to CNY: " + ((1 SAT) to CNY))
 
-  \(CONG)
+  \(SAT)
   \(BTC)
   \(CNY)
   \(FEN)
