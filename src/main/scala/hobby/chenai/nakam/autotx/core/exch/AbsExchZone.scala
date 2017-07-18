@@ -65,12 +65,12 @@ abstract class AbsExchZone[+GPT <: AbsTokenGroup, +GPC <: AbsCashGroup](val pric
       // token => pricingCash
       case (token: AbsTokenGroup#AbsToken, dst: AbsCashGroup#AbsCash, promise) =>
         if (promise /*注意这个promise不能把任务再转给token(btc)定价，不然会出现死递归*/ || cashPriRateMap.containsKey(token))
-          dst.unit << (dst.std.unit * (token.std.valueFixedFD(fixedFracDigits(token)) * getExRate(token, false)))
+          dst.unit << (dst.std.unit * (token.std.valueFfd(fixedFracDigits(token)) * getExRate(token, false)))
         else token
       // pricingCash => token
       case (cash: AbsCashGroup#AbsCash, dst: AbsTokenGroup#AbsToken, promise) =>
         if (promise || cashPriRateMap.containsKey(dst))
-          dst.unit << dst.std.unit * (cash.std.valueFixedFD(fixedFracDigits(cash)) / getExRate(dst, token$cash = false))
+          dst.unit << dst.std.unit * (cash.std.valueFfd(fixedFracDigits(cash)) / getExRate(dst, token$cash = false))
         else cash
       // pricingToken => pricingToken // 与cash不同，cash就一种，不需要判断。
       case (token: AbsTokenGroup#AbsToken, dst: AbsTokenGroup#AbsToken, _)
@@ -78,13 +78,13 @@ abstract class AbsExchZone[+GPT <: AbsTokenGroup, +GPC <: AbsCashGroup](val pric
       // token => pricingToken
       case (token: AbsTokenGroup#AbsToken, dst: AbsTokenGroup#AbsToken, promise) if dst.group eq pricingToken.group =>
         if (tokenPriRateMap.containsKey(token))
-          dst.unit << dst.std.unit * (token.std.valueFixedFD(fixedFracDigits(token.std.unit)) * getExRate(token, true))
+          dst.unit << dst.std.unit * (token.std.valueFfd(fixedFracDigits(token.std.unit)) * getExRate(token, true))
         else if (promise) ex.apply(ex.apply(token, pricingCash, promise), dst, promise)
         else token
       // pricingToken => token
       case (token: AbsTokenGroup#AbsToken, dst: AbsTokenGroup#AbsToken, promise) if token.group eq pricingToken.group =>
         if (tokenPriRateMap.containsKey(dst))
-          dst.unit << dst.std.unit * (token.std.valueFixedFD(fixedFracDigits(token)) / getExRate(dst, token$cash = true))
+          dst.unit << dst.std.unit * (token.std.valueFfd(fixedFracDigits(token)) / getExRate(dst, token$cash = true))
         else if (promise) ex.apply(ex.apply(token, pricingCash, promise), dst, promise)
         else token
       // token => token
@@ -111,7 +111,7 @@ abstract class AbsExchZone[+GPT <: AbsTokenGroup, +GPC <: AbsCashGroup](val pric
     private lazy val tokenPriRateMap = new ConcurrentHashMap[AbsCoinGroup#Unt, Double]()
 
     def updateCashPricingRate(token: AbsTokenGroup#UNIT, rate: Double): Double = {
-      cashPriRateMap.put(requireSupports(token), NumFmt.cut2FixedFD(rate, x))
+      cashPriRateMap.put(requireSupports(token), NumFmt.cut2FixedFracDigits(rate, x))
     }
 
     def updateTokenPricingRate(token: AbsTokenGroup#UNIT, rate: Double): Double = {
@@ -136,7 +136,7 @@ abstract class AbsExchZone[+GPT <: AbsTokenGroup, +GPC <: AbsCashGroup](val pric
       rate
     }
 
-    override def toString = s"$name(:$pricingCash)$supportTokenString"
+    override def toString = s"$name(:$pricingCash|$pricingToken)$supportTokenString"
 
     def supportTokenString = supportTokens.mkString("[", ", ", "]")
   }
