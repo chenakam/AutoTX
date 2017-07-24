@@ -22,9 +22,14 @@ import hobby.wei.c.tools.LruCache
   * @author Chenai Nakam(chenai.nakam@gmail.com)
   * @version 1.0, 22/07/2017
   */
-trait Cache[K, V] extends Memoize[K, V] {
-  override protected[cache] lazy val memory = new Memory[K, V] {
-    private val lru: LruCache[K, V] = new LruCache[K, V](cacheSize) {
+protected[cache] trait LruMemFunc[K, V] extends MemFunc[K, V] {
+  /**
+    * @return lru 缓存记录的最大条数。一个 `K -> V` 表示一条记录。
+    */
+  protected def maxCacheSize: Int
+
+  override protected[cache] lazy val memory = new MemStore[K, V] {
+    private val lru: LruCache[K, V] = new LruCache[K, V](maxCacheSize) {
       override protected def sizeOf(key: K, value: V) = {
         /*
            * 由于通过反射递归遍历父类属性来计算对象实际内存占用是不现实的：
@@ -54,10 +59,10 @@ trait Cache[K, V] extends Memoize[K, V] {
 
     override def clear() = lru.evictAll()
   }
-
-  protected def cacheSize: Int
 }
 
-trait CacheSyncGet[K, V] extends Cache[K, V] with MemSyncGet[K, V]
+trait LruMemoize[K, V] extends Memoize[K, V] with LruMemFunc[K, V]
 
-trait CacheSync[K, V] extends Cache[K, V] with MemSync[K, V]
+trait LruMemSyncGet[K, V] extends LruMemoize[K, V] with MemSyncGet[K, V]
+
+trait LruMemSync[K, V] extends LruMemoize[K, V] with MemSync[K, V]

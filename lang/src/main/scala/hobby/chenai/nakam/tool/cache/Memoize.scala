@@ -20,8 +20,8 @@ package hobby.chenai.nakam.tool.cache
   * @author Chenai Nakam(chenai.nakam@gmail.com)
   * @version 1.0, 22/07/2017
   */
-trait Memoize[K, V] {
-  /* 这个方案不行，很多类型 V 无法创建本 trait 实例。如 Int。
+trait Memoize[K, V] extends MemFunc[K, V] {
+  /* 这个方案不行，很多类型 V 无法创建本 trait 实例。如：Int。因此改用了 nonValue4Keys 方案。
     protected trait DefValue {
       override final def equals(obj: Any) = obj match {
         case that: DefValue => that eq this
@@ -30,30 +30,9 @@ trait Memoize[K, V] {
     }
     protected val defValue: V with DefValue
     */
-
   private var nonValue4Keys: Set[K] = Set.empty[K]
 
-  protected[cache] lazy val memory: Memory[K, V] = new Memory[K, V] {
-    private var map = Map.empty[K, V]
-
-    override def get(key: K): Option[V] = map.get(key)
-
-    override def put(key: K, value: V): Boolean = {
-      map += key -> value
-      true
-    }
-
-    override def remove(key: K): Boolean = {
-      map -= key
-      true
-    }
-
-    override def clear(): Unit = map = Map.empty[K, V]
-  }
-
   protected val delegate: Delegate[K, V]
-
-  //////////////////////////////// APIs ////////////////////////////////
 
   def get(key: K): Option[V] = {
     memory.get(key) match {
@@ -141,14 +120,4 @@ trait Delegate[K, V] {
   def load(key: K): Option[V]
 
   def update(key: K, value: Option[V]): Boolean
-}
-
-protected trait Memory[K, V] {
-  def get(key: K): Option[V]
-
-  def put(key: K, value: V): Boolean
-
-  def remove(key: K): Boolean
-
-  def clear(): Unit
 }

@@ -20,8 +20,9 @@ import hobby.chenai.nakam.tool.cache._
   * @author Chenai Nakam(chenai.nakam@gmail.com)
   * @version 1.0, 22/07/2017
   */
-object MemoizeTest extends CacheSyncGet[String, Int] {
-  override protected def cacheSize = 6
+object MemoizeTest extends LruMemSyncGet[String, Int] {
+  override protected def maxCacheSize = 4
+
   override protected val delegate = new Delegate[String, Int] {
     var map: Map[String, Int] = Map("a" -> 0, "b" -> 1, "c" -> 2, "d" -> 3, "f" -> 5)
 
@@ -43,6 +44,8 @@ object MemoizeTest extends CacheSyncGet[String, Int] {
       val i = 1
 
       def get = i
+
+      def x(): Unit
     }
 
     trait B extends A {
@@ -55,6 +58,8 @@ object MemoizeTest extends CacheSyncGet[String, Int] {
       override val i = 100
 
       override def get = super.get * 2
+
+      override def x() = ???
     }
 
     trait C extends B with Ax
