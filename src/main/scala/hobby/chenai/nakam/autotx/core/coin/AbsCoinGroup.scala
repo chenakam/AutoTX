@@ -31,6 +31,7 @@ abstract class AbsCoinGroup {
   // 可以new BtcZone.COIN()创建新实例，但不是AbsCoinZone#AbsCoin的实例，不过后者可以用于模式匹配，从属范围更广。
   type COIN <: AbsCoin
   type UNIT <: COIN with Unt
+  protected[coin] type GROUP <: AbsCoinGroup
 
   def unitStd: UNIT
 
@@ -43,7 +44,7 @@ abstract class AbsCoinGroup {
 
     val isCash: Boolean
 
-    val group = groupSelf
+    final val group: GROUP = groupSelf.asInstanceOf[GROUP]
 
     def unit: UNIT
 
@@ -99,7 +100,7 @@ abstract class AbsCoinGroup {
       * @param exchange 交易平台。
       * @return 若兑换成功，则返回值与 `that` 同类型；若不成功，则直接返回本对象。因此返回值的类型不确定。
       */
-    def to(that: AbsCoinGroup#Unt)(implicit exchange: AbsExchZone[AbsTokenGroup, AbsCashGroup]#AbsExchange)
+    def to(that: AbsCoinGroup#Unt)(implicit exchange: AbsExchZone)
     : AbsCoinGroup#AbsCoin = if (that.group eq this.group) mod(that) else exchange.applyExch(this, that)
 
     //    protected def format: String = value formatted s"%.${unit.decmlFmt}f"
