@@ -41,7 +41,8 @@ trait NumFmt {
     * @param round           是四舍五入还是截断。
     * @param fmtr            数字格式化器。若传 null 表示输出原始值。
     */
-  def formatted(length: Int = -1, fixedFracDigits: Int = -1, round: Boolean = false)(implicit fmtr: NumberFormat = formatter): String = {
+  def formatted(length: Int = -1, fixedFracDigits: Int = -1, round: Boolean = false)
+               (implicit fmtr: NumberFormat = formatter): String = {
     val s = format(fixedFracDigits, round, fmtr)
     if (length <= 0) s else s formatted s"%${length}s"
   }
