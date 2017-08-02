@@ -17,7 +17,7 @@
 package hobby.chenai.nakam.autotx.core
 
 import hobby.chenai.nakam.autotx.core.coin.{AbsCashGroup, AbsCoinGroup, AbsTokenGroup}
-import hobby.chenai.nakam.autotx.core.exch.AbsExchZone
+import hobby.chenai.nakam.autotx.core.exch.AbsExchange
 
 /**
   * @author Chenai Nakam(chenai.nakam@gmail.com)
@@ -41,7 +41,7 @@ class Fee[+GT <: AbsTokenGroup, +GF <: AbsCoinGroup](protected val tokenGroup: G
       * @param ex     交易所
       * @return 交易总费用。注意单位 `unit` 将与 `baseline` 相同。
       */
-    def costs(amount: tokenGroup.COIN)(implicit ex: AbsExchZone[AbsTokenGroup, AbsCashGroup]#AbsExchange): COIN =
+    def costs(amount: tokenGroup.COIN)(implicit ex: AbsExchange): COIN =
       baseline max (quota + (amount to quota.unit) * percentage)
   }
 }

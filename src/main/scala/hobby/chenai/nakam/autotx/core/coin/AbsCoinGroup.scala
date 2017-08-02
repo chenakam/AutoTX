@@ -16,7 +16,7 @@
 
 package hobby.chenai.nakam.autotx.core.coin
 
-import hobby.chenai.nakam.autotx.core.exch.AbsExchZone
+import hobby.chenai.nakam.autotx.core.exch.AbsExchange
 import hobby.chenai.nakam.lang.TypeBring
 import hobby.chenai.nakam.util.NumFmt
 
@@ -100,7 +100,7 @@ abstract class AbsCoinGroup {
       * @param exchange 交易平台。
       * @return 若兑换成功，则返回值与 `that` 同类型；若不成功，则直接返回本对象。因此返回值的类型不确定。
       */
-    def to(that: AbsCoinGroup#Unt)(implicit exchange: AbsExchZone)
+    def to(that: AbsCoinGroup#Unt)(implicit exchange: AbsExchange)
     : AbsCoinGroup#AbsCoin = if (that.group eq this.group) mod(that) else exchange.applyExch(this, that)
 
     //    protected def format: String = value formatted s"%.${unit.decmlFmt}f"
