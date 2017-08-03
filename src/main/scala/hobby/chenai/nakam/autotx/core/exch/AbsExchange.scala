@@ -62,24 +62,24 @@ abstract class AbsExchange
     case (cash: AbsCashGroup#AbsCash, dst: AbsCashGroup#AbsCash, _) => dst.unit << cash
     // token => pricingCash
     case (token: AbsTokenGroup#AbsToken, dst: AbsCashGroup#AbsCash, promise) =>
-      if (promise /*注意这个promise不能把任务再转给token(btc)定价，不然会出现死递归*/ || cashPriRateMap.containsKey(token)) {
+      if (promise /*注意这个promise不能把任务再转给pricingToken，不然会死递归*/ || cashPriRateMap.containsKey(token.group)) {
         val ffdRule = getFfdRule(token.group, dst.group)
         import ffdRule._
         dst.unit << sell(token, getExRate(token.group, token$cash = false))
       } else token
     // pricingCash => token
     case (cash: AbsCashGroup#AbsCash, dst: AbsTokenGroup#AbsToken, promise) =>
-      if (promise || cashPriRateMap.containsKey(dst)) {
+      if (promise || cashPriRateMap.containsKey(dst.group)) {
         val ffdRule = getFfdRule(dst.group, cash.group)
         import ffdRule._
-        dst.unit << buy(cash /*注意这里不是dst, cash表示拿了多少钱*/ , getExRate(dst.group, token$cash = false))
+        dst.unit << buy(cash /*注意这里不是dst, cash表示有多少钱*/ , getExRate(dst.group, token$cash = false))
       } else cash
     // pricingToken => pricingToken // 与token不同，cash就一种，不需要判断。
     case (token: AbsTokenGroup#AbsToken, dst: AbsTokenGroup#AbsToken, _)
       if (token.group eq pricingToken) && (dst.group eq pricingToken) => dst.unit << token
     // token => pricingToken
     case (token: AbsTokenGroup#AbsToken, dst: AbsTokenGroup#AbsToken, promise) if dst.group eq pricingToken =>
-      if (tokenPriRateMap.containsKey(token)) {
+      if (tokenPriRateMap.containsKey(token.group)) {
         val ffdRule = getFfdRule(token.group, dst.group)
         import ffdRule._
         dst.unit << sell(token, getExRate(token.group, token$cash = true))
@@ -87,20 +87,20 @@ abstract class AbsExchange
       else token
     // pricingToken => token
     case (token: AbsTokenGroup#AbsToken, dst: AbsTokenGroup#AbsToken, promise) if token.group eq pricingToken =>
-      if (tokenPriRateMap.containsKey(dst)) {
+      if (tokenPriRateMap.containsKey(dst.group)) {
         val ffdRule = getFfdRule(dst.group, token.group)
         import ffdRule._
-        dst.unit << buy(token /*注意这里不是dst, token表示拿了多少钱*/ , getExRate(dst.group, token$cash = true))
+        dst.unit << buy(token /*注意这里不是dst, token表示有多少钱*/ , getExRate(dst.group, token$cash = true))
       } else if (promise) ex.apply(ex.apply(token, pricingCash.unitStd, promise), dst, promise)
       else token
     // token => token
     case (src: AbsTokenGroup#AbsToken, dst: AbsTokenGroup#AbsToken, promise) =>
       if (dst.group == src.group) dst.unit << src
       else {
-        val ptf = tokenPriRateMap.containsKey(src)
-        val ptt = tokenPriRateMap.containsKey(dst)
-        val cf = cashPriRateMap.containsKey(src)
-        val ct = cashPriRateMap.containsKey(dst)
+        val ptf = tokenPriRateMap.containsKey(src.group)
+        val ptt = tokenPriRateMap.containsKey(dst.group)
+        val cf = cashPriRateMap.containsKey(src.group)
+        val ct = cashPriRateMap.containsKey(dst.group)
         if (ptf && ptt) ex.apply(ex.apply(src, pricingToken.unitStd, false), dst, false)
         else if (cf && ct) ex.apply(ex.apply(src, pricingCash.unitStd, false), dst, false)
         else if (promise) {
