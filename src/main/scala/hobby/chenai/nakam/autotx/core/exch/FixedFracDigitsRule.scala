@@ -16,8 +16,8 @@
 
 package hobby.chenai.nakam.autotx.core.exch
 
-import hobby.chenai.nakam.autotx.core.coin.{AbsCoinGroup, AbsTokenGroup}
-import hobby.chenai.nakam.lang.TypeBring
+import hobby.chenai.nakam.autotx.coinTpeImpl
+import hobby.chenai.nakam.autotx.core.coin.AbsCoinGroup
 import hobby.chenai.nakam.util.NumFmt
 
 /**
@@ -34,7 +34,7 @@ import hobby.chenai.nakam.util.NumFmt
   * @author Chenai Nakam(chenai.nakam@gmail.com)
   * @version 1.0, 18/07/2017
   */
-class FixedFracDigitsRule(val tokenGroup: AbsTokenGroup, val ffd4Token: Int,
+class FixedFracDigitsRule(val tokenGroup: AbsCoinGroup, val ffd4Token: Int,
                           val pricingCoinGroup: AbsCoinGroup, val ffd4Pricing: Int,
                           val cutTotal: Boolean = true) {
 
@@ -52,6 +52,5 @@ class FixedFracDigitsRule(val tokenGroup: AbsTokenGroup, val ffd4Token: Int,
     tokenGroup.unitStd * (if (cutTotal) NumFmt.cut2FixedFracDigits(value, ffd4Pricing) else value)
   }
 
-  implicit lazy val ^ = new TypeBring[tokenGroup.COIN, tokenGroup.COIN, AbsTokenGroup#AbsToken] {}.t2
-  implicit lazy val * = new TypeBring[pricingCoinGroup.COIN, pricingCoinGroup.COIN, AbsCoinGroup#AbsCoin] {}.t2
+  lazy val impl = coinTpeImpl[tokenGroup.COIN, pricingCoinGroup.COIN]
 }

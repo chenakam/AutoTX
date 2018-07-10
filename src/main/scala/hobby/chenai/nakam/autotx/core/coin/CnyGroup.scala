@@ -48,30 +48,30 @@ object CnyGroup extends AbsCashGroup {
   }
 
   // SC云储币精确到0.00001
-  lazy val FEN_3: UNIT = new RMB(1) with Unt {
-    override val name = "FEN-3"
+  lazy val Fen_3: UNIT = new RMB(1) with Unt {
+    override val name = "Fen-3"
 
     override def nameFmt = CNY.nameFmt
 
     override val decmlFmt: Int = decimals(CNY.count)
   }
   // 更高精度, 不过decimals会去掉3位，toString时会格式化掉。
-  lazy val FEN: UNIT = new RMB(1000) with CNU {
-    override val name = "FEN"
+  lazy val Fen: UNIT = new RMB(1000) with CNU {
+    override val name = "Fen"
   }
-  lazy val JIAO: UNIT = new RMB(10000) with CNU {
-    override val name = "JIAO"
+  lazy val Jiao: UNIT = new RMB(10000) with CNU {
+    override val name = "Jiao"
   }
   lazy val CNY: UNIT = new RMB(100000) with CNU {
     override val name = "CNY"
   }
 
   class ImpDsl(count: Double) {
-    implicit def FEN_3: COIN = CnyGroup.FEN_3 * count
+    implicit def Fen_3: COIN = CnyGroup.Fen_3 * count
 
-    implicit def FEN: COIN = CnyGroup.FEN * count
+    implicit def Fen: COIN = CnyGroup.Fen * count
 
-    implicit def JIAO: COIN = CnyGroup.JIAO * count
+    implicit def Jiao: COIN = CnyGroup.Jiao * count
 
     implicit def CNY: COIN = CnyGroup.CNY * count
   }

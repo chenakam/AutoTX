@@ -16,9 +16,9 @@
 
 package hobby.chenai.nakam.autotx.core
 
-import hobby.chenai.nakam.autotx.core.coin.{AbsCashGroup, AbsCoinGroup, AbsTokenGroup}
-import hobby.chenai.nakam.autotx.core.exch.AbsExchZone
-import hobby.chenai.nakam.autotx.core.exch.YunBiZone._
+import hobby.chenai.nakam.autotx.core.coin.{AbsCashGroup, AbsCoinGroup}
+import hobby.chenai.nakam.autotx.core.exch.AbsExchange
+
 import scala.language.implicitConversions
 
 /**
@@ -28,9 +28,9 @@ import scala.language.implicitConversions
 object DSL {
   val ~>: = Ops
 
-  def \(x: Any) = println(x)
+  def \(x: Any): Unit = println(x)
 
-  def ln() = \("")
+  def ln(): Unit = \("")
 
   def symbols[E](count: Int)(implicit elem: E = " ", list: List[E] = Nil): List[E] = {
     if (count <= 0) list
@@ -66,10 +66,10 @@ object DSL {
   }
 
   class Ops(val action: ACTION, val token: AbsCoinGroup#AbsCoin) {
-    private implicit var exchange: AbsExchZone[AbsTokenGroup, AbsCashGroup]#AbsExchange = DSL.exchange
+    private implicit var exchange: AbsExchange = _
     private var cash: AbsCashGroup#AbsCash = _
 
-    def on(exchange: AbsExchZone[AbsTokenGroup, AbsCashGroup]#AbsExchange): Ops = {
+    def on(exchange: AbsExchange): Ops = {
       this.exchange = exchange
       this
     }
@@ -79,13 +79,11 @@ object DSL {
       this
     }
 
-    def ~>=(): Ops = {
-      println(s"$action: ${token.formatted(15, exchange.fixedFracDigits(cash))} on ${exchange.name}" +
-        s" use ${(if (cash == null) token to exchange.pricingCash else cash) formatted(15, exchange.fixedFracDigits(cash))}" +
+    def ~>= : Ops = {
+      println(s"$action: ${token.formatted(15)()} on ${exchange.name}" +
+        s" use ${(if (cash == null) token to exchange.pricingCash.unitStd else cash).formatted(15)()}" +
         s" ${action.suffix} scheduling...")
       this
     }
   }
-
-  implicit val exchange: AbsExchZone[AbsTokenGroup, AbsCashGroup]#AbsExchange = YUNBI
 }
