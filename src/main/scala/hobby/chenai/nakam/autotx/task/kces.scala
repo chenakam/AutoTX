@@ -14,20 +14,24 @@
  * limitations under the License.
  */
 
-package hobby.chenai.nakam.autotx
+package hobby.chenai.nakam.autotx.task
 
-import hobby.chenai.nakam.autotx.core.coin.AbsCoinGroup
-import hobby.chenai.nakam.lang.TypeBring
+import hobby.wei.c.reflow.Kce
 
 /**
   * @author Chenai Nakam(chenai.nakam@gmail.com)
-  * @version 1.0, 10/07/2018
+  * @version 1.0, 11/07/2018
   */
-object coinTpeImpl {
-  def apply[PriTC <: AbsCoinGroup#AbsCoin, PriCC <: AbsCoinGroup#AbsCoin]: coinTpeImpl[PriTC, PriCC] = new coinTpeImpl[PriTC, PriCC] {}
-}
+object kces {
+  /** 交易所名称。 */
+  lazy val exchangeName = new Kce[String]("exchange_name") {}
 
-trait coinTpeImpl[PriTC <: AbsCoinGroup#AbsCoin, PriCC <: AbsCoinGroup#AbsCoin] {
-  implicit lazy val ptc = new TypeBring[PriTC, PriTC, AbsCoinGroup#AbsCoin] {}.t2
-  implicit lazy val pcc = new TypeBring[PriCC, PriCC, AbsCoinGroup#AbsCoin] {}.t2
+  // TODO: 还有一些header`apiKey/apiSecret`之类的参数，封装成任务读取。
+
+  /** `exchangeName`对应的交易所下的交易对请求地址。 */
+  // 由任务自己读取。
+  // lazy val counterPartyUrl = new Kce[String]("counter_party_url") {}
+
+  /** 交易对列表。 */
+  lazy val counterPartySeq = new Kce[Seq[(String, String)]]("counter_party_seq") {}
 }
