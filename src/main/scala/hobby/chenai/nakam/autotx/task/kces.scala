@@ -23,6 +23,8 @@ import hobby.wei.c.reflow.Kce
   * @version 1.0, 11/07/2018
   */
 object kces {
+  lazy val refreshFromNet = new Kce[String]("refresh_from_net") {}
+
   /** 交易所名称。 */
   lazy val exchangeName = new Kce[String]("exchange_name") {}
 
@@ -34,4 +36,9 @@ object kces {
 
   /** 交易对列表。 */
   lazy val counterPartySeq = new Kce[Seq[(String, String)]]("counter_party_seq") {}
+
+  /** 用户关注的交易对列表。 */
+  lazy val counterPartyUserPrefer = new Kce[Seq[(String, String)]]("counter_party_user_prefer") {}
+  /** 用户关注的交易对列表。 */
+  lazy val realTimeData = new Kce[Seq[(String, String)]]("real_time_data") {}
 }
