@@ -20,8 +20,10 @@ import hobby.chenai.nakam.autotx.core.coin._
 import hobby.chenai.nakam.autotx.core.coin.BtcGroup.{SAT, _}
 import hobby.chenai.nakam.autotx.core.coin.CnyGroup._
 import hobby.chenai.nakam.autotx.core.coin.EthGroup._
-import hobby.chenai.nakam.autotx.core.exch.YunBiZone.YUNBI
 import Syntax.{A, ABCD}
+import hobby.chenai.nakam.autotx.core.exch.{AbsExchange, YUNBI}
+
+import scala.language.postfixOps
 
 /**
   * @author Chenai Nakam(chenai.nakam@gmail.com)
@@ -37,25 +39,26 @@ object Syntax {
   val f2: (Int, Int) => Int = (x: Int, y: Int) => x + y
   val f3 = (x: Int, y: Int) => x + y
 
-  YUNBI.updateCashPricingRate(BTC, 17000)
-  YUNBI.updateCashPricingRate(ETH, 1650)
+  implicit val exchange: AbsExchange = YUNBI
+  YUNBI.updateCashPricingRate(BTC, 40000 CNY)
+  YUNBI.updateCashPricingRate(ETH, 3000 CNY)
 
   \(SAT == BTC)
   \(BTC == BTC)
-  \("BTC equals CNY: " + (SAT equals FEN))
+  \("BTC equals CNY: " + (SAT equals Fen))
   \(BTC.isInstanceOf[BtcGroup.Token])
   \(BTC.getClass eq SAT.getClass)
-  \(BTC.getClass eq JIAO.getClass)
-  \(BTC.getClass + ", " + JIAO.getClass)
+  \(BTC.getClass eq Jiao.getClass)
+  \(BTC.getClass + ", " + Jiao.getClass)
   \(SAT)
   \(BTC)
   \(SAT * 1000 + (2 BTC))
   \((10000 SAT) + (1000 SAT))
   \(1 BTC)
   \("SAT == (1 SAT)? " + (SAT == (1 SAT)))
-  \(JIAO)
-  \(JIAO == (1 JIAO))
-  \("JIAO canEqual CNY: " + (JIAO canEqual CNY))
+  \(Jiao)
+  \(Jiao == (1 Jiao))
+  \("JIAO canEqual CNY: " + (Jiao canEqual CNY))
 
   //  println(new Token(0).isInstanceOf[BtcZone.BTC])
   matchText(BTC)
@@ -77,7 +80,7 @@ object Syntax {
 
   //  require(CNY.getClass == (1 JIAO).getClass, s"${CNY unitName}不支持${JIAO.unitName}")
 
-  \(CNY.getClass + ", class: " + JIAO.getClass)
+  \(CNY.getClass + ", class: " + Jiao.getClass)
 
   type CASH = CnyGroup.COIN
 
@@ -87,7 +90,7 @@ object Syntax {
   }
 
   \("typeMatch(CNY):" + typeMatch(CNY))
-  \("typeMatch(JIAO):" + typeMatch(JIAO))
+  \("typeMatch(JIAO):" + typeMatch(Jiao))
   \("typeMatch(BTC):" + typeMatch(BTC))
 
   /*
@@ -158,7 +161,7 @@ object Syntax {
 
   object EthFee extends Fee(EthGroup, CnyGroup) {
     import feeGroup._
-    lazy val BUY = new Rule(1 CNY, 0.0001)
+    lazy val BUY = new Rule(1 CNY, 0.0001, 1 Jiao)
   }
 
   ln()
@@ -185,13 +188,13 @@ object Syntax {
 
   ~>: buy (10000 SAT) on YUNBI use (1 CNY) ~>=
 
-  ~>: buy (98 BTC) on YUNBI ~>= ()
+  ~>: buy (98 BTC) on YUNBI ~>=
 
   ~>: buy (98 BTC) ~>=
 
   \((12.34567890 CNY) formatted())
-  \((12.34567890987 FEN_3) formatted 25)
-  \((1234020000 FEN_3) formatted 25)
+  \((12.34567890987 Fen_3).formatted(fixedFracDigits = 25)(null))
+  \((1234020000 Fen_3) formatted 25)
   \((12345678900000023L SAT) to BTC formatted 25)
   \((23L SAT).formatted(25, 4)(SAT.formatter))
 

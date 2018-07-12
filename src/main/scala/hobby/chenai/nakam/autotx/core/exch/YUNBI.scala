@@ -16,19 +16,25 @@
 
 package hobby.chenai.nakam.autotx.core.exch
 
-import hobby.chenai.nakam.autotx.core.coin.{BtcGroup => B, CnyGroup => C}
+import hobby.chenai.nakam.autotx.core.coin._
 import hobby.chenai.nakam.autotx.core.coin.BtcGroup._
 import hobby.chenai.nakam.autotx.core.coin.CnyGroup._
 import hobby.chenai.nakam.autotx.core.coin.EthGroup._
+
+import scala.language.postfixOps
 
 /**
   * @author Chenai Nakam(chenai.nakam@gmail.com)
   * @version 1.0, 31/05/2017
   */
-object YunBiZone extends AbsExchZone(B, C) {
+object YUNBI extends AbsExchange("YUNBI", BtcGroup, CnyGroup, EthGroup) {
   // 云币的手续费是这么收的：买到的或卖出的，从收入里面按比例扣除。即：买到的币扣币，卖出的钱扣钱。
   // 对于手续费，没有接受几位小数一说。
-  class Exchange extends AbsExchange("YUNBI", BTC, CNY, BTC, ETH, SAT)
+  updateTokenPricingRate(ETH, 0.09 BTC)
+  updateCashPricingRate(ETH, 3000 CNY)
 
-  lazy val YUNBI = new Exchange
+  override def loadFfdRule(counterParty: (AbsTokenGroup, AbsCoinGroup)): FixedFracDigitsRule = counterParty match {
+    case (EthGroup, BtcGroup) => new FixedFracDigitsRule(EthGroup, 6, BtcGroup, 8, false)
+    case (EthGroup, CnyGroup) => new FixedFracDigitsRule(EthGroup, 6, CnyGroup, 5, false)
+  }
 }

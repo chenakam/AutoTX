@@ -41,13 +41,19 @@ object EthGroup extends AbsTokenGroup {
     override def canEqual(that: Any) = that.isInstanceOf[Token]
   }
 
-  // 以太的单位比较混乱，暂保留7位，输出时保留6位(decimals - 1)。如果小数位数太多，则留给整数的位数就会减少。
-  lazy val ETH: UNIT = new Token(10000000) with Unt {
+  // 既是单位数据也是枚举
+  lazy val GWei: UNIT = new Token(1) with Unt {
+    override val name = "GWei"
+  }
+  // 以太的单位比较混乱，暂保留到GWei(1e9Wei, 1e-9Ether)。如果小数位数太多，则留给整数的位数就会减少。
+  lazy val ETH: UNIT = new Token(1000000000) with Unt {
     override val name = "ETH"
-    override val decmlFmt: Int = super.decmlFmt - 1
+    // override val decmlFmt: Int = super.decmlFmt - 1 // 前一版设置了7个0但只保留6位有效位，故有次设置。
   }
 
   class ImpDsl(count: Double) {
+    implicit def GWei: COIN = EthGroup.GWei * count
+
     implicit def ETH: COIN = EthGroup.ETH * count
   }
 

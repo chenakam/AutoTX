@@ -41,6 +41,7 @@ abstract class AbsCoinGroup {
 
   abstract class AbsCoin(private[core] val count: Long) extends NumFmt
     with Equals with Ordered[COIN] with TypeBring[UNIT, COIN, AbsCoinGroup#AbsCoin] {
+    require(count >= 0, s"[`Coin.count`溢出: $count].")
 
     val isCash: Boolean
 
