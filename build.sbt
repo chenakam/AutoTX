@@ -22,6 +22,9 @@ lazy val root = Project(id = "autotx", base = file("."))
     aggregate in update := false
   )
 
+// 启用对 java8 lambda 语法的支持。
+scalacOptions += "-Xexperimental"
+
 exportJars := true
 
 offline := true
@@ -34,7 +37,7 @@ resolvers += "jitpack" at "https://jitpack.io"
 
 libraryDependencies ++= Seq(
   "com.github.dedge-space" % "scala-lang" % "e2c7c95585",
-  "com.github.dedge-space" % "reflow" % "607baa213e",
+  "com.github.dedge-space" % "reflow" % "fb6411f3ae",
 
   "junit" % "junit" % "[4.12,)" % Test,
   "org.scalatest" %% "scalatest" % "3.2.0-SNAP7" % Test
