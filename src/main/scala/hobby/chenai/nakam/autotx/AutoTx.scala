@@ -20,9 +20,8 @@ import hobby.chenai.nakam.autotx.core.coin.{AbsCashGroup, AbsTokenGroup, CnyGrou
 import hobby.chenai.nakam.autotx.core.coin.EthGroup._
 import hobby.chenai.nakam.autotx.task.{kces, CounterParty, RealTimePriceScheduler}
 import hobby.wei.c.reflow
-import hobby.wei.c.reflow.{Out, Poster, Reflow}
+import hobby.wei.c.reflow.{Out, Reflow}
 import hobby.wei.c.reflow.implicits._
-import hobby.wei.c.reflow.Feedback.Progress.Policy
 import scala.language.postfixOps
 
 /**
@@ -30,20 +29,6 @@ import scala.language.postfixOps
   * @version 1.0, 10/07/2018
   */
 object AutoTx {
-  // TODO: 注意在 Android 平台上需要修改。
-  // Reflow.setThreadResetor(new ThreadResetor {})
-  // Reflow.setLogger()
-  Reflow.setDebugMode(true)
-
-  implicit lazy val policy: Policy = Policy.Depth(3) -> Policy.Fluent -> Policy.Interval(600)
-  implicit lazy val poster: Poster = null
-
-  object SupportedExchange extends Enumeration {
-    type Tpe = Exchange
-    private[SupportedExchange] case class Exchange(name: String) extends Val
-    val HuoBi = Exchange("HuoBi")
-  }
-
   def startOnAll(): Unit = SupportedExchange.values.foreach(_ => startOn(_))
 
   def startOn(exchange: SupportedExchange.Tpe): Unit = {

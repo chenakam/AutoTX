@@ -16,7 +16,7 @@
 
 package hobby.chenai.nakam.autotx.task
 
-import hobby.chenai.nakam.autotx.AutoTx
+import hobby.chenai.nakam.autotx._
 import hobby.wei.c.reflow
 import hobby.wei.c.reflow.implicits._
 
@@ -25,9 +25,9 @@ import hobby.wei.c.reflow.implicits._
   * @version 1.0, 11/07/2018
   */
 object CounterParty {
-  def apply(exchange: AutoTx.SupportedExchange.Tpe): reflow.Trait = new MTrait(exchange)
+  def apply(exchange: SupportedExchange.Tpe): reflow.Trait = new MTrait(exchange)
 
-  class MTrait(exchange: AutoTx.SupportedExchange.Tpe) extends reflow.Trait.Adapter {
+  class MTrait(exchange: SupportedExchange.Tpe) extends reflow.Trait.Adapter {
     override protected def name() = getClass.getName
 
     override def newTask() = new MTask
