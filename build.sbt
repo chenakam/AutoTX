@@ -1,11 +1,8 @@
 name := baseDirectory.value.getName
-
 organization := "hobby.chenai.nakam"
-
 version := "0.0.1-SNAPSHOT"
 
 scalaVersion := "2.11.11"
-
 crossScalaVersions := Seq(
   /*"2.11.7", 多余，不需要两个*/
   "2.11.11",
@@ -16,11 +13,11 @@ lazy val scalaSettings = Seq(
   scalaVersion := "2.11.11"
 )
 
-lazy val root = Project(id = "autotx", base = file("."))
-  .dependsOn(/*lang*/)
-  .settings(scalaSettings,
-    aggregate in update := false
-  )
+//lazy val root = Project(id = "autotx", base = file("."))
+//  .dependsOn(/*lang*/)
+//  .settings(scalaSettings,
+//    aggregate in update := false
+//  )
 
 // 启用对 java8 lambda 语法的支持。
 scalacOptions += "-Xexperimental"
