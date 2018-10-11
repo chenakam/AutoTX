@@ -21,6 +21,8 @@ import hobby.wei.c.reflow
 import hobby.wei.c.reflow.implicits._
 
 /**
+  * 加载参数指定交易所的交易对。
+  *
   * @author Chenai Nakam(chenai.nakam@gmail.com)
   * @version 1.0, 11/07/2018
   */

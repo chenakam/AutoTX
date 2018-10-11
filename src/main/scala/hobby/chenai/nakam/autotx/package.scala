@@ -17,7 +17,7 @@
 package hobby.chenai.nakam
 
 import hobby.wei.c.reflow.Feedback.Progress.Policy
-import hobby.wei.c.reflow.{Poster, Reflow}
+import hobby.wei.c.reflow.Poster
 
 /**
   * @author Chenai Nakam(chenai.nakam@gmail.com)
@@ -27,14 +27,18 @@ package object autotx {
   // TODO: 注意在 Android 平台上需要修改。
   // Reflow.setThreadResetor(new ThreadResetor {})
   // Reflow.setLogger()
-  Reflow.setDebugMode(true)
+  // Reflow.setDebugMode(true)
 
   implicit lazy val policy: Policy = Policy.Depth(3) -> Policy.Fluent -> Policy.Interval(600)
   implicit lazy val poster: Poster = null
 
+  @volatile var policy4Ui: Policy = policy
+  @volatile var poster4Ui: Poster = poster
+
   object SupportedExchange extends Enumeration {
     type Tpe = Exchange
-    private[SupportedExchange] case class Exchange(name: String) extends Val
-    val HuoBi = Exchange("HuoBi")
+    private[SupportedExchange] case class Exchange(name: String, url: String) extends Val
+    val BinAn = Exchange("BinAn", "https://www.binance.com/")
+    val HuoBi = Exchange("HuoBi", "https://www.huobi.com/")
   }
 }
