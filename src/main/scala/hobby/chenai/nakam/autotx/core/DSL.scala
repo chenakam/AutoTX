@@ -67,14 +67,14 @@ object DSL {
 
   class Ops(val action: ACTION, val token: AbsCoinGroup#AbsCoin) {
     private implicit var exchange: AbsExchange = _
-    private var cash: AbsCashGroup#AbsCash = _
+    private var cash: AbsCashGroup#AbsCoin = _
 
     def on(exchange: AbsExchange): Ops = {
       this.exchange = exchange
       this
     }
 
-    def use(cash: AbsCashGroup#AbsCash): Ops = {
+    def use(cash: AbsCashGroup#AbsCoin): Ops = {
       this.cash = cash
       this
     }

@@ -21,13 +21,9 @@ package hobby.chenai.nakam.autotx.core.coin
   * @version 1.0, 11/06/2017
   */
 abstract class AbsTokenGroup extends AbsCoinGroup {
-  override protected[coin] type GROUP = AbsTokenGroup
-  override type COIN <: AbsToken
+  override type COIN <: AbsCoin
 
-  @deprecated
-  abstract class AbsCoin(count: Long) extends super.AbsCoin(count: Long)
-
-  abstract class AbsToken(count: Long) extends super.AbsCoin(count: Long) {
+  abstract class AbsCoin(count: Long) extends super.AbsCoin(count: Long) {
     final lazy val isCash = false
   }
 }

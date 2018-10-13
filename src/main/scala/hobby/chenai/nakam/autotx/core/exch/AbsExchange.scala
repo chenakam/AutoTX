@@ -70,12 +70,12 @@ abstract class AbsExchange(val name: String, override val pricingToken: AbsToken
 
   protected final lazy val impl = coinTpeImpl[PriTCoin, PriCCoin]
 
-  final def updateCashPricingRate(token: AbsTokenGroup#Unt, rate: AbsCashGroup#AbsCash): Unit = {
+  final def updateCashPricingRate(token: AbsTokenGroup#Unt, rate: AbsCashGroup#AbsCoin): Unit = {
     import impl._
     cashPriRateMap.put(requireSupports(token.group), rate)
   }
 
-  final def updateTokenPricingRate(token: AbsTokenGroup#Unt, rate: AbsTokenGroup#AbsToken): Unit = {
+  final def updateTokenPricingRate(token: AbsTokenGroup#Unt, rate: AbsTokenGroup#AbsCoin): Unit = {
     import impl._
     tokenPriRateMap.put(requireSupports(token.group), rate)
   }
@@ -126,9 +126,9 @@ abstract class CoinEx(val pricingToken: AbsTokenGroup, val pricingCash: AbsCashG
     */
   private lazy val ex: (AbsCoinGroup#AbsCoin, AbsCoinGroup#AbsCoin, Boolean) PartialFunction AbsCoinGroup#AbsCoin = {
     // pricingCash => pricingCash // 到这里不会出现两个不一样的法币
-    case (cash: AbsCashGroup#AbsCash, dst: AbsCashGroup#AbsCash, _) => dst.unit << cash
+    case (cash: AbsCashGroup#AbsCoin, dst: AbsCashGroup#AbsCoin, _) => dst.unit << cash
     // token => pricingCash
-    case (token: AbsTokenGroup#AbsToken, dst: AbsCashGroup#AbsCash, promise) =>
+    case (token: AbsTokenGroup#AbsCoin, dst: AbsCashGroup#AbsCoin, promise) =>
       if (promise /*注意这个promise不能把任务再转给pricingToken，不然会死递归*/ || isCashExSupported(token.group)) {
         val ffdRule = getFfdRule(token.group, dst.group)
         import ffdRule._
@@ -136,7 +136,7 @@ abstract class CoinEx(val pricingToken: AbsTokenGroup, val pricingCash: AbsCashG
         dst.unit << sell(token, getExRate(token.group, token$cash = false))
       } else token
     // pricingCash => token
-    case (cash: AbsCashGroup#AbsCash, dst: AbsTokenGroup#AbsToken, promise) =>
+    case (cash: AbsCashGroup#AbsCoin, dst: AbsTokenGroup#AbsCoin, promise) =>
       if (promise || isCashExSupported(dst.group)) {
         val ffdRule = getFfdRule(dst.group, cash.group)
         import ffdRule._
@@ -144,10 +144,10 @@ abstract class CoinEx(val pricingToken: AbsTokenGroup, val pricingCash: AbsCashG
         dst.unit << buy(cash /*注意这里不是dst, cash表示有多少钱*/ , getExRate(dst.group, token$cash = false))
       } else cash
     // pricingToken => pricingToken // 与token不同，cash就一种，不需要判断。
-    case (token: AbsTokenGroup#AbsToken, dst: AbsTokenGroup#AbsToken, _)
+    case (token: AbsTokenGroup#AbsCoin, dst: AbsTokenGroup#AbsCoin, _)
       if (token.group eq pricingToken) && (dst.group eq pricingToken) => dst.unit << token
     // token => pricingToken
-    case (token: AbsTokenGroup#AbsToken, dst: AbsTokenGroup#AbsToken, promise) if dst.group eq pricingToken =>
+    case (token: AbsTokenGroup#AbsCoin, dst: AbsTokenGroup#AbsCoin, promise) if dst.group eq pricingToken =>
       if (isTokenExSupported(token.group)) {
         val ffdRule = getFfdRule(token.group, dst.group)
         import ffdRule._
@@ -156,7 +156,7 @@ abstract class CoinEx(val pricingToken: AbsTokenGroup, val pricingCash: AbsCashG
       } else if (promise) ex.apply(ex.apply(token, pricingCash.unitStd, promise), dst, promise)
       else token
     // pricingToken => token
-    case (token: AbsTokenGroup#AbsToken, dst: AbsTokenGroup#AbsToken, promise) if token.group eq pricingToken =>
+    case (token: AbsTokenGroup#AbsCoin, dst: AbsTokenGroup#AbsCoin, promise) if token.group eq pricingToken =>
       if (isTokenExSupported(dst.group)) {
         val ffdRule = getFfdRule(dst.group, token.group)
         import ffdRule._
@@ -165,7 +165,7 @@ abstract class CoinEx(val pricingToken: AbsTokenGroup, val pricingCash: AbsCashG
       } else if (promise) ex.apply(ex.apply(token, pricingCash.unitStd, promise), dst, promise)
       else token
     // token => token
-    case (src: AbsTokenGroup#AbsToken, dst: AbsTokenGroup#AbsToken, promise) =>
+    case (src: AbsTokenGroup#AbsCoin, dst: AbsTokenGroup#AbsCoin, promise) =>
       if (dst.group == src.group) dst.unit << src
       else {
         val ptf = isTokenExSupported(src.group)

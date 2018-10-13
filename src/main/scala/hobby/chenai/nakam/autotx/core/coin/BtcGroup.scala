@@ -32,7 +32,7 @@ object BtcGroup extends AbsTokenGroup {
     override def unit = unt
   }
 
-  abstract class Token private[BtcGroup](count: Long) extends AbsToken(count: Long) {
+  abstract class Token private[BtcGroup](count: Long) extends AbsCoin(count: Long) {
     override def equals(obj: Any) = obj match {
       case that: Token => that.canEqual(this) && that.count == this.count
       case _ => false

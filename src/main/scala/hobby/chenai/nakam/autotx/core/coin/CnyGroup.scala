@@ -34,7 +34,7 @@ object CnyGroup extends AbsCashGroup {
     override def unit = unt
   }
 
-  abstract class RMB private[CnyGroup](count: Long) extends AbsCash(count: Long) {
+  abstract class RMB private[CnyGroup](count: Long) extends AbsCoin(count: Long) {
     override def equals(obj: Any) = obj match {
       case that: RMB => that.canEqual(this) && that.count == this.count
       case _ => false
