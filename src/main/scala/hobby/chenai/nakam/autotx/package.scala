@@ -16,6 +16,9 @@
 
 package hobby.chenai.nakam
 
+import hobby.chenai.nakam.autotx.core.coin.{AbsCashGroup, AbsCoinGroup}
+import hobby.chenai.nakam.lang.TypeBring.AsIs
+import hobby.wei.c.reflow
 import hobby.wei.c.reflow.Feedback.Progress.Policy
 import hobby.wei.c.reflow.Poster
 
@@ -35,10 +38,21 @@ package object autotx {
   @volatile var policy4Ui: Policy = policy
   @volatile var poster4Ui: Poster = poster
 
-  object SupportedExchange extends Enumeration {
-    type Tpe = Exchange
-    private[SupportedExchange] case class Exchange(name: String, url: String) extends Val
-    val BinAn = Exchange("BinAn", "https://www.binance.com/")
-    val HuoBi = Exchange("HuoBi", "https://www.huobi.com/")
+  object Exchange extends Enumeration {
+    type Tpe = Ex
+    private[Exchange] case class Ex(name: String, url: String) extends Val(name) {
+      // override def toString() = // super.toString() ==> name
+    }
+    val GateIo = Ex("GateIo", "https://www.gate.io/")
+    val BinAn = Ex("BinAn", "https://www.binance.com/")
+    val HuoBi = Ex("HuoBi", "https://www.huobi.com/")
+
+    def fromName(name: String) = values.find(_.toString.equalsIgnoreCase(name)).map(_.as[Tpe]).orNull
   }
+
+  /** 交易对 */
+  case class CounterParty(token: AbsCoinGroup, pricing: AbsCashGroup)
+
+  /** 给任务分进程运行。每个进程按需配置线程池。 */
+  private[autotx] abstract class TaskProcess(threadConf: reflow.Config)
 }

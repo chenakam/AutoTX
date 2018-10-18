@@ -27,9 +27,9 @@ import hobby.wei.c.reflow.implicits._
   * @version 1.0, 11/07/2018
   */
 object CounterParty {
-  def apply(exchange: SupportedExchange.Tpe): reflow.Trait = new MTrait(exchange)
+  def apply(exchange: Exchange.Tpe): reflow.Trait = new MTrait(exchange)
 
-  class MTrait(exchange: SupportedExchange.Tpe) extends reflow.Trait.Adapter {
+  class MTrait(exchange: Exchange.Tpe) extends reflow.Trait.Adapter {
     override protected def name() = getClass.getName
 
     override def newTask() = new MTask
