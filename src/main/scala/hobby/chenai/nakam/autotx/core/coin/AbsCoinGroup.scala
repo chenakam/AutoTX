@@ -18,6 +18,7 @@ package hobby.chenai.nakam.autotx.core.coin
 
 import hobby.chenai.nakam.autotx.core.exch.AbsExchange
 import hobby.chenai.nakam.lang.TypeBring
+import hobby.chenai.nakam.lang.TypeBring.AsIs
 import hobby.chenai.nakam.util.NumFmt
 
 /**
@@ -31,7 +32,7 @@ abstract class AbsCoinGroup {
   // 可以new BtcZone.COIN()创建新实例，但不是AbsCoinZone#AbsCoin的实例，不过后者可以用于模式匹配，从属范围更广。
   type COIN <: AbsCoin
   type UNIT <: COIN with Unt
-  protected type GROUP = groupSelf.type
+  type GROUP <: AbsCoinGroup
 
   def unitStd: UNIT
 
@@ -45,7 +46,7 @@ abstract class AbsCoinGroup {
 
     val isCash: Boolean
 
-    final val group: GROUP = groupSelf
+    final val group: GROUP = groupSelf.as[GROUP]
 
     def unit: UNIT
 

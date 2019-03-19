@@ -21,6 +21,7 @@ package hobby.chenai.nakam.autotx.core.coin
   * @version 1.0, 11/06/2017
   */
 abstract class AbsTokenGroup extends AbsCoinGroup {
+  override type GROUP <: AbsTokenGroup
   override type COIN <: AbsCoin
 
   abstract class AbsCoin(count: Long) extends super.AbsCoin(count: Long) {
