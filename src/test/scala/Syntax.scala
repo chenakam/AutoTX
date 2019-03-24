@@ -76,7 +76,7 @@ object Syntax {
   }
 
   \("CNY.isInstanceOf[CnyZone.RMB]:" + CNY.isInstanceOf[CnyGroup.RMB])
-  \("CNY.isInstanceOf[AbsCoinZone#AbsCash]:" + CNY.isInstanceOf[AbsCashGroup#AbsCash])
+  \("CNY.isInstanceOf[AbsCoinZone#AbsCoin]:" + CNY.isInstanceOf[AbsCashGroup#AbsCoin])
 
   //  require(CNY.getClass == (1 JIAO).getClass, s"${CNY unitName}不支持${JIAO.unitName}")
 
