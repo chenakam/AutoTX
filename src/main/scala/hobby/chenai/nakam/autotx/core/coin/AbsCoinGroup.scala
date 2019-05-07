@@ -116,7 +116,7 @@ abstract class AbsCoinGroup {
   trait Unt extends AbsCoin {
     override final def unit = this
 
-    def name: String
+    val name: String
 
     def nameFmt: String = name
 
