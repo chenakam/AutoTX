@@ -40,7 +40,7 @@ abstract class AbsCoinGroup {
 
   override def toString = s"GROUP[${unitStd.name}]"
 
-  abstract class AbsCoin(private[core] val count: Long) extends NumFmt
+  abstract class AbsCoin(private[autotx] val count: Long) extends NumFmt
     with Equals with Ordered[COIN] with TypeBring[UNIT, COIN, AbsCoinGroup#AbsCoin] {
     require(count >= 0, s"[`Coin.count`溢出: $count].")
 

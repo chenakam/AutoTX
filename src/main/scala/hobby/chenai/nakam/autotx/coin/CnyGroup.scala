@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-present, Chenai Nakam(chenai.nakam@gmail.com)
+ * Copyright (C) 2019-present, Chenai Nakam(chenai.nakam@gmail.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,9 +14,11 @@
  * limitations under the License.
  */
 
-package hobby.chenai.nakam.autotx.core.coin
+package hobby.chenai.nakam.autotx.coin
 
-import scala.language.{existentials, implicitConversions, postfixOps}
+import hobby.chenai.nakam.autotx.core.coin.AbsCashGroup
+
+import scala.language.implicitConversions
 
 /**
   * @author Chenai Nakam(chenai.nakam@gmail.com)

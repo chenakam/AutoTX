@@ -16,10 +16,11 @@
 
 package hobby.chenai.nakam.autotx.core.exch
 
+import hobby.chenai.nakam.autotx.coin.{BtcGroup, CnyGroup, EthGroup}
 import hobby.chenai.nakam.autotx.core.coin._
-import hobby.chenai.nakam.autotx.core.coin.BtcGroup._
-import hobby.chenai.nakam.autotx.core.coin.CnyGroup._
-import hobby.chenai.nakam.autotx.core.coin.EthGroup._
+import hobby.chenai.nakam.autotx.coin.BtcGroup._
+import hobby.chenai.nakam.autotx.coin.CnyGroup._
+import hobby.chenai.nakam.autotx.coin.EthGroup._
 
 import scala.language.postfixOps
 

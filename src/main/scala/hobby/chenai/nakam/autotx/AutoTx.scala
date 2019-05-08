@@ -16,8 +16,9 @@
 
 package hobby.chenai.nakam.autotx
 
-import hobby.chenai.nakam.autotx.core.coin.{AbsCashGroup, AbsTokenGroup, CnyGroup}
-import hobby.chenai.nakam.autotx.core.coin.EthGroup._
+import hobby.chenai.nakam.autotx.coin.CnyGroup
+import hobby.chenai.nakam.autotx.core.coin.{AbsCashGroup, AbsTokenGroup}
+import hobby.chenai.nakam.autotx.coin.EthGroup._
 import hobby.chenai.nakam.autotx.task.{kces, RealTimePriceScheduler}
 import hobby.wei.c.reflow
 import hobby.wei.c.reflow.{Config, Out, Reflow}

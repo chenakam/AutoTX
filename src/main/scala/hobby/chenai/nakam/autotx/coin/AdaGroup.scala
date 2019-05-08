@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-present, Chenai Nakam(chenai.nakam@gmail.com)
+ * Copyright (C) 2019-present, Chenai Nakam(chenai.nakam@gmail.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,25 +14,27 @@
  * limitations under the License.
  */
 
-package hobby.chenai.nakam.autotx.core.coin
+package hobby.chenai.nakam.autotx.coin
 
-import scala.language.{existentials, implicitConversions, postfixOps}
+import hobby.chenai.nakam.autotx.core.coin.AbsTokenGroup
+
+import scala.language.implicitConversions
 
 /**
   * @author Chenai Nakam(chenai.nakam@gmail.com)
-  * @version 1.0, 29/05/2017
+  * @version 1.0, 10/05/2019
   */
-object BtcGroup extends AbsTokenGroup {
+object AdaGroup extends AbsTokenGroup {
   override type COIN = Token
   override type UNIT = COIN with Unt
 
-  override def unitStd = BTC
+  override def unitStd = ADA
 
   override def make(count: Long, unt: UNIT) = new Token(count) {
     override def unit = unt
   }
 
-  abstract class Token private[BtcGroup](count: Long) extends AbsCoin(count: Long) {
+  abstract class Token private[AdaGroup](count: Long) extends AbsCoin(count: Long) {
     override def equals(obj: Any) = obj match {
       case that: Token => that.canEqual(this) && that.count == this.count
       case _ => false
@@ -41,20 +43,14 @@ object BtcGroup extends AbsTokenGroup {
     override def canEqual(that: Any) = that.isInstanceOf[Token]
   }
 
-  // 既是单位数据也是枚举
-  lazy val SAT: UNIT = new Token(1) with Unt {
-    override val name = "SAT"
-  }
-  lazy val BTC: UNIT = new Token(100000000) with Unt { // 一亿聪
-    override val name = "BTC"
+  lazy val ADA: UNIT = new Token(100000000) with Unt {
+    override val name = "ADA"
   }
 
   class ImpDsl(count: Double) {
-    implicit def SAT: COIN = BtcGroup.SAT * count
-
-    implicit def BTC: COIN = BtcGroup.BTC * count
+    implicit def ADA: COIN = AdaGroup.ADA * count
   }
 
   // 不可以写在父类里，否则对于多个不同的币种就不知道转换给谁了。
-  implicit def wrapBtcNum(count: Double): ImpDsl = new ImpDsl(count)
+  implicit def wrapAdaNum(count: Double): ImpDsl = new ImpDsl(count)
 }

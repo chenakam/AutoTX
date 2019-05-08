@@ -17,7 +17,6 @@
 package hobby.chenai.nakam.autotx.core.exch
 
 import java.util.concurrent.ConcurrentHashMap
-import hobby.chenai.nakam.autotx.coinTpeImpl
 import hobby.chenai.nakam.autotx.core.coin._
 import hobby.chenai.nakam.lang.TypeBring.AsIs
 import hobby.chenai.nakam.tool.cache.{Delegate, LazyGet, Lru, Memoize}

@@ -16,7 +16,6 @@
 
 package hobby.chenai.nakam.autotx.core.exch
 
-import hobby.chenai.nakam.autotx.coinTpeImpl
 import hobby.chenai.nakam.autotx.core.coin.AbsCoinGroup
 import hobby.chenai.nakam.util.NumFmt
 
