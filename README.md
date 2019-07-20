@@ -1,2 +1,2 @@
-# AutoTX
-Simple Auto-Transaction toolkit.
+# TXDSL
+Simple Auto-Transaction DSL toolkit.
