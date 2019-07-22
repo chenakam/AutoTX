@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package hobby.chenai.nakam.autotx.core.coin
+package hobby.chenai.nakam.txdsl.core.coin
 
-import hobby.chenai.nakam.autotx.core.exch.AbsExchange
+import hobby.chenai.nakam.txdsl.core.exch.AbsExchange
 import hobby.chenai.nakam.lang.TypeBring
 import hobby.chenai.nakam.lang.TypeBring.AsIs
 import hobby.chenai.nakam.util.NumFmt
@@ -40,7 +40,7 @@ abstract class AbsCoinGroup {
 
   override def toString = s"GROUP[${unitStd.name}]"
 
-  abstract class AbsCoin(private[autotx] val count: Long) extends NumFmt
+  abstract class AbsCoin(private[txdsl] val count: Long) extends NumFmt
     with Equals with Ordered[COIN] with TypeBring[UNIT, COIN, AbsCoinGroup#AbsCoin] {
     require(count >= 0, s"[`Coin.count`溢出: $count].")
 

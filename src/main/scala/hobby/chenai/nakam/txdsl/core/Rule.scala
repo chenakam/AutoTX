@@ -14,10 +14,10 @@
 // * limitations under the License.
 // */
 //
-//package hobby.chenai.nakam.autotx.core
+//package hobby.chenai.nakam.txdsl.core
 //
-//import hobby.chenai.nakam.autotx.core.FeeSrc.FeeSrc
-//import hobby.chenai.nakam.autotx.core.coin.AbsCoinZone
+//import hobby.chenai.nakam.txdsl.core.FeeSrc.FeeSrc
+//import hobby.chenai.nakam.txdsl.core.coin.AbsCoinZone
 //
 ///**
 //  * @param token     代币类型

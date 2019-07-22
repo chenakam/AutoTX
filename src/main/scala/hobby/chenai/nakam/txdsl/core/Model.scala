@@ -14,17 +14,12 @@
  * limitations under the License.
  */
 
-package hobby.chenai.nakam.autotx.core.coin
+package hobby.chenai.nakam.txdsl.core
 
 /**
   * @author Chenai Nakam(chenai.nakam@gmail.com)
-  * @version 1.0, 11/06/2017
+  * @version 1.0, 25/05/2017
   */
-abstract class AbsCashGroup extends AbsCoinGroup {
-  override type GROUP <: AbsCashGroup
-  override type COIN <: AbsCoin
+class Model {
 
-  abstract class AbsCoin(count: Long) extends super.AbsCoin(count: Long) {
-    final /*lazy*/ val isCash = true
-  }
 }

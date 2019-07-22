@@ -14,9 +14,9 @@
 // * limitations under the License.
 // */
 //
-//package hobby.chenai.nakam.autotx.core
+//package hobby.chenai.nakam.txdsl.core
 //
-//import hobby.chenai.nakam.autotx.core.order.Item
+//import hobby.chenai.nakam.txdsl.core.order.Item
 //
 ///**
 //  * @author Chenai Nakam(chenai.nakam@gmail.com)

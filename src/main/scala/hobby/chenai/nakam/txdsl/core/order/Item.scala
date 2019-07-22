@@ -14,9 +14,9 @@
 // * limitations under the License.
 // */
 //
-//package hobby.chenai.nakam.autotx.core.order
+//package hobby.chenai.nakam.txdsl.core.order
 //
-//import hobby.chenai.nakam.autotx.core.Rule
+//import hobby.chenai.nakam.txdsl.core.Rule
 //
 ///**
 //  * @param id    挂单id

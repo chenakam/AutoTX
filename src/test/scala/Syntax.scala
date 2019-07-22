@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-import hobby.chenai.nakam.autotx.coin.BtcGroup.{SAT, _}
-import hobby.chenai.nakam.autotx.coin.CnyGroup._
-import hobby.chenai.nakam.autotx.coin.EthGroup._
-import hobby.chenai.nakam.autotx.core.DSL._
-import hobby.chenai.nakam.autotx.core.Fee
-import hobby.chenai.nakam.autotx.core.coin._
+import hobby.chenai.nakam.txdsl.coin.BtcGroup.{SAT, _}
+import hobby.chenai.nakam.txdsl.coin.CnyGroup._
+import hobby.chenai.nakam.txdsl.coin.EthGroup._
+import hobby.chenai.nakam.txdsl.core.DSL._
+import hobby.chenai.nakam.txdsl.core.Fee
+import hobby.chenai.nakam.txdsl.core.coin._
 import Syntax.{A, ABCD}
-import hobby.chenai.nakam.autotx.coin.{BtcGroup, CnyGroup, EthGroup}
-import hobby.chenai.nakam.autotx.core.exch.{AbsExchange, YUNBI}
+import hobby.chenai.nakam.txdsl.coin.{BtcGroup, CnyGroup, EthGroup}
+import hobby.chenai.nakam.txdsl.core.exch.{AbsExchange, YUNBI}
 
 import scala.language.{implicitConversions, postfixOps}
 

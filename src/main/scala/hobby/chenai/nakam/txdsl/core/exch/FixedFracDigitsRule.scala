@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package hobby.chenai.nakam.autotx.core.exch
+package hobby.chenai.nakam.txdsl.core.exch
 
-import hobby.chenai.nakam.autotx.core.coin.AbsCoinGroup
+import hobby.chenai.nakam.txdsl.core.coin.AbsCoinGroup
 import hobby.chenai.nakam.util.NumFmt
 
 /**

@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package hobby.chenai.nakam.autotx.core
+package hobby.chenai.nakam.txdsl.core
 
-import hobby.chenai.nakam.autotx.core.coin.{AbsCashGroup, AbsCoinGroup}
-import hobby.chenai.nakam.autotx.core.exch.AbsExchange
+import hobby.chenai.nakam.txdsl.core.coin.{AbsCashGroup, AbsCoinGroup}
+import hobby.chenai.nakam.txdsl.core.exch.AbsExchange
 
 import scala.language.implicitConversions
 

@@ -14,27 +14,27 @@
  * limitations under the License.
  */
 
-package hobby.chenai.nakam.autotx.coin
+package hobby.chenai.nakam.txdsl.coin
 
-import hobby.chenai.nakam.autotx.core.coin.AbsTokenGroup
+import hobby.chenai.nakam.txdsl.core.coin.AbsTokenGroup
 
 import scala.language.implicitConversions
 
 /**
   * @author Chenai Nakam(chenai.nakam@gmail.com)
-  * @version 1.0, 30/05/2017
+  * @version 1.0, 10/05/2019
   */
-object EthGroup extends AbsTokenGroup {
+object AdaGroup extends AbsTokenGroup {
   override type COIN = Token
   override type UNIT = COIN with Unt
 
-  override def unitStd = ETH
+  override def unitStd = ADA
 
   override def make(count: Long, unt: UNIT) = new Token(count) {
     override def unit = unt
   }
 
-  abstract class Token private[EthGroup](count: Long) extends AbsCoin(count: Long) {
+  abstract class Token private[AdaGroup](count: Long) extends AbsCoin(count: Long) {
     override def equals(obj: Any) = obj match {
       case that: Token => that.canEqual(this) && that.count == this.count
       case _ => false
@@ -43,21 +43,14 @@ object EthGroup extends AbsTokenGroup {
     override def canEqual(that: Any) = that.isInstanceOf[Token]
   }
 
-  // 既是单位数据也是枚举
-  lazy val GWei: UNIT = new Token(1) with Unt {
-    override val name = "GWei"
-  }
-  // 以太的单位比较混乱，暂保留到GWei(1e9Wei, 1e-9Ether)。如果小数位数太多，则留给整数的位数就会减少。
-  lazy val ETH: UNIT = new Token(1000000000) with Unt {
-    override val name = "ETH"
-    // override val decmlFmt: Int = super.decmlFmt - 1 // 前一版设置了7个0但只保留6位有效位，故有次设置。
+  lazy val ADA: UNIT = new Token(100000000) with Unt {
+    override val name = "ADA"
   }
 
   class ImpDsl(count: Double) {
-    implicit def GWei: COIN = EthGroup.GWei * count
-
-    implicit def ETH: COIN = EthGroup.ETH * count
+    implicit def ADA: COIN = AdaGroup.ADA * count
   }
 
-  implicit def wrapEthNum(count: Double): ImpDsl = new ImpDsl(count)
+  // 不可以写在父类里，否则对于多个不同的币种就不知道转换给谁了。
+  implicit def wrapAdaNum(count: Double): ImpDsl = new ImpDsl(count)
 }
