@@ -13,7 +13,7 @@ lazy val scalaSettings = Seq(
   scalaVersion := "2.11.11"
 )
 
-//lazy val root = Project(id = "autotx", base = file("."))
+//lazy val root = Project(id = "txdsl", base = file("."))
 //  .dependsOn(/*lang*/)
 //  .settings(scalaSettings,
 //    aggregate in update := false
