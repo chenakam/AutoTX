@@ -30,14 +30,14 @@ import scala.language.postfixOps
   * @version 1.0, 10/05/2019
   */
 package object coin {
-  object Serializer extends (AbsCoinGroup#AbsCoin => (Double, String)) {
-    def apply(coin: AbsCoinGroup#AbsCoin): (Double, String) = {
+  object Serializer extends (AbsCoinGroup#AbsCoin => (BigDecimal, String)) {
+    def apply(coin: AbsCoinGroup#AbsCoin): (BigDecimal, String) = {
       val std = coin.std
       (std.value, std.unit.name)
     }
 
     //@throws[RuntimeException]
-    def unapply(coin: (Double, String)): Option[AbsCoinGroup#AbsCoin] = Option(coin._2 match {
+    def unapply(coin: (BigDecimal, String)): Option[AbsCoinGroup#AbsCoin] = Option(coin._2 match {
       case CNY.name => coin._1 CNY
       case USDT.name => coin._1 USDT
       case BTC.name => coin._1 BTC
@@ -49,13 +49,13 @@ package object coin {
   }
 
   implicit class Serializable(coin: AbsCoinGroup#AbsCoin) {
-    def serialize: (Double, String) = Serializer(coin)
+    def serialize: (BigDecimal, String) = Serializer(coin)
   }
 
-  implicit class Deserializable(coin: (Double, String)) {
+  implicit class Deserializable(coin: (BigDecimal, String)) {
     //@throws[RuntimeException]
     def desrl: Option[AbsCoinGroup#AbsCoin] = (coin /*: @unchecked*/) match {
-      case Serializer(x) => Some(x)
+      case Serializer(tuple) => Some(tuple)
       case _ => None
     }
   }

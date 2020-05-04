@@ -16,14 +16,15 @@
 
 package hobby.chenai.nakam.txdsl.core.coin
 
-import hobby.chenai.nakam.txdsl.core.exch.AbsExchange
 import hobby.chenai.nakam.lang.TypeBring
 import hobby.chenai.nakam.lang.TypeBring.AsIs
+import hobby.chenai.nakam.txdsl.core.exch.AbsExchange
 import hobby.chenai.nakam.util.NumFmt
 
 /**
   * @author Chenai Nakam(chenai.nakam@gmail.com)
-  * @version 1.0, 25/05/2017
+  * @version 1.0, 25/05/2017;
+  *          2.0, 04/05/2020，修改`value`类型`Double => BigDecimal`。
   */
 abstract class AbsCoinGroup {
   groupSelf =>
@@ -36,11 +37,11 @@ abstract class AbsCoinGroup {
 
   def unitStd: UNIT
 
-  def make(count: Long, unit: UNIT): COIN
+  def make(count: BigInt, unit: UNIT): COIN
 
   override def toString = s"GROUP[${unitStd.name}]"
 
-  abstract class AbsCoin(private[txdsl] val count: Long) extends NumFmt
+  abstract class AbsCoin(private[txdsl] val count: BigInt) extends NumFmt
     with Equals with Ordered[COIN] with TypeBring[UNIT, COIN, AbsCoinGroup#AbsCoin] {
     require(count >= 0, s"[`Coin.count`溢出: $count].")
 
@@ -50,20 +51,23 @@ abstract class AbsCoinGroup {
 
     def unit: UNIT
 
-    def value: Double = this / unit
+    override def value: BigDecimal = this / unit
 
     def +(that: COIN): COIN = make(this.count + that.count, unit)
 
     def -(that: COIN): COIN = make(this.count - that.count, unit)
 
+    // 下面这段说明是对于v1.0而言（make(Long, UNIT)），但现在仍适用。
     // 由于toString.formatted也会进行round操作，如果这里再进行round会越算越多：
     // 例如6.45 FEN, round后的count = 65(给最低单位多保留了1位，即64.5, round(64.5) = 65),
     // 最终toString的时候round(6.5) = 7. 因此这里直接进行toLong舍弃小数。
-    def *(x: Double): COIN = make((this.count * x).toLong /*round*/ , unit)
+    def *(x: Double): COIN = make((BigDecimal(this.count) * BigDecimal(x /*会自动toString*/)).toBigInt(), unit)
+    def *(x: BigDecimal): COIN = make((BigDecimal(this.count) * x).toBigInt(), unit)
 
-    def /(x: Double): COIN = make((this.count / x).toLong /*round*/ , unit)
+    def /(x: Double): COIN = make((BigDecimal(this.count) / BigDecimal(x)).toBigInt(), unit)
+    def /(x: BigDecimal): COIN = make((BigDecimal(this.count) / x).toBigInt(), unit)
 
-    def /(that: COIN): Double = this.count.toDouble / that.count
+    def /(that: COIN): BigDecimal = BigDecimal(this.count) / BigDecimal(that.count)
 
     /**
       * 将单位标准化。由于某些预定义的[作为枚举的]常量将自己本身作为了标准单位。
@@ -122,7 +126,7 @@ abstract class AbsCoinGroup {
 
     def decmlFmt: Int = decimals(count)
 
-    def decimals(n: Double): Int = if (n == 1) 0 else 1 + decimals(n / 10)
+    def decimals(n: BigInt): Int = if (n == 1) 0 else 1 + decimals(n / 10)
 
     def <<(coin: AbsCoinGroup#AbsCoin): COIN = coin mod unit
   }

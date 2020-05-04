@@ -24,7 +24,7 @@ abstract class AbsTokenGroup extends AbsCoinGroup {
   override type GROUP <: AbsTokenGroup
   override type COIN <: AbsCoin
 
-  abstract class AbsCoin(count: Long) extends super.AbsCoin(count: Long) {
+  abstract class AbsCoin(count: BigInt) extends super.AbsCoin(count: BigInt) {
     final /*lazy*/ val isCash = false
   }
 }

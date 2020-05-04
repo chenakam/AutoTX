@@ -30,11 +30,11 @@ object UsdtGroup extends AbsTokenGroup {
 
   override def unitStd = USDT
 
-  override def make(count: Long, unt: UNIT) = new USDT(count) {
+  override def make(count: BigInt, unt: UNIT) = new USDT(count) {
     override def unit = unt
   }
 
-  abstract class USDT private[UsdtGroup](count: Long) extends AbsCoin(count: Long) {
+  abstract class USDT private[UsdtGroup](count: BigInt) extends AbsCoin(count: BigInt) {
     override def equals(obj: Any) = obj match {
       case that: USDT => that.canEqual(this) && that.count == this.count
       case _ => false
@@ -61,7 +61,7 @@ object UsdtGroup extends AbsTokenGroup {
     override val name = "USDT"
   }
 
-  class ImpDsl(count: Double) {
+  class ImpDsl(count: BigDecimal) {
     implicit def UsFen_3: COIN = UsdtGroup.UsFen_3 * count
 
     implicit def UsFen: COIN = UsdtGroup.UsFen * count
@@ -70,4 +70,5 @@ object UsdtGroup extends AbsTokenGroup {
   }
 
   implicit def wrapUsdtNum(count: Double): ImpDsl = new ImpDsl(count)
+  implicit def wrapUsdtNum(count: BigDecimal): ImpDsl = new ImpDsl(count)
 }

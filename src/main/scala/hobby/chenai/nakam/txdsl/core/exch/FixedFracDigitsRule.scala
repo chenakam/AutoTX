@@ -37,9 +37,9 @@ class FixedFracDigitsRule(val tokenGroup: AbsCoinGroup, val ffd4Token: Int,
                           val pricingCoinGroup: AbsCoinGroup, val ffd4Pricing: Int,
                           val cutTotal: Boolean = true) {
 
-  def cut(token: tokenGroup.COIN): Double = token.std.valueFfd(ffd4Token)
+  def cut(token: tokenGroup.COIN): BigDecimal = token.std.valueFfd(ffd4Token)
 
-  def cut$(pricing: pricingCoinGroup.COIN): Double = pricing.std.valueFfd(ffd4Pricing)
+  def cut$(pricing: pricingCoinGroup.COIN): BigDecimal = pricing.std.valueFfd(ffd4Pricing)
 
   def sell(token: tokenGroup.COIN, pricingExRate: pricingCoinGroup.COIN): pricingCoinGroup.COIN = {
     val value = cut(token) * cut$(pricingExRate)

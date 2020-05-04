@@ -30,11 +30,11 @@ object BtcGroup extends AbsTokenGroup {
 
   override def unitStd = BTC
 
-  override def make(count: Long, unt: UNIT) = new Token(count) {
+  override def make(count: BigInt, unt: UNIT) = new Token(count) {
     override def unit = unt
   }
 
-  abstract class Token private[BtcGroup](count: Long) extends AbsCoin(count: Long) {
+  abstract class Token private[BtcGroup](count: BigInt) extends AbsCoin(count: BigInt) {
     override def equals(obj: Any) = obj match {
       case that: Token => that.canEqual(this) && that.count == this.count
       case _ => false
@@ -51,7 +51,7 @@ object BtcGroup extends AbsTokenGroup {
     override val name = "BTC"
   }
 
-  class ImpDsl(count: Double) {
+  class ImpDsl(count: BigDecimal) {
     implicit def SAT: COIN = BtcGroup.SAT * count
 
     implicit def BTC: COIN = BtcGroup.BTC * count
@@ -59,4 +59,5 @@ object BtcGroup extends AbsTokenGroup {
 
   // 不可以写在父类里，否则对于多个不同的币种就不知道转换给谁了。
   implicit def wrapBtcNum(count: Double): ImpDsl = new ImpDsl(count)
+  implicit def wrapBtcNum(count: BigDecimal): ImpDsl = new ImpDsl(count)
 }

@@ -30,11 +30,11 @@ object EthGroup extends AbsTokenGroup {
 
   override def unitStd = ETH
 
-  override def make(count: Long, unt: UNIT) = new Token(count) {
+  override def make(count: BigInt, unt: UNIT) = new Token(count) {
     override def unit = unt
   }
 
-  abstract class Token private[EthGroup](count: Long) extends AbsCoin(count: Long) {
+  abstract class Token private[EthGroup](count: BigInt) extends AbsCoin(count: BigInt) {
     override def equals(obj: Any) = obj match {
       case that: Token => that.canEqual(this) && that.count == this.count
       case _ => false
@@ -53,11 +53,12 @@ object EthGroup extends AbsTokenGroup {
     // override val decmlFmt: Int = super.decmlFmt - 1 // 前一版设置了7个0但只保留6位有效位，故有次设置。
   }
 
-  class ImpDsl(count: Double) {
+  class ImpDsl(count: BigDecimal) {
     implicit def GWei: COIN = EthGroup.GWei * count
 
     implicit def ETH: COIN = EthGroup.ETH * count
   }
 
   implicit def wrapEthNum(count: Double): ImpDsl = new ImpDsl(count)
+  implicit def wrapEthNum(count: BigDecimal): ImpDsl = new ImpDsl(count)
 }

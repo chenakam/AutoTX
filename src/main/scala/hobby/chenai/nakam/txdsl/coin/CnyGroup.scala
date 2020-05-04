@@ -29,13 +29,13 @@ object CnyGroup extends AbsCashGroup {
 
   lazy override val unitStd = CNY
 
-  override def make(count: Long, unt: UNIT) = new RMB(
+  override def make(count: BigInt, unt: UNIT) = new RMB(
     count // if (unt == FEN_3) count else count / 1000 * 1000 // 可以这样重构FEN以上的精度
   ) {
     override def unit = unt
   }
 
-  abstract class RMB private[CnyGroup](count: Long) extends AbsCoin(count: Long) {
+  abstract class RMB private[CnyGroup](count: BigInt) extends AbsCoin(count: BigInt) {
     override def equals(obj: Any) = obj match {
       case that: RMB => that.canEqual(this) && that.count == this.count
       case _ => false
@@ -67,7 +67,7 @@ object CnyGroup extends AbsCashGroup {
     override val name = "CNY"
   }
 
-  class ImpDsl(count: Double) {
+  class ImpDsl(count: BigDecimal) {
     implicit def Fen_3: COIN = CnyGroup.Fen_3 * count
 
     implicit def Fen: COIN = CnyGroup.Fen * count
@@ -78,4 +78,5 @@ object CnyGroup extends AbsCashGroup {
   }
 
   implicit def wrapCnyNum(count: Double): ImpDsl = new ImpDsl(count)
+  implicit def wrapCnyNum(count: BigDecimal): ImpDsl = new ImpDsl(count)
 }

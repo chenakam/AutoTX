@@ -30,11 +30,11 @@ object AdaGroup extends AbsTokenGroup {
 
   override def unitStd = ADA
 
-  override def make(count: Long, unt: UNIT) = new Token(count) {
+  override def make(count: BigInt, unt: UNIT) = new Token(count) {
     override def unit = unt
   }
 
-  abstract class Token private[AdaGroup](count: Long) extends AbsCoin(count: Long) {
+  abstract class Token private[AdaGroup](count: BigInt) extends AbsCoin(count: BigInt) {
     override def equals(obj: Any) = obj match {
       case that: Token => that.canEqual(this) && that.count == this.count
       case _ => false
@@ -47,10 +47,11 @@ object AdaGroup extends AbsTokenGroup {
     override val name = "ADA"
   }
 
-  class ImpDsl(count: Double) {
+  class ImpDsl(count: BigDecimal) {
     implicit def ADA: COIN = AdaGroup.ADA * count
   }
 
   // 不可以写在父类里，否则对于多个不同的币种就不知道转换给谁了。
   implicit def wrapAdaNum(count: Double): ImpDsl = new ImpDsl(count)
+  implicit def wrapAdaNum(count: BigDecimal): ImpDsl = new ImpDsl(count)
 }
