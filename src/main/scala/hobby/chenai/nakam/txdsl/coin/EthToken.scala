@@ -19,44 +19,62 @@ package hobby.chenai.nakam.txdsl.coin
 import hobby.chenai.nakam.txdsl.core.coin.AbsTokenGroup
 
 import scala.language.implicitConversions
+import scala.math.BigInt.int2bigInt
 
 /**
   * @author Chenai Nakam(chenai.nakam@gmail.com)
   * @version 1.0, 30/05/2017
   */
-object EthGroup extends AbsTokenGroup {
-  override type COIN = Token
+object EthToken extends AbsTokenGroup {
+  override type COIN = Ethereum
   override type UNIT = COIN with Unt
 
   override def unitStd = ETH
 
-  override def make(count: BigInt, unt: UNIT) = new Token(count) {
+  override def make(count: BigInt, unt: UNIT) = new Ethereum(count) {
     override def unit = unt
   }
 
-  abstract class Token private[EthGroup](count: BigInt) extends AbsCoin(count: BigInt) {
+  abstract class Ethereum private[EthToken](count: BigInt) extends AbsCoin(count: BigInt) {
     override def equals(obj: Any) = obj match {
-      case that: Token => that.canEqual(this) && that.count == this.count
+      case that: Ethereum => that.canEqual(this) && that.count == this.count
       case _ => false
     }
 
-    override def canEqual(that: Any) = that.isInstanceOf[Token]
+    override def canEqual(that: Any) = that.isInstanceOf[Ethereum]
   }
 
-  // 既是单位数据也是枚举
-  lazy val GWei: UNIT = new Token(1) with Unt {
+  lazy val Wei: UNIT = new Ethereum(1) with Unt {
+    override val name = "Wei"
+  }
+  lazy val KWei: UNIT = new Ethereum(10.pow(3)) with Unt {
+    override val name = "KWei"
+  }
+  lazy val MWei: UNIT = new Ethereum(10.pow(6)) with Unt {
+    override val name = "MWei"
+  }
+  lazy val GWei: UNIT = new Ethereum(10.pow(9)) with Unt {
     override val name = "GWei"
   }
-  // 以太的单位比较混乱，暂保留到GWei(1e9Wei, 1e-9Ether)。如果小数位数太多，则留给整数的位数就会减少。
-  lazy val ETH: UNIT = new Token(1000000000) with Unt {
-    override val name = "ETH"
+  lazy val Szabo: UNIT = new Ethereum(10.pow(12)) with Unt {
+    override val name = "Szabo"
+  }
+  lazy val Finney: UNIT = new Ethereum(10.pow(15)) with Unt {
+    override val name = "Finney"
+  }
+  lazy val ETH: UNIT = new Ethereum(10.pow(18)) with Unt {
+    override val name = "ETH" // Ether
     // override val decmlFmt: Int = super.decmlFmt - 1 // 前一版设置了7个0但只保留6位有效位，故有次设置。
   }
 
   class ImpDsl(count: BigDecimal) {
-    @inline def GWei: COIN = EthGroup.GWei * count
-
-    @inline def ETH: COIN = EthGroup.ETH * count
+    @inline def Wei: COIN = EthToken.Wei * count
+    @inline def KWei: COIN = EthToken.KWei * count
+    @inline def MWei: COIN = EthToken.MWei * count
+    @inline def GWei: COIN = EthToken.GWei * count
+    @inline def Szabo: COIN = EthToken.Szabo * count
+    @inline def Finney: COIN = EthToken.Finney * count
+    @inline def ETH: COIN = EthToken.ETH * count
   }
 
   @inline implicit def wrapEthNum(count: Double): ImpDsl = new ImpDsl(count)

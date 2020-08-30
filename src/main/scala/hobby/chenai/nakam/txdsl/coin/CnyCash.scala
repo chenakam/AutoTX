@@ -24,7 +24,7 @@ import scala.language.implicitConversions
   * @author Chenai Nakam(chenai.nakam@gmail.com)
   * @version 1.0, 30/05/2017
   */
-object CnyGroup extends AbsCashGroup {
+object CnyCash extends AbsCashGroup {
   override type COIN = RMB
   override type UNIT = COIN with Unt
 
@@ -36,7 +36,7 @@ object CnyGroup extends AbsCashGroup {
     override def unit = unt
   }
 
-  abstract class RMB private[CnyGroup](count: BigInt) extends AbsCoin(count: BigInt) {
+  abstract class RMB private[CnyCash](count: BigInt) extends AbsCoin(count: BigInt) {
     override def equals(obj: Any) = obj match {
       case that: RMB => that.canEqual(this) && that.count == this.count
       case _ => false
@@ -49,7 +49,7 @@ object CnyGroup extends AbsCashGroup {
     override val decmlFmt: Int = super.decmlFmt - 3
   }
 
-  // SC云储币精确到0.00001
+  // SC云储币精确到0.00001(云币网)，各交易所不同，暂且就这样。
   lazy val Fen_3: UNIT = new RMB(1) with Unt {
     override val name = "Fen-3"
 
@@ -69,13 +69,10 @@ object CnyGroup extends AbsCashGroup {
   }
 
   class ImpDsl(count: BigDecimal) {
-    @inline def Fen_3: COIN = CnyGroup.Fen_3 * count
-
-    @inline def Fen: COIN = CnyGroup.Fen * count
-
-    @inline def Jiao: COIN = CnyGroup.Jiao * count
-
-    @inline def CNY: COIN = CnyGroup.CNY * count
+    @inline def Fen_3: COIN = CnyCash.Fen_3 * count
+    @inline def Fen: COIN = CnyCash.Fen * count
+    @inline def Jiao: COIN = CnyCash.Jiao * count
+    @inline def CNY: COIN = CnyCash.CNY * count
   }
 
   @inline implicit def wrapCnyNum(count: Double): ImpDsl = new ImpDsl(count)

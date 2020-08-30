@@ -24,7 +24,7 @@ import scala.language.implicitConversions
   * @author Chenai Nakam(chenai.nakam@gmail.com)
   * @version 1.0, 08/05/2019
   */
-object UsdtGroup extends AbsTokenGroup {
+object UsdtToken extends AbsTokenGroup {
   override type COIN = USDT
   override type UNIT = COIN with Unt
 
@@ -34,7 +34,7 @@ object UsdtGroup extends AbsTokenGroup {
     override def unit = unt
   }
 
-  abstract class USDT private[UsdtGroup](count: BigInt) extends AbsCoin(count: BigInt) {
+  abstract class USDT private[UsdtToken](count: BigInt) extends AbsCoin(count: BigInt) {
     override def equals(obj: Any) = obj match {
       case that: USDT => that.canEqual(this) && that.count == this.count
       case _ => false
@@ -62,11 +62,9 @@ object UsdtGroup extends AbsTokenGroup {
   }
 
   class ImpDsl(count: BigDecimal) {
-    @inline def UsFen_3: COIN = UsdtGroup.UsFen_3 * count
-
-    @inline def UsFen: COIN = UsdtGroup.UsFen * count
-
-    @inline def USDT: COIN = UsdtGroup.USDT * count
+    @inline def UsFen_3: COIN = UsdtToken.UsFen_3 * count
+    @inline def UsFen: COIN = UsdtToken.UsFen * count
+    @inline def USDT: COIN = UsdtToken.USDT * count
   }
 
   @inline implicit def wrapUsdtNum(count: Double): ImpDsl = new ImpDsl(count)

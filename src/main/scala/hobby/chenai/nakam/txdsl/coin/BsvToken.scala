@@ -19,45 +19,39 @@ package hobby.chenai.nakam.txdsl.coin
 import hobby.chenai.nakam.txdsl.core.coin.AbsTokenGroup
 
 import scala.language.implicitConversions
+import scala.math.BigInt.int2bigInt
 
 /**
   * @author Chenai Nakam(chenai.nakam@gmail.com)
-  * @version 1.0, 29/05/2017
+  * @version 1.0, 30/08/2020
   */
-object BtcGroup extends AbsTokenGroup {
-  override type COIN = Token
+object BsvToken extends AbsTokenGroup {
+  override type COIN = BitcoinCashSV
   override type UNIT = COIN with Unt
 
-  override def unitStd = BTC
+  override def unitStd = BSV
 
-  override def make(count: BigInt, unt: UNIT) = new Token(count) {
+  override def make(count: BigInt, unt: UNIT) = new BitcoinCashSV(count) {
     override def unit = unt
   }
 
-  abstract class Token private[BtcGroup](count: BigInt) extends AbsCoin(count: BigInt) {
+  abstract class BitcoinCashSV private[BsvToken](count: BigInt) extends AbsCoin(count: BigInt) {
     override def equals(obj: Any) = obj match {
-      case that: Token => that.canEqual(this) && that.count == this.count
+      case that: BitcoinCashSV => that.canEqual(this) && that.count == this.count
       case _ => false
     }
 
-    override def canEqual(that: Any) = that.isInstanceOf[Token]
+    override def canEqual(that: Any) = that.isInstanceOf[BitcoinCashSV]
   }
 
-  // 既是单位数据也是枚举
-  lazy val SAT: UNIT = new Token(1) with Unt {
-    override val name = "SAT"
-  }
-  lazy val BTC: UNIT = new Token(100000000) with Unt { // 一亿聪
-    override val name = "BTC"
+  lazy val BSV: UNIT = new BitcoinCashSV(10.pow(8)) with Unt {
+    override val name = "BSV"
   }
 
   class ImpDsl(count: BigDecimal) {
-    @inline def SAT: COIN = BtcGroup.SAT * count
-
-    @inline def BTC: COIN = BtcGroup.BTC * count
+    @inline def BSV: COIN = BsvToken.BSV * count
   }
 
-  // 不可以写在父类里，否则对于多个不同的币种就不知道转换给谁了。
-  @inline implicit def wrapBtcNum(count: Double): ImpDsl = new ImpDsl(count)
-  @inline implicit def wrapBtcNum(count: BigDecimal): ImpDsl = new ImpDsl(count)
+  @inline implicit def wrapBsvNum(count: Double): ImpDsl = new ImpDsl(count)
+  @inline implicit def wrapBsvNum(count: BigDecimal): ImpDsl = new ImpDsl(count)
 }

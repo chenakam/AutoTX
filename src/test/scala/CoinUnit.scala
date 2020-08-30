@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-import hobby.chenai.nakam.txdsl.coin.BtcGroup._
-import hobby.chenai.nakam.txdsl.coin.CnyGroup
-import hobby.chenai.nakam.txdsl.coin.CnyGroup._
-import hobby.chenai.nakam.txdsl.coin.EthGroup._
+import hobby.chenai.nakam.txdsl.coin.BtcToken._
+import hobby.chenai.nakam.txdsl.coin.CnyCash
+import hobby.chenai.nakam.txdsl.coin.CnyCash._
+import hobby.chenai.nakam.txdsl.coin.EthToken._
 import hobby.chenai.nakam.txdsl.core.DSL._
 import hobby.chenai.nakam.txdsl.core.exch.{AbsExchange, YUNBI}
 
@@ -96,7 +96,7 @@ object CoinUnit {
   //  implicit val exchangeBtcc = BTCC
 
   \("(5.44 JIAO) to ETH to CNY to BTC to JIAO: " + ((5.44 Jiao) to ETH to CNY to BTC to Jiao))
-  val jiao: CnyGroup.COIN = CNY.^((5.4506789 Jiao) to ETH to CNY to BTC to Jiao)
+  val jiao: CnyCash.COIN = CNY.^((5.4506789 Jiao) to ETH to CNY to BTC to Jiao)
   //  \("(5.45 JIAO) to ETH to CNY to BTC to JIAO: " + jiao.value(CNY))
   \("(5.45 JIAO) to ETH to CNY to BTC to JIAO to FEN_3: " + (jiao to Fen_3))
   \("(5.49 SAT) to ETH to BTC to FEN to SAT: " + ((5.49 SAT) to ETH to BTC to Fen to SAT))

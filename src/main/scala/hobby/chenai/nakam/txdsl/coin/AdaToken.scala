@@ -19,36 +19,37 @@ package hobby.chenai.nakam.txdsl.coin
 import hobby.chenai.nakam.txdsl.core.coin.AbsTokenGroup
 
 import scala.language.implicitConversions
+import scala.math.BigInt.int2bigInt
 
 /**
   * @author Chenai Nakam(chenai.nakam@gmail.com)
   * @version 1.0, 10/05/2019
   */
-object AdaGroup extends AbsTokenGroup {
-  override type COIN = Token
+object AdaToken extends AbsTokenGroup {
+  override type COIN = Cardano
   override type UNIT = COIN with Unt
 
   override def unitStd = ADA
 
-  override def make(count: BigInt, unt: UNIT) = new Token(count) {
+  override def make(count: BigInt, unt: UNIT) = new Cardano(count) {
     override def unit = unt
   }
 
-  abstract class Token private[AdaGroup](count: BigInt) extends AbsCoin(count: BigInt) {
+  abstract class Cardano private[AdaToken](count: BigInt) extends AbsCoin(count: BigInt) {
     override def equals(obj: Any) = obj match {
-      case that: Token => that.canEqual(this) && that.count == this.count
+      case that: Cardano => that.canEqual(this) && that.count == this.count
       case _ => false
     }
 
-    override def canEqual(that: Any) = that.isInstanceOf[Token]
+    override def canEqual(that: Any) = that.isInstanceOf[Cardano]
   }
 
-  lazy val ADA: UNIT = new Token(100000000) with Unt {
+  lazy val ADA: UNIT = new Cardano(10.pow(8)) with Unt {
     override val name = "ADA"
   }
 
   class ImpDsl(count: BigDecimal) {
-    @inline def ADA: COIN = AdaGroup.ADA * count
+    @inline def ADA: COIN = AdaToken.ADA * count
   }
 
   // 不可以写在父类里，否则对于多个不同的币种就不知道转换给谁了。
