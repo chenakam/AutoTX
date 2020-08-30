@@ -17,6 +17,7 @@
 package hobby.chenai.nakam.txdsl.coin
 
 import hobby.chenai.nakam.txdsl.core.coin.AbsCashGroup
+
 import scala.language.implicitConversions
 
 /**
@@ -68,15 +69,15 @@ object CnyGroup extends AbsCashGroup {
   }
 
   class ImpDsl(count: BigDecimal) {
-    implicit def Fen_3: COIN = CnyGroup.Fen_3 * count
+    @inline def Fen_3: COIN = CnyGroup.Fen_3 * count
 
-    implicit def Fen: COIN = CnyGroup.Fen * count
+    @inline def Fen: COIN = CnyGroup.Fen * count
 
-    implicit def Jiao: COIN = CnyGroup.Jiao * count
+    @inline def Jiao: COIN = CnyGroup.Jiao * count
 
-    implicit def CNY: COIN = CnyGroup.CNY * count
+    @inline def CNY: COIN = CnyGroup.CNY * count
   }
 
-  implicit def wrapCnyNum(count: Double): ImpDsl = new ImpDsl(count)
-  implicit def wrapCnyNum(count: BigDecimal): ImpDsl = new ImpDsl(count)
+  @inline implicit def wrapCnyNum(count: Double): ImpDsl = new ImpDsl(count)
+  @inline implicit def wrapCnyNum(count: BigDecimal): ImpDsl = new ImpDsl(count)
 }

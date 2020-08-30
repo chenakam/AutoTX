@@ -52,12 +52,12 @@ object BtcGroup extends AbsTokenGroup {
   }
 
   class ImpDsl(count: BigDecimal) {
-    implicit def SAT: COIN = BtcGroup.SAT * count
+    @inline def SAT: COIN = BtcGroup.SAT * count
 
-    implicit def BTC: COIN = BtcGroup.BTC * count
+    @inline def BTC: COIN = BtcGroup.BTC * count
   }
 
   // 不可以写在父类里，否则对于多个不同的币种就不知道转换给谁了。
-  implicit def wrapBtcNum(count: Double): ImpDsl = new ImpDsl(count)
-  implicit def wrapBtcNum(count: BigDecimal): ImpDsl = new ImpDsl(count)
+  @inline implicit def wrapBtcNum(count: Double): ImpDsl = new ImpDsl(count)
+  @inline implicit def wrapBtcNum(count: BigDecimal): ImpDsl = new ImpDsl(count)
 }

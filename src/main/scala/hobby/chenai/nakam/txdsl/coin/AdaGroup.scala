@@ -48,10 +48,10 @@ object AdaGroup extends AbsTokenGroup {
   }
 
   class ImpDsl(count: BigDecimal) {
-    implicit def ADA: COIN = AdaGroup.ADA * count
+    @inline def ADA: COIN = AdaGroup.ADA * count
   }
 
   // 不可以写在父类里，否则对于多个不同的币种就不知道转换给谁了。
-  implicit def wrapAdaNum(count: Double): ImpDsl = new ImpDsl(count)
-  implicit def wrapAdaNum(count: BigDecimal): ImpDsl = new ImpDsl(count)
+  @inline implicit def wrapAdaNum(count: Double): ImpDsl = new ImpDsl(count)
+  @inline implicit def wrapAdaNum(count: BigDecimal): ImpDsl = new ImpDsl(count)
 }

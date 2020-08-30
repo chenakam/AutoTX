@@ -62,13 +62,13 @@ object UsdtGroup extends AbsTokenGroup {
   }
 
   class ImpDsl(count: BigDecimal) {
-    implicit def UsFen_3: COIN = UsdtGroup.UsFen_3 * count
+    @inline def UsFen_3: COIN = UsdtGroup.UsFen_3 * count
 
-    implicit def UsFen: COIN = UsdtGroup.UsFen * count
+    @inline def UsFen: COIN = UsdtGroup.UsFen * count
 
-    implicit def USDT: COIN = UsdtGroup.USDT * count
+    @inline def USDT: COIN = UsdtGroup.USDT * count
   }
 
-  implicit def wrapUsdtNum(count: Double): ImpDsl = new ImpDsl(count)
-  implicit def wrapUsdtNum(count: BigDecimal): ImpDsl = new ImpDsl(count)
+  @inline implicit def wrapUsdtNum(count: Double): ImpDsl = new ImpDsl(count)
+  @inline implicit def wrapUsdtNum(count: BigDecimal): ImpDsl = new ImpDsl(count)
 }

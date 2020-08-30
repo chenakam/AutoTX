@@ -37,5 +37,6 @@ object YUNBI extends AbsExchange("YUNBI", BtcGroup, CnyGroup, EthGroup) {
   override def loadFfdRule(counterParty: (AbsTokenGroup, AbsCoinGroup)): FixedFracDigitsRule = counterParty match {
     case (EthGroup, BtcGroup) => new FixedFracDigitsRule(EthGroup, 6, BtcGroup, 8, false)
     case (EthGroup, CnyGroup) => new FixedFracDigitsRule(EthGroup, 6, CnyGroup, 5, false)
+    case (BtcGroup, CnyGroup) => new FixedFracDigitsRule(BtcGroup, 8, CnyGroup, 5, false)
   }
 }

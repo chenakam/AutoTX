@@ -59,4 +59,10 @@ package object coin {
       case _ => None
     }
   }
+
+  implicit class Str2BigDec(count: String) {
+    @inline def bigDec: BigDecimal = string2BigDecimal(count)
+  }
+
+  @inline implicit def string2BigDecimal(count: String): BigDecimal = BigDecimal(count)
 }

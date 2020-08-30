@@ -45,6 +45,7 @@ abstract class AbsCoinGroup {
     with Equals with Ordered[COIN] with TypeBring[UNIT, COIN, AbsCoinGroup#AbsCoin] {
     require(count >= 0, s"[`Coin.count`溢出: $count].")
 
+    /** 是否为法币（即：pricingCash），但不是 pricingToken。 */
     val isCash: Boolean
 
     final val group: GROUP = groupSelf.as[GROUP]

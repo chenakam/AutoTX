@@ -54,7 +54,7 @@ abstract class AbsExchange(val name: String, override val pricingToken: AbsToken
   }
 
   override final def getFfdRule[T <: AbsTokenGroup, C <: AbsCoinGroup](token: T, pricingCoin: C): FixedFracDigitsRule =
-    get(token, pricingCoin).as[FixedFracDigitsRule]
+    get(token, pricingCoin).get.as[FixedFracDigitsRule]
 
   // 没有比特币汇率则必须有法币汇率
   /** 从加密货币到法币的汇率，而法币在一个交易所只有一种。 */
@@ -92,7 +92,7 @@ abstract class AbsExchange(val name: String, override val pricingToken: AbsToken
     rate
   }
 
-  override def toString = s"$name(:$pricingCash|$pricingToken)$supportTokenString"
+  override def toString = s"$name(priCash: $pricingCash | priTkn: $pricingToken)$supportTokenString"
 
   def supportTokenString = supportTokens.mkString("[", ", ", "]")
 }

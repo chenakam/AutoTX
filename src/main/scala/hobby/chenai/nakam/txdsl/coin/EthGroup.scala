@@ -54,11 +54,11 @@ object EthGroup extends AbsTokenGroup {
   }
 
   class ImpDsl(count: BigDecimal) {
-    implicit def GWei: COIN = EthGroup.GWei * count
+    @inline def GWei: COIN = EthGroup.GWei * count
 
-    implicit def ETH: COIN = EthGroup.ETH * count
+    @inline def ETH: COIN = EthGroup.ETH * count
   }
 
-  implicit def wrapEthNum(count: Double): ImpDsl = new ImpDsl(count)
-  implicit def wrapEthNum(count: BigDecimal): ImpDsl = new ImpDsl(count)
+  @inline implicit def wrapEthNum(count: Double): ImpDsl = new ImpDsl(count)
+  @inline implicit def wrapEthNum(count: BigDecimal): ImpDsl = new ImpDsl(count)
 }
