@@ -2,15 +2,15 @@ name := baseDirectory.value.getName
 organization := "hobby.chenai.nakam"
 version := "0.0.1-SNAPSHOT"
 
-scalaVersion := "2.11.11"
+scalaVersion := "2.11.12"
 crossScalaVersions := Seq(
   /*"2.11.7", 多余，不需要两个*/
-  "2.11.11",
+  "2.11.12",
   /*"2.12.2", 有一些编译问题：`the interface is not a direct parent`。*/
-  "2.12.6")
+  "2.12.12")
 
 lazy val scalaSettings = Seq(
-  scalaVersion := "2.11.11"
+  scalaVersion := "2.11.12"
 )
 
 //lazy val root = Project(id = "txdsl", base = file("."))
@@ -33,8 +33,8 @@ publishArtifact in packageDoc := false
 resolvers += "jitpack" at "https://jitpack.io"
 
 libraryDependencies ++= Seq(
-  "com.github.dedge-space" % "scala-lang" % "727912b657",
-  "com.github.dedge-space" % "reflow" % "511279b7b1",
+  "com.github.dedge-space" % "scala-lang" % "6e95678f48",
+  "com.github.dedge-space" % "reflow" % "d693ad4e9c",
 
   "junit" % "junit" % "[4.12,)" % Test,
   "org.scalatest" %% "scalatest" % "3.2.0-SNAP7" % Test
