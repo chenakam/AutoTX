@@ -1,3 +1,4 @@
+// format: off
 name := baseDirectory.value.getName
 organization := "hobby.chenai.nakam"
 version := "0.0.1-SNAPSHOT"
@@ -34,7 +35,7 @@ resolvers += "jitpack" at "https://jitpack.io"
 
 libraryDependencies ++= Seq(
   "com.github.dedge-space" % "scala-lang" % "6e95678f48",
-  "com.github.dedge-space" % "reflow" % "d693ad4e9c",
+  "com.github.dedge-space" % "reflow" % "ca688461fb",
 
   "junit" % "junit" % "[4.12,)" % Test,
   "org.scalatest" %% "scalatest" % "3.2.0-SNAP7" % Test

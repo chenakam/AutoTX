@@ -48,6 +48,16 @@ abstract class AbsCoinGroup {
     /** 是否为法币（即：pricingCash），但不是 pricingToken。 */
     val isCash: Boolean
 
+    final def token: AbsTokenGroup#AbsCoin = {
+      assert(!isCash)
+      this.as[AbsTokenGroup#AbsCoin]
+    }
+
+    final def cash: AbsCashGroup#AbsCoin = {
+      assert(isCash)
+      this.as[AbsCashGroup#AbsCoin]
+    }
+
     final val group: GROUP = groupSelf.as[GROUP]
 
     def unit: UNIT
@@ -63,9 +73,11 @@ abstract class AbsCoinGroup {
     // 例如6.45 FEN, round后的count = 65(给最低单位多保留了1位，即64.5, round(64.5) = 65),
     // 最终toString的时候round(6.5) = 7. 因此这里直接进行toLong舍弃小数。
     def *(x: Double): COIN = make((BigDecimal(this.count) * BigDecimal(x /*会自动toString*/)).toBigInt(), unit)
+
     def *(x: BigDecimal): COIN = make((BigDecimal(this.count) * x).toBigInt(), unit)
 
     def /(x: Double): COIN = make((BigDecimal(this.count) / BigDecimal(x)).toBigInt(), unit)
+
     def /(x: BigDecimal): COIN = make((BigDecimal(this.count) / x).toBigInt(), unit)
 
     def /(that: COIN): BigDecimal = BigDecimal(this.count) / BigDecimal(that.count)
@@ -131,4 +143,5 @@ abstract class AbsCoinGroup {
 
     def <<(coin: AbsCoinGroup#AbsCoin): COIN = coin mod unit
   }
+
 }

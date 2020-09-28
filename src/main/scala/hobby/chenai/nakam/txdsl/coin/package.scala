@@ -163,4 +163,6 @@ package object coin {
   @inline implicit def bigDecimal2BigInt(count: BigDecimal): BigInt = count.toBigInt()
   @inline implicit def string2BigDecimal(count: String): BigDecimal = BigDecimal(count)
   @inline implicit def bigInt2BigDecimal(count: BigInt): BigDecimal = BigDecimal(count)
+
+  lazy val ZERO: BigDecimal = 0
 }
