@@ -48,10 +48,10 @@ object AlgoToken extends AbsTokenGroup {
     override val name = "ALGO"
   }
 
-  class ImpDsl(count: BigDecimal) {
+  class DslImpl(count: BigDecimal) {
     @inline def ALGO: COIN = AlgoToken.ALGO * count
   }
 
-  @inline implicit def wrapAlgoNum(count: Double): ImpDsl = new ImpDsl(count)
-  @inline implicit def wrapAlgoNum(count: BigDecimal): ImpDsl = new ImpDsl(count)
+  @inline implicit def wrapAlgoNum(count: Double): DslImpl = new DslImpl(count)
+  @inline implicit def wrapAlgoNum(count: BigDecimal): DslImpl = new DslImpl(count)
 }

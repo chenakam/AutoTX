@@ -67,7 +67,7 @@ object EthToken extends AbsTokenGroup {
     // override val decmlFmt: Int = super.decmlFmt - 1 // 前一版设置了7个0但只保留6位有效位，故有次设置。
   }
 
-  class ImpDsl(count: BigDecimal) {
+  class DslImpl(count: BigDecimal) {
     @inline def Wei: COIN = EthToken.Wei * count
     @inline def KWei: COIN = EthToken.KWei * count
     @inline def MWei: COIN = EthToken.MWei * count
@@ -77,6 +77,6 @@ object EthToken extends AbsTokenGroup {
     @inline def ETH: COIN = EthToken.ETH * count
   }
 
-  @inline implicit def wrapEthNum(count: Double): ImpDsl = new ImpDsl(count)
-  @inline implicit def wrapEthNum(count: BigDecimal): ImpDsl = new ImpDsl(count)
+  @inline implicit def wrapEthNum(count: Double): DslImpl = new DslImpl(count)
+  @inline implicit def wrapEthNum(count: BigDecimal): DslImpl = new DslImpl(count)
 }

@@ -48,10 +48,10 @@ object DfToken extends AbsTokenGroup {
     override val name = "DF"
   }
 
-  class ImpDsl(count: BigDecimal) {
+  class DslImpl(count: BigDecimal) {
     @inline def DF: COIN = DfToken.DF * count
   }
 
-  @inline implicit def wrapDfNum(count: Double): ImpDsl = new ImpDsl(count)
-  @inline implicit def wrapDfNum(count: BigDecimal): ImpDsl = new ImpDsl(count)
+  @inline implicit def wrapDfNum(count: Double): DslImpl = new DslImpl(count)
+  @inline implicit def wrapDfNum(count: BigDecimal): DslImpl = new DslImpl(count)
 }

@@ -48,10 +48,10 @@ object GardToken extends AbsTokenGroup {
     override val name = "GARD"
   }
 
-  class ImpDsl(count: BigDecimal) {
+  class DslImpl(count: BigDecimal) {
     @inline def GARD: COIN = GardToken.GARD * count
   }
 
-  @inline implicit def wrapGardNum(count: Double): ImpDsl = new ImpDsl(count)
-  @inline implicit def wrapGardNum(count: BigDecimal): ImpDsl = new ImpDsl(count)
+  @inline implicit def wrapGardNum(count: Double): DslImpl = new DslImpl(count)
+  @inline implicit def wrapGardNum(count: BigDecimal): DslImpl = new DslImpl(count)
 }

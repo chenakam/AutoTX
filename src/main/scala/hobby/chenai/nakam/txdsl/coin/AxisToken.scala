@@ -48,10 +48,10 @@ object AxisToken extends AbsTokenGroup {
     override val name = "AXIS"
   }
 
-  class ImpDsl(count: BigDecimal) {
+  class DslImpl(count: BigDecimal) {
     @inline def AXIS: COIN = AxisToken.AXIS * count
   }
 
-  @inline implicit def wrapAxisNum(count: Double): ImpDsl = new ImpDsl(count)
-  @inline implicit def wrapAxisNum(count: BigDecimal): ImpDsl = new ImpDsl(count)
+  @inline implicit def wrapAxisNum(count: Double): DslImpl = new DslImpl(count)
+  @inline implicit def wrapAxisNum(count: BigDecimal): DslImpl = new DslImpl(count)
 }

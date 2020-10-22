@@ -48,10 +48,10 @@ object AkroToken extends AbsTokenGroup {
     override val name = "AKRO"
   }
 
-  class ImpDsl(count: BigDecimal) {
+  class DslImpl(count: BigDecimal) {
     @inline def AKRO: COIN = AkroToken.AKRO * count
   }
 
-  @inline implicit def wrapAkroNum(count: Double): ImpDsl = new ImpDsl(count)
-  @inline implicit def wrapAkroNum(count: BigDecimal): ImpDsl = new ImpDsl(count)
+  @inline implicit def wrapAkroNum(count: Double): DslImpl = new DslImpl(count)
+  @inline implicit def wrapAkroNum(count: BigDecimal): DslImpl = new DslImpl(count)
 }

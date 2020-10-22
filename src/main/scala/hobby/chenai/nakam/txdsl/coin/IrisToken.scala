@@ -48,10 +48,10 @@ object IrisToken extends AbsTokenGroup {
     override val name = "IRIS"
   }
 
-  class ImpDsl(count: BigDecimal) {
+  class DslImpl(count: BigDecimal) {
     @inline def IRIS: COIN = IrisToken.IRIS * count
   }
 
-  @inline implicit def wrapIrisNum(count: Double): ImpDsl = new ImpDsl(count)
-  @inline implicit def wrapIrisNum(count: BigDecimal): ImpDsl = new ImpDsl(count)
+  @inline implicit def wrapIrisNum(count: Double): DslImpl = new DslImpl(count)
+  @inline implicit def wrapIrisNum(count: BigDecimal): DslImpl = new DslImpl(count)
 }

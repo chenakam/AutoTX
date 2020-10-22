@@ -48,10 +48,10 @@ object SrmToken extends AbsTokenGroup {
     override val name = "SRM"
   }
 
-  class ImpDsl(count: BigDecimal) {
+  class DslImpl(count: BigDecimal) {
     @inline def SRM: COIN = SrmToken.SRM * count
   }
 
-  @inline implicit def wrapSrmNum(count: Double): ImpDsl = new ImpDsl(count)
-  @inline implicit def wrapSrmNum(count: BigDecimal): ImpDsl = new ImpDsl(count)
+  @inline implicit def wrapSrmNum(count: Double): DslImpl = new DslImpl(count)
+  @inline implicit def wrapSrmNum(count: BigDecimal): DslImpl = new DslImpl(count)
 }

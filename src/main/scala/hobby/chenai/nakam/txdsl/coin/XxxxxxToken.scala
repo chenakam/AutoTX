@@ -48,10 +48,10 @@
 //    override val name = "XXX"
 //  }
 //
-//  class ImpDsl(count: BigDecimal) {
+//  class DslImpl(count: BigDecimal) {
 //    @inline def XXX: COIN = XxxxxxToken.ZEC * count
 //  }
 //
-//  @inline implicit def wrap  Num(count: Double): ImpDsl = new ImpDsl(count)
-//  @inline implicit def wrap Num(count: BigDecimal): ImpDsl = new ImpDsl(count)
+//  @inline implicit def wrap  Num(count: Double): DslImpl = new DslImpl(count)
+//  @inline implicit def wrap Num(count: BigDecimal): DslImpl = new DslImpl(count)
 //}

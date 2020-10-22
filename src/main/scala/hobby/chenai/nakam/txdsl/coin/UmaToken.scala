@@ -48,10 +48,10 @@ object UmaToken extends AbsTokenGroup {
     override val name = "UMA"
   }
 
-  class ImpDsl(count: BigDecimal) {
+  class DslImpl(count: BigDecimal) {
     @inline def UMA: COIN = UmaToken.UMA * count
   }
 
-  @inline implicit def wrapUmaNum(count: Double): ImpDsl = new ImpDsl(count)
-  @inline implicit def wrapUmaNum(count: BigDecimal): ImpDsl = new ImpDsl(count)
+  @inline implicit def wrapUmaNum(count: Double): DslImpl = new DslImpl(count)
+  @inline implicit def wrapUmaNum(count: BigDecimal): DslImpl = new DslImpl(count)
 }

@@ -48,10 +48,10 @@ object SushiToken extends AbsTokenGroup {
     override val name = "SUSHI"
   }
 
-  class ImpDsl(count: BigDecimal) {
+  class DslImpl(count: BigDecimal) {
     @inline def SUSHI: COIN = SushiToken.SUSHI * count
   }
 
-  @inline implicit def wrapSushiNum(count: Double): ImpDsl = new ImpDsl(count)
-  @inline implicit def wrapSushiNum(count: BigDecimal): ImpDsl = new ImpDsl(count)
+  @inline implicit def wrapSushiNum(count: Double): DslImpl = new DslImpl(count)
+  @inline implicit def wrapSushiNum(count: BigDecimal): DslImpl = new DslImpl(count)
 }

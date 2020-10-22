@@ -48,10 +48,10 @@ object QtumToken extends AbsTokenGroup {
     override val name = "QTUM"
   }
 
-  class ImpDsl(count: BigDecimal) {
+  class DslImpl(count: BigDecimal) {
     @inline def QTUM: COIN = QtumToken.QTUM * count
   }
 
-  @inline implicit def wrapQtumNum(count: Double): ImpDsl = new ImpDsl(count)
-  @inline implicit def wrapQtumNum(count: BigDecimal): ImpDsl = new ImpDsl(count)
+  @inline implicit def wrapQtumNum(count: Double): DslImpl = new DslImpl(count)
+  @inline implicit def wrapQtumNum(count: BigDecimal): DslImpl = new DslImpl(count)
 }

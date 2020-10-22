@@ -48,10 +48,10 @@ object CreditToken extends AbsTokenGroup {
     override val name = "CREDIT"
   }
 
-  class ImpDsl(count: BigDecimal) {
+  class DslImpl(count: BigDecimal) {
     @inline def CREDIT: COIN = CreditToken.CREDIT * count
   }
 
-  @inline implicit def wrapCreditNum(count: Double): ImpDsl = new ImpDsl(count)
-  @inline implicit def wrapCreditNum(count: BigDecimal): ImpDsl = new ImpDsl(count)
+  @inline implicit def wrapCreditNum(count: Double): DslImpl = new DslImpl(count)
+  @inline implicit def wrapCreditNum(count: BigDecimal): DslImpl = new DslImpl(count)
 }

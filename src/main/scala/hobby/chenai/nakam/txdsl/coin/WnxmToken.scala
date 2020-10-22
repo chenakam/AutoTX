@@ -48,10 +48,10 @@ object WnxmToken extends AbsTokenGroup {
     override val name = "WNXM"
   }
 
-  class ImpDsl(count: BigDecimal) {
+  class DslImpl(count: BigDecimal) {
     @inline def WNXM: COIN = WnxmToken.WNXM * count
   }
 
-  @inline implicit def wrapWnxmNum(count: Double): ImpDsl = new ImpDsl(count)
-  @inline implicit def wrapWnxmNum(count: BigDecimal): ImpDsl = new ImpDsl(count)
+  @inline implicit def wrapWnxmNum(count: Double): DslImpl = new DslImpl(count)
+  @inline implicit def wrapWnxmNum(count: BigDecimal): DslImpl = new DslImpl(count)
 }

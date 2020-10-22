@@ -48,10 +48,10 @@ object SaltToken extends AbsTokenGroup {
     override val name = "SALT"
   }
 
-  class ImpDsl(count: BigDecimal) {
+  class DslImpl(count: BigDecimal) {
     @inline def SALT: COIN = SaltToken.SALT * count
   }
 
-  @inline implicit def wrapSaltNum(count: Double): ImpDsl = new ImpDsl(count)
-  @inline implicit def wrapSaltNum(count: BigDecimal): ImpDsl = new ImpDsl(count)
+  @inline implicit def wrapSaltNum(count: Double): DslImpl = new DslImpl(count)
+  @inline implicit def wrapSaltNum(count: BigDecimal): DslImpl = new DslImpl(count)
 }

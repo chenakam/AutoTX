@@ -48,10 +48,10 @@ object BsvToken extends AbsTokenGroup {
     override val name = "BSV"
   }
 
-  class ImpDsl(count: BigDecimal) {
+  class DslImpl(count: BigDecimal) {
     @inline def BSV: COIN = BsvToken.BSV * count
   }
 
-  @inline implicit def wrapBsvNum(count: Double): ImpDsl = new ImpDsl(count)
-  @inline implicit def wrapBsvNum(count: BigDecimal): ImpDsl = new ImpDsl(count)
+  @inline implicit def wrapBsvNum(count: Double): DslImpl = new DslImpl(count)
+  @inline implicit def wrapBsvNum(count: BigDecimal): DslImpl = new DslImpl(count)
 }

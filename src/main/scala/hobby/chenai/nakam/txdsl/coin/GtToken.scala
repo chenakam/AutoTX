@@ -48,10 +48,10 @@ object GtToken extends AbsTokenGroup {
     override val name = "GT"
   }
 
-  class ImpDsl(count: BigDecimal) {
+  class DslImpl(count: BigDecimal) {
     @inline def GT: COIN = GtToken.GT * count
   }
 
-  @inline implicit def wrapGtNum(count: Double): ImpDsl = new ImpDsl(count)
-  @inline implicit def wrapGtNum(count: BigDecimal): ImpDsl = new ImpDsl(count)
+  @inline implicit def wrapGtNum(count: Double): DslImpl = new DslImpl(count)
+  @inline implicit def wrapGtNum(count: BigDecimal): DslImpl = new DslImpl(count)
 }

@@ -48,10 +48,10 @@ object CrvToken extends AbsTokenGroup {
     override val name = "CRV"
   }
 
-  class ImpDsl(count: BigDecimal) {
+  class DslImpl(count: BigDecimal) {
     @inline def CRV: COIN = CrvToken.CRV * count
   }
 
-  @inline implicit def wrapCrvNum(count: Double): ImpDsl = new ImpDsl(count)
-  @inline implicit def wrapCrvNum(count: BigDecimal): ImpDsl = new ImpDsl(count)
+  @inline implicit def wrapCrvNum(count: Double): DslImpl = new DslImpl(count)
+  @inline implicit def wrapCrvNum(count: BigDecimal): DslImpl = new DslImpl(count)
 }

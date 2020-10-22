@@ -48,10 +48,10 @@ object DkaToken extends AbsTokenGroup {
     override val name = "DKA"
   }
 
-  class ImpDsl(count: BigDecimal) {
+  class DslImpl(count: BigDecimal) {
     @inline def DKA: COIN = DkaToken.DKA * count
   }
 
-  @inline implicit def wrapDkaNum(count: Double): ImpDsl = new ImpDsl(count)
-  @inline implicit def wrapDkaNum(count: BigDecimal): ImpDsl = new ImpDsl(count)
+  @inline implicit def wrapDkaNum(count: Double): DslImpl = new DslImpl(count)
+  @inline implicit def wrapDkaNum(count: BigDecimal): DslImpl = new DslImpl(count)
 }

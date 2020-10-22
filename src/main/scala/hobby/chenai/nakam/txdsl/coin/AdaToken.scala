@@ -48,11 +48,11 @@ object AdaToken extends AbsTokenGroup {
     override val name = "ADA"
   }
 
-  class ImpDsl(count: BigDecimal) {
+  class DslImpl(count: BigDecimal) {
     @inline def ADA: COIN = AdaToken.ADA * count
   }
 
   // 不可以写在父类里，否则对于多个不同的币种就不知道转换给谁了。
-  @inline implicit def wrapAdaNum(count: Double): ImpDsl = new ImpDsl(count)
-  @inline implicit def wrapAdaNum(count: BigDecimal): ImpDsl = new ImpDsl(count)
+  @inline implicit def wrapAdaNum(count: Double): DslImpl = new DslImpl(count)
+  @inline implicit def wrapAdaNum(count: BigDecimal): DslImpl = new DslImpl(count)
 }

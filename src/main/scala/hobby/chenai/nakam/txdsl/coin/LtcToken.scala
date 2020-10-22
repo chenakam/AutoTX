@@ -48,10 +48,10 @@ object LtcToken extends AbsTokenGroup {
     override val name = "LTC"
   }
 
-  class ImpDsl(count: BigDecimal) {
+  class DslImpl(count: BigDecimal) {
     @inline def LTC: COIN = LtcToken.LTC * count
   }
 
-  @inline implicit def wrapLtcNum(count: Double): ImpDsl = new ImpDsl(count)
-  @inline implicit def wrapLtcNum(count: BigDecimal): ImpDsl = new ImpDsl(count)
+  @inline implicit def wrapLtcNum(count: Double): DslImpl = new DslImpl(count)
+  @inline implicit def wrapLtcNum(count: BigDecimal): DslImpl = new DslImpl(count)
 }

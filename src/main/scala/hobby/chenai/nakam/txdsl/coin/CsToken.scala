@@ -48,10 +48,10 @@ object CsToken extends AbsTokenGroup {
     override val name = "CS"
   }
 
-  class ImpDsl(count: BigDecimal) {
+  class DslImpl(count: BigDecimal) {
     @inline def CS: COIN = CsToken.CS * count
   }
 
-  @inline implicit def wrapCsNum(count: Double): ImpDsl = new ImpDsl(count)
-  @inline implicit def wrapCsNum(count: BigDecimal): ImpDsl = new ImpDsl(count)
+  @inline implicit def wrapCsNum(count: Double): DslImpl = new DslImpl(count)
+  @inline implicit def wrapCsNum(count: BigDecimal): DslImpl = new DslImpl(count)
 }

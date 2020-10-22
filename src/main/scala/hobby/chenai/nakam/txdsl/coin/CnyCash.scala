@@ -68,13 +68,13 @@ object CnyCash extends AbsCashGroup {
     override val name = "CNY"
   }
 
-  class ImpDsl(count: BigDecimal) {
+  class DslImpl(count: BigDecimal) {
     @inline def Fen_3: COIN = CnyCash.Fen_3 * count
     @inline def Fen: COIN = CnyCash.Fen * count
     @inline def Jiao: COIN = CnyCash.Jiao * count
     @inline def CNY: COIN = CnyCash.CNY * count
   }
 
-  @inline implicit def wrapCnyNum(count: Double): ImpDsl = new ImpDsl(count)
-  @inline implicit def wrapCnyNum(count: BigDecimal): ImpDsl = new ImpDsl(count)
+  @inline implicit def wrapCnyNum(count: Double): DslImpl = new DslImpl(count)
+  @inline implicit def wrapCnyNum(count: BigDecimal): DslImpl = new DslImpl(count)
 }

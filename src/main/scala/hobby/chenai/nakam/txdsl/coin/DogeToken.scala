@@ -48,10 +48,10 @@ object DogeToken extends AbsTokenGroup {
     override val name = "DOGE"
   }
 
-  class ImpDsl(count: BigDecimal) {
+  class DslImpl(count: BigDecimal) {
     @inline def DOGE: COIN = DogeToken.DOGE * count
   }
 
-  @inline implicit def wrapDogeNum(count: Double): ImpDsl = new ImpDsl(count)
-  @inline implicit def wrapDogeNum(count: BigDecimal): ImpDsl = new ImpDsl(count)
+  @inline implicit def wrapDogeNum(count: Double): DslImpl = new DslImpl(count)
+  @inline implicit def wrapDogeNum(count: BigDecimal): DslImpl = new DslImpl(count)
 }

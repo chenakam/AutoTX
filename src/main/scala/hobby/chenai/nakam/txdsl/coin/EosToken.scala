@@ -48,10 +48,10 @@ object EosToken extends AbsTokenGroup {
     override val name = "EOS"
   }
 
-  class ImpDsl(count: BigDecimal) {
+  class DslImpl(count: BigDecimal) {
     @inline def EOS: COIN = EosToken.EOS * count
   }
 
-  @inline implicit def wrapEosNum(count: Double): ImpDsl = new ImpDsl(count)
-  @inline implicit def wrapEosNum(count: BigDecimal): ImpDsl = new ImpDsl(count)
+  @inline implicit def wrapEosNum(count: Double): DslImpl = new DslImpl(count)
+  @inline implicit def wrapEosNum(count: BigDecimal): DslImpl = new DslImpl(count)
 }

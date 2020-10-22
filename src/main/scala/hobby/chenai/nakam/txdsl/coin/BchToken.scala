@@ -48,10 +48,10 @@ object BchToken extends AbsTokenGroup {
     override val name = "BCH"
   }
 
-  class ImpDsl(count: BigDecimal) {
+  class DslImpl(count: BigDecimal) {
     @inline def BCH: COIN = BchToken.BCH * count
   }
 
-  @inline implicit def wrapBchNum(count: Double): ImpDsl = new ImpDsl(count)
-  @inline implicit def wrapBchNum(count: BigDecimal): ImpDsl = new ImpDsl(count)
+  @inline implicit def wrapBchNum(count: Double): DslImpl = new DslImpl(count)
+  @inline implicit def wrapBchNum(count: BigDecimal): DslImpl = new DslImpl(count)
 }

@@ -52,12 +52,12 @@ object BtcToken extends AbsTokenGroup {
     override val name = "BTC"
   }
 
-  class ImpDsl(count: BigDecimal) {
+  class DslImpl(count: BigDecimal) {
     @inline def SAT: COIN = BtcToken.SAT * count
     @inline def BTC: COIN = BtcToken.BTC * count
   }
 
   // 不可以写在父类里，否则对于多个不同的币种就不知道转换给谁了。
-  @inline implicit def wrapBtcNum(count: Double): ImpDsl = new ImpDsl(count)
-  @inline implicit def wrapBtcNum(count: BigDecimal): ImpDsl = new ImpDsl(count)
+  @inline implicit def wrapBtcNum(count: Double): DslImpl = new DslImpl(count)
+  @inline implicit def wrapBtcNum(count: BigDecimal): DslImpl = new DslImpl(count)
 }

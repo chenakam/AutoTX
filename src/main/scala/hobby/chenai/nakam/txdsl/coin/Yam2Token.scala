@@ -48,10 +48,10 @@ object Yam2Token extends AbsTokenGroup {
     override val name = "YAMV2"
   }
 
-  class ImpDsl(count: BigDecimal) {
+  class DslImpl(count: BigDecimal) {
     @inline def YAMV2: COIN = Yam2Token.YAMV2 * count
   }
 
-  @inline implicit def wrapYAMv2Num(count: Double): ImpDsl = new ImpDsl(count)
-  @inline implicit def wrapYAMv2Num(count: BigDecimal): ImpDsl = new ImpDsl(count)
+  @inline implicit def wrapYAMv2Num(count: Double): DslImpl = new DslImpl(count)
+  @inline implicit def wrapYAMv2Num(count: BigDecimal): DslImpl = new DslImpl(count)
 }

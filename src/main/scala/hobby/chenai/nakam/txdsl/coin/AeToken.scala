@@ -48,10 +48,10 @@ object AeToken extends AbsTokenGroup {
     override val name = "AE"
   }
 
-  class ImpDsl(count: BigDecimal) {
+  class DslImpl(count: BigDecimal) {
     @inline def AE: COIN = AeToken.AE * count
   }
 
-  @inline implicit def wrapAeNum(count: Double): ImpDsl = new ImpDsl(count)
-  @inline implicit def wrapAeNum(count: BigDecimal): ImpDsl = new ImpDsl(count)
+  @inline implicit def wrapAeNum(count: Double): DslImpl = new DslImpl(count)
+  @inline implicit def wrapAeNum(count: BigDecimal): DslImpl = new DslImpl(count)
 }

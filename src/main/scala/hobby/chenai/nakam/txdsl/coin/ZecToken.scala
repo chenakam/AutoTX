@@ -48,10 +48,10 @@ object ZecToken extends AbsTokenGroup {
     override val name = "ZEC"
   }
 
-  class ImpDsl(count: BigDecimal) {
+  class DslImpl(count: BigDecimal) {
     @inline def ZEC: COIN = ZecToken.ZEC * count
   }
 
-  @inline implicit def wrapZecNum(count: Double): ImpDsl = new ImpDsl(count)
-  @inline implicit def wrapZecNum(count: BigDecimal): ImpDsl = new ImpDsl(count)
+  @inline implicit def wrapZecNum(count: Double): DslImpl = new DslImpl(count)
+  @inline implicit def wrapZecNum(count: BigDecimal): DslImpl = new DslImpl(count)
 }

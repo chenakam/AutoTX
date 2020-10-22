@@ -48,10 +48,10 @@ object RlcToken extends AbsTokenGroup {
     override val name = "RLC"
   }
 
-  class ImpDsl(count: BigDecimal) {
+  class DslImpl(count: BigDecimal) {
     @inline def RLC: COIN = RlcToken.RLC * count
   }
 
-  @inline implicit def wrapRlcNum(count: Double): ImpDsl = new ImpDsl(count)
-  @inline implicit def wrapRlcNum(count: BigDecimal): ImpDsl = new ImpDsl(count)
+  @inline implicit def wrapRlcNum(count: Double): DslImpl = new DslImpl(count)
+  @inline implicit def wrapRlcNum(count: BigDecimal): DslImpl = new DslImpl(count)
 }

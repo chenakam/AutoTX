@@ -48,10 +48,10 @@ object KsmToken extends AbsTokenGroup {
     override val name = "KSM"
   }
 
-  class ImpDsl(count: BigDecimal) {
+  class DslImpl(count: BigDecimal) {
     @inline def KSM: COIN = KsmToken.KSM * count
   }
 
-  @inline implicit def wrapKsmNum(count: Double): ImpDsl = new ImpDsl(count)
-  @inline implicit def wrapKsmNum(count: BigDecimal): ImpDsl = new ImpDsl(count)
+  @inline implicit def wrapKsmNum(count: Double): DslImpl = new DslImpl(count)
+  @inline implicit def wrapKsmNum(count: BigDecimal): DslImpl = new DslImpl(count)
 }

@@ -48,10 +48,10 @@ object ElfToken extends AbsTokenGroup {
     override val name = "ELF"
   }
 
-  class ImpDsl(count: BigDecimal) {
+  class DslImpl(count: BigDecimal) {
     @inline def ELF: COIN = ElfToken.ELF * count
   }
 
-  @inline implicit def wrapElfNum(count: Double): ImpDsl = new ImpDsl(count)
-  @inline implicit def wrapElfNum(count: BigDecimal): ImpDsl = new ImpDsl(count)
+  @inline implicit def wrapElfNum(count: Double): DslImpl = new DslImpl(count)
+  @inline implicit def wrapElfNum(count: BigDecimal): DslImpl = new DslImpl(count)
 }

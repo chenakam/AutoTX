@@ -48,10 +48,10 @@ object KlayToken extends AbsTokenGroup {
     override val name = "KLAY"
   }
 
-  class ImpDsl(count: BigDecimal) {
+  class DslImpl(count: BigDecimal) {
     @inline def KLAY: COIN = KlayToken.KLAY * count
   }
 
-  @inline implicit def wrapKlayNum(count: Double): ImpDsl = new ImpDsl(count)
-  @inline implicit def wrapKlayNum(count: BigDecimal): ImpDsl = new ImpDsl(count)
+  @inline implicit def wrapKlayNum(count: Double): DslImpl = new DslImpl(count)
+  @inline implicit def wrapKlayNum(count: BigDecimal): DslImpl = new DslImpl(count)
 }

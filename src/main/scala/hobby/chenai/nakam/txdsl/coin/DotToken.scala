@@ -48,10 +48,10 @@ object DotToken extends AbsTokenGroup {
     override val name = "DOT"
   }
 
-  class ImpDsl(count: BigDecimal) {
+  class DslImpl(count: BigDecimal) {
     @inline def DOT: COIN = DotToken.DOT * count
   }
 
-  @inline implicit def wrapDotNum(count: Double): ImpDsl = new ImpDsl(count)
-  @inline implicit def wrapDotNum(count: BigDecimal): ImpDsl = new ImpDsl(count)
+  @inline implicit def wrapDotNum(count: Double): DslImpl = new DslImpl(count)
+  @inline implicit def wrapDotNum(count: BigDecimal): DslImpl = new DslImpl(count)
 }

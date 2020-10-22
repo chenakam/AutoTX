@@ -48,10 +48,10 @@ object FilToken extends AbsTokenGroup {
     override val name = "FIL"
   }
 
-  class ImpDsl(count: BigDecimal) {
+  class DslImpl(count: BigDecimal) {
     @inline def FIL: COIN = FilToken.FIL * count
   }
 
-  @inline implicit def wrapFilNum(count: Double): ImpDsl = new ImpDsl(count)
-  @inline implicit def wrapFilNum(count: BigDecimal): ImpDsl = new ImpDsl(count)
+  @inline implicit def wrapFilNum(count: Double): DslImpl = new DslImpl(count)
+  @inline implicit def wrapFilNum(count: BigDecimal): DslImpl = new DslImpl(count)
 }

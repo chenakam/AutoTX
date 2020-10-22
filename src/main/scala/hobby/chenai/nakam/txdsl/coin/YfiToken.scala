@@ -48,10 +48,10 @@ object YfiToken extends AbsTokenGroup {
     override val name = "YFI"
   }
 
-  class ImpDsl(count: BigDecimal) {
+  class DslImpl(count: BigDecimal) {
     @inline def YFI: COIN = YfiToken.YFI * count
   }
 
-  @inline implicit def wrapYfiNum(count: Double): ImpDsl = new ImpDsl(count)
-  @inline implicit def wrapYfiNum(count: BigDecimal): ImpDsl = new ImpDsl(count)
+  @inline implicit def wrapYfiNum(count: Double): DslImpl = new DslImpl(count)
+  @inline implicit def wrapYfiNum(count: BigDecimal): DslImpl = new DslImpl(count)
 }

@@ -48,10 +48,10 @@ object ZrxToken extends AbsTokenGroup {
     override val name = "ZRX"
   }
 
-  class ImpDsl(count: BigDecimal) {
+  class DslImpl(count: BigDecimal) {
     @inline def ZRX: COIN = ZrxToken.ZRX * count
   }
 
-  @inline implicit def wrapZrxNum(count: Double): ImpDsl = new ImpDsl(count)
-  @inline implicit def wrapZrxNum(count: BigDecimal): ImpDsl = new ImpDsl(count)
+  @inline implicit def wrapZrxNum(count: Double): DslImpl = new DslImpl(count)
+  @inline implicit def wrapZrxNum(count: BigDecimal): DslImpl = new DslImpl(count)
 }

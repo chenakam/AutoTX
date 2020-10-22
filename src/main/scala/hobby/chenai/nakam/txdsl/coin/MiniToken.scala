@@ -48,10 +48,10 @@ object MiniToken extends AbsTokenGroup {
     override val name = "MINI"
   }
 
-  class ImpDsl(count: BigDecimal) {
+  class DslImpl(count: BigDecimal) {
     @inline def MINI: COIN = MiniToken.MINI * count
   }
 
-  @inline implicit def wrapMiniNum(count: Double): ImpDsl = new ImpDsl(count)
-  @inline implicit def wrapMiniNum(count: BigDecimal): ImpDsl = new ImpDsl(count)
+  @inline implicit def wrapMiniNum(count: Double): DslImpl = new DslImpl(count)
+  @inline implicit def wrapMiniNum(count: BigDecimal): DslImpl = new DslImpl(count)
 }

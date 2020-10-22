@@ -48,10 +48,10 @@ object NknToken extends AbsTokenGroup {
     override val name = "NKN"
   }
 
-  class ImpDsl(count: BigDecimal) {
+  class DslImpl(count: BigDecimal) {
     @inline def NKN: COIN = NknToken.NKN * count
   }
 
-  @inline implicit def wrapNknNum(count: Double): ImpDsl = new ImpDsl(count)
-  @inline implicit def wrapNknNum(count: BigDecimal): ImpDsl = new ImpDsl(count)
+  @inline implicit def wrapNknNum(count: Double): DslImpl = new DslImpl(count)
+  @inline implicit def wrapNknNum(count: BigDecimal): DslImpl = new DslImpl(count)
 }

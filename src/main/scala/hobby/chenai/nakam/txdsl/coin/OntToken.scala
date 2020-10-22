@@ -48,10 +48,10 @@ object OntToken extends AbsTokenGroup {
     override val name = "ONT"
   }
 
-  class ImpDsl(count: BigDecimal) {
+  class DslImpl(count: BigDecimal) {
     @inline def ONT: COIN = OntToken.ONT * count
   }
 
-  @inline implicit def wrapOntNum(count: Double): ImpDsl = new ImpDsl(count)
-  @inline implicit def wrapOntNum(count: BigDecimal): ImpDsl = new ImpDsl(count)
+  @inline implicit def wrapOntNum(count: Double): DslImpl = new DslImpl(count)
+  @inline implicit def wrapOntNum(count: BigDecimal): DslImpl = new DslImpl(count)
 }

@@ -61,12 +61,12 @@ object UsdtToken extends AbsTokenGroup {
     override val name = "USDT"
   }
 
-  class ImpDsl(count: BigDecimal) {
+  class DslImpl(count: BigDecimal) {
     @inline def UsFen_3: COIN = UsdtToken.UsFen_3 * count
     @inline def UsFen: COIN = UsdtToken.UsFen * count
     @inline def USDT: COIN = UsdtToken.USDT * count
   }
 
-  @inline implicit def wrapUsdtNum(count: Double): ImpDsl = new ImpDsl(count)
-  @inline implicit def wrapUsdtNum(count: BigDecimal): ImpDsl = new ImpDsl(count)
+  @inline implicit def wrapUsdtNum(count: Double): DslImpl = new DslImpl(count)
+  @inline implicit def wrapUsdtNum(count: BigDecimal): DslImpl = new DslImpl(count)
 }
