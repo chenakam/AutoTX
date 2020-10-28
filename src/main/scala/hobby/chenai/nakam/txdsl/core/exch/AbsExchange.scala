@@ -19,24 +19,26 @@ package hobby.chenai.nakam.txdsl.core.exch
 import hobby.chenai.nakam.lang.TypeBring.AsIs
 import hobby.chenai.nakam.tool.cache.{Delegate, LazyGet, Lru, Memoize}
 import hobby.chenai.nakam.txdsl.core.coin.{AbsCoinGroup, AbsTokenGroup, _}
+import hobby.chenai.nakam.txdsl.core.Fee
 import java.util.concurrent.ConcurrentHashMap
 import scala.language.postfixOps
 
 /**
+  * 没有手续费的[理想状态]下的交易所。交易手续费[[Fee]]等其它组件可以依托本组件创建符合实际情况的交易所。<br>
+  *
   * @param name         交易所名称。
-  * @param pricingToken 定价的token。必须填，但只要不`updateTokenPricingRate()`就不会用它来计算定价。
-  * @param pricingCash  定价的法币。
-  * @param tokens       本平台支持的tokens。
+  * @param pricingToken 定价`token`。必填，但只要不`updateTokenPricingRate()`就不会用它来计算定价。
+  * @param pricingCash  定价法币。
+  * @param tokens       本平台支持的除[[pricingToken]]和[[pricingCash]]之外的所有币种。
   * @author Chenai Nakam(chenai.nakam@gmail.com)
   * @version 1.0, 30/05/2017
   */
-abstract class AbsExchange(val name: String, override val pricingToken: AbsTokenGroup, override val pricingCash: AbsCashGroup,
-                           tokens: AbsTokenGroup*) extends CoinEx(pricingToken, pricingCash)
-  with Memoize[(AbsTokenGroup, AbsCoinGroup), FixedFracDigitsRule] with LazyGet with Lru {
+abstract class AbsExchange(val name: String, override val pricingToken: AbsTokenGroup, override val pricingCash: AbsCashGroup, tokens: AbsTokenGroup*)
+    extends CoinEx(pricingToken, pricingCash) with Memoize[(AbsTokenGroup, AbsCoinGroup), FixedFracDigitsRule] with LazyGet with Lru {
   require(!tokens.contains(pricingToken))
 
   val supportTokens = pricingToken :: tokens.toList.distinct
-  private val zero = pricingCash.unitStd * 0
+  private val zero  = pricingCash.unitStd * 0
   supportTokens.foreach(cashPriRateMap.put(_, zero))
   // tokenPriRateMap（即token定价）是可选的，因此不put into Map.
   // supportTokens.foreach(tokenPriRateMap.put(_, zero))
@@ -47,6 +49,7 @@ abstract class AbsExchange(val name: String, override val pricingToken: AbsToken
   protected def loadFfdRule(counterParty: (AbsTokenGroup, AbsCoinGroup)): FixedFracDigitsRule
 
   override protected val maxCacheSize = 50
+
   override protected val delegate = new Delegate[(AbsTokenGroup, AbsCoinGroup), FixedFracDigitsRule] {
     override def load(key: (AbsTokenGroup, AbsCoinGroup)) = Option(loadFfdRule(key))
 
@@ -79,16 +82,19 @@ abstract class AbsExchange(val name: String, override val pricingToken: AbsToken
   }
 
   private def requireSupports(tokenGroup: AbsTokenGroup): AbsTokenGroup = {
-    require(supportTokens.contains(tokenGroup), s"parameter `tokenGroup`: $tokenGroup, " +
-      s"is not contains in `supportTokens`: $supportTokenString.")
+    require(
+      supportTokens.contains(tokenGroup),
+      s"parameter `tokenGroup`: $tokenGroup, is not contains in `supportTokens`: $supportTokenString."
+    )
     tokenGroup
   }
 
   override protected final def getExRate(tokenGroup: AbsTokenGroup, token$cash: Boolean) = {
     val rate = if (token$cash) tokenPriRateMap.get(tokenGroup) else cashPriRateMap.get(tokenGroup)
-    require(rate != null && rate.value > 0, s"rate of $tokenGroup(:${
-      if (token$cash) pricingToken else pricingCash
-    }) have not initialized on $name.")
+    require(
+      rate != null && rate.value > 0,
+      s"rate of $tokenGroup(:${if (token$cash) pricingToken else pricingCash}) have not initialized on $name."
+    )
     rate
   }
 
@@ -113,17 +119,19 @@ abstract class CoinEx(val pricingToken: AbsTokenGroup, val pricingCash: AbsCashG
 
   def applyExch(src: AbsCoinGroup#AbsCoin, dst: AbsCoinGroup#Unt): AbsCoinGroup#AbsCoin = {
     // pricingToken已经在supportTokens里面了
-    if ((if (src.isCash) src.group eq pricingCash else supportTokens.contains(src.group.as[AbsTokenGroup]))
-      && (if (dst.isCash) dst.group eq pricingCash else supportTokens.contains(dst.group.as[AbsTokenGroup])))
+    if (
+      (if (src.isCash) src.group eq pricingCash else supportTokens.contains(src.group.as[AbsTokenGroup])) &&
+      (if (dst.isCash) dst.group eq pricingCash else supportTokens.contains(dst.group.as[AbsTokenGroup]))
+    ) {
       ex.applyOrElse((src, dst, true), (x: (AbsCoinGroup#AbsCoin, _, _)) => x._1)
-    else src
+    } else src
   }
 
   /**
     * 有token(btc)定价则优先token, 否则强制法币定价（若没有则报错）。
     */
   private lazy val ex: (AbsCoinGroup#AbsCoin, AbsCoinGroup#AbsCoin, Boolean) PartialFunction AbsCoinGroup#AbsCoin = {
-    // pricingCash => pricingCash // 到这里不会出现两个不一样的法币
+    // pricingCash => pricingCash // 与token不同，cash就一种，不需要判断。
     case (cash: AbsCashGroup#AbsCoin, dst: AbsCashGroup#AbsCoin, _) => dst.unit << cash
     // token => pricingCash
     case (token: AbsTokenGroup#AbsCoin, dst: AbsCashGroup#AbsCoin, promise) =>
@@ -139,11 +147,11 @@ abstract class CoinEx(val pricingToken: AbsTokenGroup, val pricingCash: AbsCashG
         val ffdRule = getFfdRule(dst.group, cash.group)
         import ffdRule._
         import ffdRule.impl._
-        dst.unit << buy(cash /*注意这里不是dst, cash表示有多少钱*/ , getExRate(dst.group, token$cash = false))
+        dst.unit << buy(cash /*注意这里不是dst, cash表示有多少钱*/, getExRate(dst.group, token$cash = false))
       } else cash
-    // pricingToken => pricingToken // 与token不同，cash就一种，不需要判断。
-    case (token: AbsTokenGroup#AbsCoin, dst: AbsTokenGroup#AbsCoin, _)
-      if (token.group eq pricingToken) && (dst.group eq pricingToken) => dst.unit << token
+    // pricingToken => pricingToken
+    case (token: AbsTokenGroup#AbsCoin, dst: AbsTokenGroup#AbsCoin, _) if (token.group eq pricingToken) && (dst.group eq pricingToken) =>
+      dst.unit << token
     // token => pricingToken
     case (token: AbsTokenGroup#AbsCoin, dst: AbsTokenGroup#AbsCoin, promise) if dst.group eq pricingToken =>
       if (isTokenExSupported(token.group)) {
@@ -159,7 +167,7 @@ abstract class CoinEx(val pricingToken: AbsTokenGroup, val pricingCash: AbsCashG
         val ffdRule = getFfdRule(dst.group, token.group)
         import ffdRule._
         import ffdRule.impl._
-        dst.unit << buy(token /*注意这里不是dst, token表示有多少钱*/ , getExRate(dst.group, token$cash = true))
+        dst.unit << buy(token /*注意这里不是dst, token表示有多少钱*/, getExRate(dst.group, token$cash = true))
       } else if (promise) ex.apply(ex.apply(token, pricingCash.unitStd, promise), dst, promise)
       else token
     // token => token
@@ -168,8 +176,8 @@ abstract class CoinEx(val pricingToken: AbsTokenGroup, val pricingCash: AbsCashG
       else {
         val ptf = isTokenExSupported(src.group)
         val ptt = isTokenExSupported(dst.group)
-        val cf = isCashExSupported(src.group)
-        val ct = isCashExSupported(dst.group)
+        val cf  = isCashExSupported(src.group)
+        val ct  = isCashExSupported(dst.group)
         if (ptf && ptt) ex.apply(ex.apply(src, pricingToken.unitStd, false), dst, false)
         else if (cf && ct) ex.apply(ex.apply(src, pricingCash.unitStd, false), dst, false)
         else if (promise) {

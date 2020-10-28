@@ -41,8 +41,8 @@ abstract class AbsCoinGroup {
 
   override def toString = s"GROUP[${unitStd.name}]"
 
-  abstract class AbsCoin(private[txdsl] val count: BigInt) extends NumFmt
-    with Equals with Ordered[COIN] with TypeBring[UNIT, COIN, AbsCoinGroup#AbsCoin] {
+  abstract class AbsCoin(private[txdsl] val count: BigInt)
+      extends NumFmt with Equals with Ordered[COIN] with TypeBring[UNIT, COIN, AbsCoinGroup#AbsCoin] {
     require(count >= 0, s"[`Coin.count`溢出: $count].")
 
     /** 是否为法币（即：pricingCash），但不是 pricingToken。 */
@@ -72,11 +72,15 @@ abstract class AbsCoinGroup {
     // 由于toString.formatted也会进行round操作，如果这里再进行round会越算越多：
     // 例如6.45 FEN, round后的count = 65(给最低单位多保留了1位，即64.5, round(64.5) = 65),
     // 最终toString的时候round(6.5) = 7. 因此这里直接进行toLong舍弃小数。
-    def *(x: Double): COIN = make((BigDecimal(this.count) * BigDecimal(x /*会自动toString*/)).toBigInt(), unit)
+    def *(x: Double): COIN = make((BigDecimal(this.count) * BigDecimal(x /*会自动toString*/ )).toBigInt(), unit)
+
+    def *(x: Int): COIN = make(this.count * x, unit)
 
     def *(x: BigDecimal): COIN = make((BigDecimal(this.count) * x).toBigInt(), unit)
 
     def /(x: Double): COIN = make((BigDecimal(this.count) / BigDecimal(x)).toBigInt(), unit)
+
+    def /(x: Int): COIN = make(this.count / x, unit)
 
     def /(x: BigDecimal): COIN = make((BigDecimal(this.count) / x).toBigInt(), unit)
 
@@ -119,8 +123,8 @@ abstract class AbsCoinGroup {
       * @param exchange 交易平台。
       * @return 若兑换成功，则返回值与 `that` 同类型；若不成功，则直接返回本对象。因此返回值的类型不确定。
       */
-    def to(that: AbsCoinGroup#Unt)(implicit exchange: AbsExchange)
-    : AbsCoinGroup#AbsCoin = if (that.group eq this.group) mod(that) else exchange.applyExch(this, that)
+    def to(that: AbsCoinGroup#Unt)(implicit exchange: AbsExchange): AbsCoinGroup#AbsCoin =
+      if (that.group eq this.group) mod(that) else exchange.applyExch(this, that)
 
     //    protected def format: String = value formatted s"%.${unit.decmlFmt}f"
 

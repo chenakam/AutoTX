@@ -28,7 +28,7 @@ package object coin {
 
   lazy val BTC                                             = BtcToken.BTC
   lazy val SAT                                             = BtcToken.SAT
-  implicit lazy val _BTC_i: Int => BtcToken.DslImpl        = _BTC_d(_)
+  implicit lazy val _BTC_i: Int => BtcToken.DslImplInt     = BtcToken.wrapBtcNum
   implicit lazy val _BTC_s: String => BtcToken.DslImpl     = _BTC_d(_)
   implicit lazy val _BTC_b: Double => BtcToken.DslImpl     = BtcToken.wrapBtcNum
   implicit lazy val _BTC_d: BigDecimal => BtcToken.DslImpl = BtcToken.wrapBtcNum
@@ -37,7 +37,7 @@ package object coin {
   lazy val ETH                                             = EthToken.ETH
   lazy val GWei                                            = EthToken.GWei
   lazy val Wei                                             = EthToken.Wei
-  implicit lazy val _ETH_i: Int => EthToken.DslImpl        = _ETH_d(_)
+  implicit lazy val _ETH_i: Int => EthToken.DslImplInt     = EthToken.wrapEthNum
   implicit lazy val _ETH_s: String => EthToken.DslImpl     = _ETH_d(_)
   implicit lazy val _ETH_b: Double => EthToken.DslImpl     = EthToken.wrapEthNum
   implicit lazy val _ETH_d: BigDecimal => EthToken.DslImpl = EthToken.wrapEthNum
@@ -45,13 +45,13 @@ package object coin {
   lazy val CNY                                            = CnyCash.CNY
   lazy val CNJiao                                         = CnyCash.Jiao
   lazy val CNFen                                          = CnyCash.Fen
-  implicit lazy val _CNY_i: Int => CnyCash.DslImpl        = _CNY_d(_)
+  implicit lazy val _CNY_i: Int => CnyCash.DslImplInt     = CnyCash.wrapCnyNum
   implicit lazy val _CNY_s: String => CnyCash.DslImpl     = _CNY_d(_)
   implicit lazy val _CNY_b: Double => CnyCash.DslImpl     = CnyCash.wrapCnyNum
   implicit lazy val _CNY_d: BigDecimal => CnyCash.DslImpl = CnyCash.wrapCnyNum
 
   lazy val USDT                                              = UsdtToken.USDT
-  implicit lazy val _USDT_i: Int => UsdtToken.DslImpl        = _USDT_d(_)
+  implicit lazy val _USDT_i: Int => UsdtToken.DslImplInt     = UsdtToken.wrapUsdtNum
   implicit lazy val _USDT_s: String => UsdtToken.DslImpl     = _USDT_d(_)
   implicit lazy val _USDT_b: Double => UsdtToken.DslImpl     = UsdtToken.wrapUsdtNum
   implicit lazy val _USDT_d: BigDecimal => UsdtToken.DslImpl = UsdtToken.wrapUsdtNum
@@ -356,21 +356,21 @@ package object coin {
       case MINI.name   => coin._1 MINI
       case NKN.name    => coin._1 NKN
       case ONT.name    => coin._1 ONT
-      case QTUM.name  => coin._1 QTUM
-      case RDN.name   => coin._1 RDN
-      case RLC.name   => coin._1 RLC
-      case SALT.name  => coin._1 SALT
-      case SRM.name   => coin._1 SRM
-      case SUSHI.name => coin._1 SUSHI
-      case UMA.name   => coin._1 UMA
-      case WNXM.name  => coin._1 WNXM
-      case YAMV2.name => coin._1 YAMV2
-      case YFI.name   => coin._1 YFI
-      case YFII.name  => coin._1 YFII
-      case YFV.name   => coin._1 YFV
-      case ZEC.name   => coin._1 ZEC
-      case ZRX.name   => coin._1 ZRX
-      case _          => null // 交易所有很多币种，简单地抛出异常是不行的。 throw new RuntimeException(s"不存在指定的币种，或不是[标准]单位:$coin".tag)
+      case QTUM.name   => coin._1 QTUM
+      case RDN.name    => coin._1 RDN
+      case RLC.name    => coin._1 RLC
+      case SALT.name   => coin._1 SALT
+      case SRM.name    => coin._1 SRM
+      case SUSHI.name  => coin._1 SUSHI
+      case UMA.name    => coin._1 UMA
+      case WNXM.name   => coin._1 WNXM
+      case YAMV2.name  => coin._1 YAMV2
+      case YFI.name    => coin._1 YFI
+      case YFII.name   => coin._1 YFII
+      case YFV.name    => coin._1 YFV
+      case ZEC.name    => coin._1 ZEC
+      case ZRX.name    => coin._1 ZRX
+      case _           => null // 交易所有很多币种，简单地抛出异常是不行的。 throw new RuntimeException(s"不存在指定的币种，或不是[标准]单位:$coin".tag)
     })
   }
 
@@ -413,4 +413,5 @@ package object coin {
 //  @inline implicit def int2BigDecimal(count: Int): BigDecimal       = BigDecimal(count)
 
   lazy val ZERO: BigDecimal = 0
+  lazy val ONE: BigDecimal  = 1
 }

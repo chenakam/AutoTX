@@ -23,7 +23,7 @@ import hobby.chenai.nakam.txdsl.core.exch.AbsExchange
   * @author Chenai Nakam(chenai.nakam@gmail.com)
   * @version 1.0, 25/05/2017
   */
-class Fee[+GT <: AbsCoinGroup, +GF <: AbsCoinGroup](protected val coinGroup: GT, protected val feeGroup: GF) {
+class Fee[+GT <: AbsCoinGroup, +GF <: AbsCoinGroup](val coinGroup: GT, val feeGroup: GF) {
   import feeGroup._
 
   /** 假定手续费只收一种货币。如果需要多个，可以创建多个本对象。
@@ -32,7 +32,7 @@ class Fee[+GT <: AbsCoinGroup, +GF <: AbsCoinGroup](protected val coinGroup: GT,
     * @param percentage 按比例收取的费用。
     * @param baseline   费用基准线。
     */
-  class Rule(val quota: COIN, val percentage: Double, val baseline: COIN) {
+  class Rule(val quota: COIN, val percentage: BigDecimal, val baseline: COIN) {
     import quota.t2
 
     /** 计算交易费。

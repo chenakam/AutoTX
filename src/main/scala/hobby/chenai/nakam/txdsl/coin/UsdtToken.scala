@@ -34,10 +34,11 @@ object UsdtToken extends AbsTokenGroup {
     override def unit = unt
   }
 
-  abstract class USDT private[UsdtToken](count: BigInt) extends AbsCoin(count: BigInt) {
+  abstract class USDT private[UsdtToken] (count: BigInt) extends AbsCoin(count: BigInt) {
+
     override def equals(obj: Any) = obj match {
       case that: USDT => that.canEqual(this) && that.count == this.count
-      case _ => false
+      case _          => false
     }
 
     override def canEqual(that: Any) = that.isInstanceOf[USDT]
@@ -54,19 +55,28 @@ object UsdtToken extends AbsTokenGroup {
 
     override val decmlFmt: Int = decimals(USDT.count)
   }
+
   lazy val UsFen: UNIT = new USDT(1000) with UST {
     override val name = "UsFen"
   }
+
   lazy val USDT: UNIT = new USDT(100000) with UST {
     override val name = "USDT"
   }
 
   class DslImpl(count: BigDecimal) {
     @inline def UsFen_3: COIN = UsdtToken.UsFen_3 * count
-    @inline def UsFen: COIN = UsdtToken.UsFen * count
-    @inline def USDT: COIN = UsdtToken.USDT * count
+    @inline def UsFen: COIN   = UsdtToken.UsFen * count
+    @inline def USDT: COIN    = UsdtToken.USDT * count
   }
 
-  @inline implicit def wrapUsdtNum(count: Double): DslImpl = new DslImpl(count)
+  class DslImplInt(count: Int) {
+    @inline def UsFen_3: COIN = UsdtToken.UsFen_3 * count
+    @inline def UsFen: COIN   = UsdtToken.UsFen * count
+    @inline def USDT: COIN    = UsdtToken.USDT * count
+  }
+
+  @inline implicit def wrapUsdtNum(count: Int): DslImplInt     = new DslImplInt(count)
+  @inline implicit def wrapUsdtNum(count: Double): DslImpl     = new DslImpl(count)
   @inline implicit def wrapUsdtNum(count: BigDecimal): DslImpl = new DslImpl(count)
 }

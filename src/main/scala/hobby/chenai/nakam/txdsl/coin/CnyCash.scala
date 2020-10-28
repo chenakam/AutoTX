@@ -36,10 +36,11 @@ object CnyCash extends AbsCashGroup {
     override def unit = unt
   }
 
-  abstract class RMB private[CnyCash](count: BigInt) extends AbsCoin(count: BigInt) {
+  abstract class RMB private[CnyCash] (count: BigInt) extends AbsCoin(count: BigInt) {
+
     override def equals(obj: Any) = obj match {
       case that: RMB => that.canEqual(this) && that.count == this.count
-      case _ => false
+      case _         => false
     }
 
     override def canEqual(that: Any) = that.isInstanceOf[RMB]
@@ -57,24 +58,35 @@ object CnyCash extends AbsCashGroup {
 
     override val decmlFmt: Int = decimals(CNY.count)
   }
+
   // 更高精度, 不过decimals会去掉3位，toString时会格式化掉。
   lazy val Fen: UNIT = new RMB(1000) with CNU {
     override val name = "Fen"
   }
+
   lazy val Jiao: UNIT = new RMB(10000) with CNU {
     override val name = "Jiao"
   }
+
   lazy val CNY: UNIT = new RMB(100000) with CNU {
     override val name = "CNY"
   }
 
   class DslImpl(count: BigDecimal) {
     @inline def Fen_3: COIN = CnyCash.Fen_3 * count
-    @inline def Fen: COIN = CnyCash.Fen * count
-    @inline def Jiao: COIN = CnyCash.Jiao * count
-    @inline def CNY: COIN = CnyCash.CNY * count
+    @inline def Fen: COIN   = CnyCash.Fen * count
+    @inline def Jiao: COIN  = CnyCash.Jiao * count
+    @inline def CNY: COIN   = CnyCash.CNY * count
   }
 
-  @inline implicit def wrapCnyNum(count: Double): DslImpl = new DslImpl(count)
+  class DslImplInt(count: Int) {
+    @inline def Fen_3: COIN = CnyCash.Fen_3 * count
+    @inline def Fen: COIN   = CnyCash.Fen * count
+    @inline def Jiao: COIN  = CnyCash.Jiao * count
+    @inline def CNY: COIN   = CnyCash.CNY * count
+  }
+
+  @inline implicit def wrapCnyNum(count: Int): DslImplInt     = new DslImplInt(count)
+  @inline implicit def wrapCnyNum(count: Double): DslImpl     = new DslImpl(count)
   @inline implicit def wrapCnyNum(count: BigDecimal): DslImpl = new DslImpl(count)
 }

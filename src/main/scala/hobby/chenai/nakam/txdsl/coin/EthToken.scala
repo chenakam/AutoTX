@@ -35,10 +35,11 @@ object EthToken extends AbsTokenGroup {
     override def unit = unt
   }
 
-  abstract class Ethereum private[EthToken](count: BigInt) extends AbsCoin(count: BigInt) {
+  abstract class Ethereum private[EthToken] (count: BigInt) extends AbsCoin(count: BigInt) {
+
     override def equals(obj: Any) = obj match {
       case that: Ethereum => that.canEqual(this) && that.count == this.count
-      case _ => false
+      case _              => false
     }
 
     override def canEqual(that: Any) = that.isInstanceOf[Ethereum]
@@ -47,36 +48,53 @@ object EthToken extends AbsTokenGroup {
   lazy val Wei: UNIT = new Ethereum(1) with Unt {
     override val name = "Wei"
   }
+
   lazy val KWei: UNIT = new Ethereum(10.pow(3)) with Unt {
     override val name = "KWei"
   }
+
   lazy val MWei: UNIT = new Ethereum(10.pow(6)) with Unt {
     override val name = "MWei"
   }
+
   lazy val GWei: UNIT = new Ethereum(10.pow(9)) with Unt {
     override val name = "GWei"
   }
+
   lazy val Szabo: UNIT = new Ethereum(10.pow(12)) with Unt {
     override val name = "Szabo"
   }
+
   lazy val Finney: UNIT = new Ethereum(10.pow(15)) with Unt {
     override val name = "Finney"
   }
+
   lazy val ETH: UNIT = new Ethereum(10.pow(18)) with Unt {
     override val name = "ETH" // Ether
     // override val decmlFmt: Int = super.decmlFmt - 1 // 前一版设置了7个0但只保留6位有效位，故有次设置。
   }
 
   class DslImpl(count: BigDecimal) {
-    @inline def Wei: COIN = EthToken.Wei * count
-    @inline def KWei: COIN = EthToken.KWei * count
-    @inline def MWei: COIN = EthToken.MWei * count
-    @inline def GWei: COIN = EthToken.GWei * count
-    @inline def Szabo: COIN = EthToken.Szabo * count
+    @inline def Wei: COIN    = EthToken.Wei * count
+    @inline def KWei: COIN   = EthToken.KWei * count
+    @inline def MWei: COIN   = EthToken.MWei * count
+    @inline def GWei: COIN   = EthToken.GWei * count
+    @inline def Szabo: COIN  = EthToken.Szabo * count
     @inline def Finney: COIN = EthToken.Finney * count
-    @inline def ETH: COIN = EthToken.ETH * count
+    @inline def ETH: COIN    = EthToken.ETH * count
   }
 
-  @inline implicit def wrapEthNum(count: Double): DslImpl = new DslImpl(count)
+  class DslImplInt(count: Int) {
+    @inline def Wei: COIN    = EthToken.Wei * count
+    @inline def KWei: COIN   = EthToken.KWei * count
+    @inline def MWei: COIN   = EthToken.MWei * count
+    @inline def GWei: COIN   = EthToken.GWei * count
+    @inline def Szabo: COIN  = EthToken.Szabo * count
+    @inline def Finney: COIN = EthToken.Finney * count
+    @inline def ETH: COIN    = EthToken.ETH * count
+  }
+
+  @inline implicit def wrapEthNum(count: Int): DslImplInt     = new DslImplInt(count)
+  @inline implicit def wrapEthNum(count: Double): DslImpl     = new DslImpl(count)
   @inline implicit def wrapEthNum(count: BigDecimal): DslImpl = new DslImpl(count)
 }

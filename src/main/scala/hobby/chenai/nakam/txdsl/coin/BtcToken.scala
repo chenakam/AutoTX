@@ -35,10 +35,11 @@ object BtcToken extends AbsTokenGroup {
     override def unit = unt
   }
 
-  abstract class Bitcoin private[BtcToken](count: BigInt) extends AbsCoin(count: BigInt) {
+  abstract class Bitcoin private[BtcToken] (count: BigInt) extends AbsCoin(count: BigInt) {
+
     override def equals(obj: Any) = obj match {
       case that: Bitcoin => that.canEqual(this) && that.count == this.count
-      case _ => false
+      case _             => false
     }
 
     override def canEqual(that: Any) = that.isInstanceOf[Bitcoin]
@@ -48,6 +49,7 @@ object BtcToken extends AbsTokenGroup {
   lazy val SAT: UNIT = new Bitcoin(1) with Unt {
     override val name = "SAT"
   }
+
   lazy val BTC: UNIT = new Bitcoin(10.pow(8)) with Unt { // 一亿聪
     override val name = "BTC"
   }
@@ -57,7 +59,13 @@ object BtcToken extends AbsTokenGroup {
     @inline def BTC: COIN = BtcToken.BTC * count
   }
 
+  class DslImplInt(count: Int) {
+    @inline def SAT: COIN = BtcToken.SAT * count
+    @inline def BTC: COIN = BtcToken.BTC * count
+  }
+
   // 不可以写在父类里，否则对于多个不同的币种就不知道转换给谁了。
-  @inline implicit def wrapBtcNum(count: Double): DslImpl = new DslImpl(count)
+  @inline implicit def wrapBtcNum(count: Int): DslImplInt     = new DslImplInt(count)
+  @inline implicit def wrapBtcNum(count: Double): DslImpl     = new DslImpl(count)
   @inline implicit def wrapBtcNum(count: BigDecimal): DslImpl = new DslImpl(count)
 }
