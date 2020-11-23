@@ -45,12 +45,14 @@ package object coin {
   lazy val CNY                                            = CnyCash.CNY
   lazy val CNJiao                                         = CnyCash.Jiao
   lazy val CNFen                                          = CnyCash.Fen
+  lazy val CNFen3                                         = CnyCash.Fen3
   implicit lazy val _CNY_i: Int => CnyCash.DslImplInt     = CnyCash.wrapCnyNum
   implicit lazy val _CNY_s: String => CnyCash.DslImpl     = _CNY_d(_)
   implicit lazy val _CNY_b: Double => CnyCash.DslImpl     = CnyCash.wrapCnyNum
   implicit lazy val _CNY_d: BigDecimal => CnyCash.DslImpl = CnyCash.wrapCnyNum
 
   lazy val USDT                                              = UsdtToken.USDT
+  lazy val USFen3                                            = UsdtToken.USFen3
   implicit lazy val _USDT_i: Int => UsdtToken.DslImplInt     = UsdtToken.wrapUsdtNum
   implicit lazy val _USDT_s: String => UsdtToken.DslImpl     = _USDT_d(_)
   implicit lazy val _USDT_b: Double => UsdtToken.DslImpl     = UsdtToken.wrapUsdtNum
@@ -61,6 +63,12 @@ package object coin {
   implicit lazy val _ADA_s: String => AdaToken.DslImpl     = _ADA_d(_)
   implicit lazy val _ADA_b: Double => AdaToken.DslImpl     = AdaToken.wrapAdaNum
   implicit lazy val _ADA_d: BigDecimal => AdaToken.DslImpl = AdaToken.wrapAdaNum
+
+  lazy val ADEL                                              = AdelToken.ADEL
+  implicit lazy val _ADEL_i: Int => AdelToken.DslImpl        = _ADEL_d(_)
+  implicit lazy val _ADEL_s: String => AdelToken.DslImpl     = _ADEL_d(_)
+  implicit lazy val _ADEL_b: Double => AdelToken.DslImpl     = AdelToken.wrapAdelNum
+  implicit lazy val _ADEL_d: BigDecimal => AdelToken.DslImpl = AdelToken.wrapAdelNum
 
   lazy val AE                                            = AeToken.AE
   implicit lazy val _AE_i: Int => AeToken.DslImpl        = _AE_d(_)
@@ -92,7 +100,7 @@ package object coin {
   implicit lazy val _BCH_b: Double => BchToken.DslImpl     = BchToken.wrapBchNum
   implicit lazy val _BCH_d: BigDecimal => BchToken.DslImpl = BchToken.wrapBchNum
 
-  lazy val BSV                                             = BsvToken.BSV
+  lazy val BCHSV                                           = BsvToken.BCHSV
   implicit lazy val _BSV_i: Int => BsvToken.DslImpl        = _BSV_d(_)
   implicit lazy val _BSV_s: String => BsvToken.DslImpl     = _BSV_d(_)
   implicit lazy val _BSV_b: Double => BsvToken.DslImpl     = BsvToken.wrapBsvNum
@@ -164,6 +172,12 @@ package object coin {
   implicit lazy val _FIL_b: Double => FilToken.DslImpl     = FilToken.wrapFilNum
   implicit lazy val _FIL_d: BigDecimal => FilToken.DslImpl = FilToken.wrapFilNum
 
+  lazy val FIL6                                              = Fil6Token.FIL6
+  implicit lazy val _FIL6_i: Int => Fil6Token.DslImpl        = _FIL6_d(_)
+  implicit lazy val _FIL6_s: String => Fil6Token.DslImpl     = _FIL6_d(_)
+  implicit lazy val _FIL6_b: Double => Fil6Token.DslImpl     = Fil6Token.wrapFil6Num
+  implicit lazy val _FIL6_d: BigDecimal => Fil6Token.DslImpl = Fil6Token.wrapFil6Num
+
   lazy val GARD                                              = GardToken.GARD
   implicit lazy val _GARD_i: Int => GardToken.DslImpl        = _GARD_d(_)
   implicit lazy val _GARD_s: String => GardToken.DslImpl     = _GARD_d(_)
@@ -176,11 +190,23 @@ package object coin {
   implicit lazy val _GT_b: Double => GtToken.DslImpl     = GtToken.wrapGtNum
   implicit lazy val _GT_d: BigDecimal => GtToken.DslImpl = GtToken.wrapGtNum
 
+  lazy val INK                                             = InkToken.INK
+  implicit lazy val _INK_i: Int => InkToken.DslImpl        = _INK_d(_)
+  implicit lazy val _INK_s: String => InkToken.DslImpl     = _INK_d(_)
+  implicit lazy val _INK_b: Double => InkToken.DslImpl     = InkToken.wrapInkNum
+  implicit lazy val _INK_d: BigDecimal => InkToken.DslImpl = InkToken.wrapInkNum
+
   lazy val IOTA                                              = IotaToken.IOTA
   implicit lazy val _IOTA_i: Int => IotaToken.DslImpl        = _IOTA_d(_)
   implicit lazy val _IOTA_s: String => IotaToken.DslImpl     = _IOTA_d(_)
   implicit lazy val _IOTA_b: Double => IotaToken.DslImpl     = IotaToken.wrapIotaNum
   implicit lazy val _IOTA_d: BigDecimal => IotaToken.DslImpl = IotaToken.wrapIotaNum
+
+  lazy val IOTX                                              = IotxToken.IOTX
+  implicit lazy val _IOTX_i: Int => IotxToken.DslImpl        = _IOTX_d(_)
+  implicit lazy val _IOTX_s: String => IotxToken.DslImpl     = _IOTX_d(_)
+  implicit lazy val _IOTX_b: Double => IotxToken.DslImpl     = IotxToken.wrapIotxNum
+  implicit lazy val _IOTX_d: BigDecimal => IotxToken.DslImpl = IotxToken.wrapIotxNum
 
   lazy val IRIS                                              = IrisToken.IRIS
   implicit lazy val _IRIS_i: Int => IrisToken.DslImpl        = _IRIS_d(_)
@@ -211,6 +237,12 @@ package object coin {
   implicit lazy val _LTC_s: String => LtcToken.DslImpl     = _LTC_d(_)
   implicit lazy val _LTC_b: Double => LtcToken.DslImpl     = LtcToken.wrapLtcNum
   implicit lazy val _LTC_d: BigDecimal => LtcToken.DslImpl = LtcToken.wrapLtcNum
+
+  lazy val MED                                             = MedToken.MED
+  implicit lazy val _MED_i: Int => MedToken.DslImpl        = _MED_d(_)
+  implicit lazy val _MED_s: String => MedToken.DslImpl     = _MED_d(_)
+  implicit lazy val _MED_b: Double => MedToken.DslImpl     = MedToken.wrapMedNum
+  implicit lazy val _MED_d: BigDecimal => MedToken.DslImpl = MedToken.wrapMedNum
 
   lazy val MINI                                              = MiniToken.MINI
   implicit lazy val _MINI_i: Int => MiniToken.DslImpl        = _MINI_d(_)
@@ -266,6 +298,12 @@ package object coin {
   implicit lazy val _SUSHI_b: Double => SushiToken.DslImpl     = SushiToken.wrapSushiNum
   implicit lazy val _SUSHI_d: BigDecimal => SushiToken.DslImpl = SushiToken.wrapSushiNum
 
+  lazy val TSL                                             = TslToken.TSL
+  implicit lazy val _TSL_i: Int => TslToken.DslImpl        = _TSL_d(_)
+  implicit lazy val _TSL_s: String => TslToken.DslImpl     = _TSL_d(_)
+  implicit lazy val _TSL_b: Double => TslToken.DslImpl     = TslToken.wrapTslNum
+  implicit lazy val _TSL_d: BigDecimal => TslToken.DslImpl = TslToken.wrapTslNum
+
   lazy val UMA                                             = UmaToken.UMA
   implicit lazy val _UMA_i: Int => UmaToken.DslImpl        = _UMA_d(_)
   implicit lazy val _UMA_s: String => UmaToken.DslImpl     = _UMA_d(_)
@@ -277,6 +315,12 @@ package object coin {
   implicit lazy val _WNXM_s: String => WnxmToken.DslImpl     = _WNXM_d(_)
   implicit lazy val _WNXM_b: Double => WnxmToken.DslImpl     = WnxmToken.wrapWnxmNum
   implicit lazy val _WNXM_d: BigDecimal => WnxmToken.DslImpl = WnxmToken.wrapWnxmNum
+
+  lazy val XRP                                             = XrpToken.XRP
+  implicit lazy val _XRP_i: Int => XrpToken.DslImpl        = _XRP_d(_)
+  implicit lazy val _XRP_s: String => XrpToken.DslImpl     = _XRP_d(_)
+  implicit lazy val _XRP_b: Double => XrpToken.DslImpl     = XrpToken.wrapXrpNum
+  implicit lazy val _XRP_d: BigDecimal => XrpToken.DslImpl = XrpToken.wrapXrpNum
 
   lazy val YAMV2                                              = Yam2Token.YAMV2
   implicit lazy val _YAMV2_i: Int => Yam2Token.DslImpl        = _YAMV2_d(_)
@@ -302,11 +346,11 @@ package object coin {
   implicit lazy val _YFV_b: Double => YfvToken.DslImpl     = YfvToken.wrapYfvNum
   implicit lazy val _YFV_d: BigDecimal => YfvToken.DslImpl = YfvToken.wrapYfvNum
 
-  lazy val ZEC                                             = ZecToken.ZEC
-  implicit lazy val _ZEC_i: Int => ZecToken.DslImpl        = _ZEC_d(_)
-  implicit lazy val _ZEC_s: String => ZecToken.DslImpl     = _ZEC_d(_)
-  implicit lazy val _ZEC_b: Double => ZecToken.DslImpl     = ZecToken.wrapZecNum
-  implicit lazy val _ZEC_d: BigDecimal => ZecToken.DslImpl = ZecToken.wrapZecNum
+  lazy val ZEC                                               = ZCashToken.ZEC
+  implicit lazy val _ZEC_i: Int => ZCashToken.DslImpl        = _ZEC_d(_)
+  implicit lazy val _ZEC_s: String => ZCashToken.DslImpl     = _ZEC_d(_)
+  implicit lazy val _ZEC_b: Double => ZCashToken.DslImpl     = ZCashToken.wrapZecNum
+  implicit lazy val _ZEC_d: BigDecimal => ZCashToken.DslImpl = ZCashToken.wrapZecNum
 
   lazy val ZRX                                             = ZrxToken.ZRX
   implicit lazy val _ZRX_i: Int => ZrxToken.DslImpl        = _ZRX_d(_)
@@ -328,12 +372,13 @@ package object coin {
       case BTC.name    => coin._1 BTC
       case ETH.name    => coin._1 ETH
       case ADA.name    => coin._1 ADA
+      case ADEL.name   => coin._1 ADEL
       case AE.name     => coin._1 AE
       case ALGO.name   => coin._1 ALGO
       case AKRO.name   => coin._1 AKRO
       case AXIS.name   => coin._1 AXIS
       case BCH.name    => coin._1 BCH
-      case BSV.name    => coin._1 BSV
+      case BCHSV.name  => coin._1 BCHSV
       case CREDIT.name => coin._1 CREDIT
       case CRV.name    => coin._1 CRV
       case CS.name     => coin._1 CS
@@ -345,14 +390,18 @@ package object coin {
       case ELF.name    => coin._1 ELF
       case EOS.name    => coin._1 EOS
       case FIL.name    => coin._1 FIL
+      case FIL6.name   => coin._1 FIL6
       case GARD.name   => coin._1 GARD
       case GT.name     => coin._1 GT
+      case INK.name    => coin._1 INK
       case IOTA.name   => coin._1 IOTA
+      case IOTX.name   => coin._1 IOTX
       case IRIS.name   => coin._1 IRIS
       case KLAY.name   => coin._1 KLAY
       case KSM.name    => coin._1 KSM
       case LBA.name    => coin._1 LBA
       case LTC.name    => coin._1 LTC
+      case MED.name    => coin._1 MED
       case MINI.name   => coin._1 MINI
       case NKN.name    => coin._1 NKN
       case ONT.name    => coin._1 ONT
@@ -362,8 +411,10 @@ package object coin {
       case SALT.name   => coin._1 SALT
       case SRM.name    => coin._1 SRM
       case SUSHI.name  => coin._1 SUSHI
+      case TSL.name    => coin._1 TSL
       case UMA.name    => coin._1 UMA
       case WNXM.name   => coin._1 WNXM
+      case XRP.name    => coin._1 XRP
       case YAMV2.name  => coin._1 YAMV2
       case YFI.name    => coin._1 YFI
       case YFII.name   => coin._1 YFII
@@ -414,4 +465,7 @@ package object coin {
 
   lazy val ZERO: BigDecimal = 0
   lazy val ONE: BigDecimal  = 1
+
+  lazy val ZERO_CNY = 0.CNY
+  lazy val ONE_CNY  = 1.CNY
 }

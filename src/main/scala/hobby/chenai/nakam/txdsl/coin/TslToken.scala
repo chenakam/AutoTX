@@ -23,35 +23,36 @@ import scala.math.BigInt.int2bigInt
 
 /**
   * @author Chenai Nakam(chenai.nakam@gmail.com)
-  * @version 1.0, 30/08/2020
+  * @version 1.0, 01/09/2020
   */
-object FilToken extends AbsTokenGroup {
-  override type COIN = Filecoin
+object TslToken extends AbsTokenGroup {
+  override type COIN = Energo
   override type UNIT = COIN with Unt
 
-  override def unitStd = FIL
+  override def unitStd = TSL
 
-  override def make(count: BigInt, unt: UNIT) = new Filecoin(count) {
+  override def make(count: BigInt, unt: UNIT) = new Energo(count) {
     override def unit = unt
   }
 
-  abstract class Filecoin private[FilToken] (count: BigInt) extends AbsCoin(count: BigInt) {
+  abstract class Energo private[TslToken] (count: BigInt) extends AbsCoin(count: BigInt) {
+
     override def equals(obj: Any) = obj match {
-      case that: Filecoin => that.canEqual(this) && that.count == this.count
-      case _              => false
+      case that: Energo => that.canEqual(this) && that.count == this.count
+      case _            => false
     }
 
-    override def canEqual(that: Any) = that.isInstanceOf[Filecoin]
+    override def canEqual(that: Any) = that.isInstanceOf[Energo]
   }
 
-  lazy val FIL: UNIT = new Filecoin(10.pow(8)) with Unt {
-    override val name = "FIL"
+  lazy val TSL: UNIT = new Energo(10.pow(8)) with Unt {
+    override val name = "TSL"
   }
 
   class DslImpl(count: BigDecimal) {
-    @inline def FIL: COIN = FilToken.FIL * count
+    @inline def TSL: COIN = TslToken.TSL * count
   }
 
-  @inline implicit def wrapFilNum(count: Double): DslImpl     = new DslImpl(count)
-  @inline implicit def wrapFilNum(count: BigDecimal): DslImpl = new DslImpl(count)
+  @inline implicit def wrapTslNum(count: Double): DslImpl     = new DslImpl(count)
+  @inline implicit def wrapTslNum(count: BigDecimal): DslImpl = new DslImpl(count)
 }

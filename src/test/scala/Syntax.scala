@@ -194,8 +194,8 @@ object Syntax {
   ~>: buy (98 BTC) ~>=
 
   \((12.34567890 CNY) formatted())
-  \((12.34567890987 Fen_3).formatted(fixedFracDigits = 25)(null))
-  \((1234020000 Fen_3) formatted 25)
+  \((12.34567890987 Fen3).formatted(fixedFracDigits = 25)(null))
+  \((1234020000 Fen3) formatted 25)
   \((12345678900000023L SAT) to BTC formatted 25)
   \((23L SAT).formatted(25, 4)(SAT.formatter))
 

@@ -128,24 +128,23 @@ abstract class AbsCoinGroup {
 
     //    protected def format: String = value formatted s"%.${unit.decmlFmt}f"
 
-    override final def toString = if (unit eq this) unit.name else formatted(-1, unit.decmlFmt)(null)
+    override final def toString = if (unit eq this) unit.name else formatted(-1, unit.decmlFmtAdj, unit.decmlFmtFfd)(null)
 
     override protected def unitNameFmt = unit.nameFmt
   }
 
-  // 不能用Unit, 会与系统类型冲突。
   trait Unt extends AbsCoin {
     override final def unit = this
 
     val name: String
-
     def nameFmt: String = name
 
-    def decmlFmt: Int = decimals(count)
+    /** 校准小数位。 */
+    def decmlFmtAdj = BigDecimal(1)
+    def decmlFmtFfd = decimals(count)
 
-    def decimals(n: BigInt): Int = if (n == 1) 0 else 1 + decimals(n / 10)
+    def decimals(n: BigInt = count): Int = if (n < 10) 0 else 1 + decimals(n / 10)
 
     def <<(coin: AbsCoinGroup#AbsCoin): COIN = coin mod unit
   }
-
 }

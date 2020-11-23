@@ -17,41 +17,40 @@
 package hobby.chenai.nakam.txdsl.coin
 
 import hobby.chenai.nakam.txdsl.core.coin.AbsTokenGroup
-
 import scala.language.implicitConversions
 import scala.math.BigInt.int2bigInt
 
 /**
   * @author Chenai Nakam(chenai.nakam@gmail.com)
-  * @version 1.0, 30/08/2020
+  * @version 1.0, 01/09/2020
   */
-object FilToken extends AbsTokenGroup {
-  override type COIN = Filecoin
+object AdelToken extends AbsTokenGroup {
+  override type COIN = AkroDelphi
   override type UNIT = COIN with Unt
 
-  override def unitStd = FIL
+  override def unitStd = ADEL
 
-  override def make(count: BigInt, unt: UNIT) = new Filecoin(count) {
+  override def make(count: BigInt, unt: UNIT) = new AkroDelphi(count) {
     override def unit = unt
   }
 
-  abstract class Filecoin private[FilToken] (count: BigInt) extends AbsCoin(count: BigInt) {
+  abstract class AkroDelphi private[ AdelToken ](count: BigInt) extends AbsCoin(count: BigInt) {
     override def equals(obj: Any) = obj match {
-      case that: Filecoin => that.canEqual(this) && that.count == this.count
-      case _              => false
+      case that: AkroDelphi => that.canEqual(this) && that.count == this.count
+      case _ => false
     }
 
-    override def canEqual(that: Any) = that.isInstanceOf[Filecoin]
+    override def canEqual(that: Any) = that.isInstanceOf[AkroDelphi]
   }
 
-  lazy val FIL: UNIT = new Filecoin(10.pow(8)) with Unt {
-    override val name = "FIL"
+  lazy val ADEL: UNIT = new AkroDelphi(10.pow(8)) with Unt {
+    override val name = "ADEL"
   }
 
   class DslImpl(count: BigDecimal) {
-    @inline def FIL: COIN = FilToken.FIL * count
+    @inline def ADEL: COIN = AdelToken.ADEL * count
   }
 
-  @inline implicit def wrapFilNum(count: Double): DslImpl     = new DslImpl(count)
-  @inline implicit def wrapFilNum(count: BigDecimal): DslImpl = new DslImpl(count)
+  @inline implicit def wrapAdelNum(count: Double): DslImpl = new DslImpl(count)
+  @inline implicit def wrapAdelNum(count: BigDecimal): DslImpl = new DslImpl(count)
 }

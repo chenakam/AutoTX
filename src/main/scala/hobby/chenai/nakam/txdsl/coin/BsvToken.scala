@@ -29,7 +29,7 @@ object BsvToken extends AbsTokenGroup {
   override type COIN = BitcoinCashSV
   override type UNIT = COIN with Unt
 
-  override def unitStd = BSV
+  override def unitStd = BCHSV
 
   override def make(count: BigInt, unt: UNIT) = new BitcoinCashSV(count) {
     override def unit = unt
@@ -44,12 +44,12 @@ object BsvToken extends AbsTokenGroup {
     override def canEqual(that: Any) = that.isInstanceOf[BitcoinCashSV]
   }
 
-  lazy val BSV: UNIT = new BitcoinCashSV(10.pow(8)) with Unt {
-    override val name = "BSV"
+  lazy val BCHSV: UNIT = new BitcoinCashSV(10.pow(8)) with Unt {
+    override val name = "BCHSV"
   }
 
   class DslImpl(count: BigDecimal) {
-    @inline def BSV: COIN = BsvToken.BSV * count
+    @inline def BCHSV: COIN = BsvToken.BCHSV * count
   }
 
   @inline implicit def wrapBsvNum(count: Double): DslImpl = new DslImpl(count)

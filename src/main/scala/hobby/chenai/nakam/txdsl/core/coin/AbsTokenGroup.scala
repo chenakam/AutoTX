@@ -21,10 +21,16 @@ package hobby.chenai.nakam.txdsl.core.coin
   * @version 1.0, 11/06/2017
   */
 abstract class AbsTokenGroup extends AbsCoinGroup {
-  override type GROUP <: AbsTokenGroup
   override type COIN <: AbsCoin
+  override type UNIT <: COIN with Unt
+  override type GROUP <: AbsTokenGroup
 
   abstract class AbsCoin(count: BigInt) extends super.AbsCoin(count: BigInt) {
     final /*lazy*/ val isCash = false
+
+    /** 是否为稳定币。 */
+    val isStable: Boolean = false
   }
+
+  trait Unt extends AbsCoin with super.Unt
 }

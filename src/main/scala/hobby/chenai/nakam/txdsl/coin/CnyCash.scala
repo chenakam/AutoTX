@@ -17,7 +17,6 @@
 package hobby.chenai.nakam.txdsl.coin
 
 import hobby.chenai.nakam.txdsl.core.coin.AbsCashGroup
-
 import scala.language.implicitConversions
 
 /**
@@ -47,16 +46,17 @@ object CnyCash extends AbsCashGroup {
   }
 
   private trait CNU extends Unt {
-    override val decmlFmt: Int = super.decmlFmt - 3
+    override val decmlFmtFfd = super.decmlFmtFfd - 3
   }
 
   // SC云储币精确到0.00001(云币网)，各交易所不同，暂且就这样。
-  lazy val Fen_3: UNIT = new RMB(1) with Unt {
-    override val name = "Fen-3"
+  lazy val Fen3: UNIT = new RMB(1) with Unt {
+    override val name = "Fen3"
 
     override def nameFmt = CNY.nameFmt
 
-    override val decmlFmt: Int = decimals(CNY.count)
+    override def decmlFmtAdj = ONE / CNY.count
+    override val decmlFmtFfd = decimals(CNY.count)
   }
 
   // 更高精度, 不过decimals会去掉3位，toString时会格式化掉。
@@ -73,17 +73,17 @@ object CnyCash extends AbsCashGroup {
   }
 
   class DslImpl(count: BigDecimal) {
-    @inline def Fen_3: COIN = CnyCash.Fen_3 * count
-    @inline def Fen: COIN   = CnyCash.Fen * count
-    @inline def Jiao: COIN  = CnyCash.Jiao * count
-    @inline def CNY: COIN   = CnyCash.CNY * count
+    @inline def Fen3: COIN = CnyCash.Fen3 * count
+    @inline def Fen: COIN  = CnyCash.Fen * count
+    @inline def Jiao: COIN = CnyCash.Jiao * count
+    @inline def CNY: COIN  = CnyCash.CNY * count
   }
 
   class DslImplInt(count: Int) {
-    @inline def Fen_3: COIN = CnyCash.Fen_3 * count
-    @inline def Fen: COIN   = CnyCash.Fen * count
-    @inline def Jiao: COIN  = CnyCash.Jiao * count
-    @inline def CNY: COIN   = CnyCash.CNY * count
+    @inline def Fen3: COIN = CnyCash.Fen3 * count
+    @inline def Fen: COIN  = CnyCash.Fen * count
+    @inline def Jiao: COIN = CnyCash.Jiao * count
+    @inline def CNY: COIN  = CnyCash.CNY * count
   }
 
   @inline implicit def wrapCnyNum(count: Int): DslImplInt     = new DslImplInt(count)

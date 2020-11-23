@@ -67,6 +67,8 @@ object CoinUnit {
   \("1.45 FEN: " + (1.45 Fen))
   \("1.4 FEN: " + (1.4 Fen))
   \("1.5 FEN: " + (1.5 Fen))
+  \("1.494 FEN: " + ((1.494 Fen) to Fen3))
+  \("1.495 FEN: " + ((1.495 Fen) to Fen3))
 
   ln
 
@@ -98,7 +100,7 @@ object CoinUnit {
   \("(5.44 JIAO) to ETH to CNY to BTC to JIAO: " + ((5.44 Jiao) to ETH to CNY to BTC to Jiao))
   val jiao: CnyCash.COIN = CNY.^((5.4506789 Jiao) to ETH to CNY to BTC to Jiao)
   //  \("(5.45 JIAO) to ETH to CNY to BTC to JIAO: " + jiao.value(CNY))
-  \("(5.45 JIAO) to ETH to CNY to BTC to JIAO to FEN_3: " + (jiao to Fen_3))
+  \("(5.45 JIAO) to ETH to CNY to BTC to JIAO to FEN_3: " + (jiao to Fen3))
   \("(5.49 SAT) to ETH to BTC to FEN to SAT: " + ((5.49 SAT) to ETH to BTC to Fen to SAT))
   \("(5.51 SAT) to ETH to BTC to FEN to SAT: " + ((5.51 SAT) to ETH to BTC to Fen to SAT))
   \("(5.51 SAT) to ETH: " + ((5.51 SAT) to ETH))
@@ -119,7 +121,7 @@ object CoinUnit {
 
   ln()
 
-  \("(1 SAT) to FEN_3: " + ((1 SAT) to Fen_3))
+  \("(1 SAT) to FEN_3: " + ((1 SAT) to Fen3))
   \("(1 SAT) to FEN: " + ((1 SAT) to Fen))
   \("(1 SAT) to CNY: " + ((1 SAT) to CNY))
 
@@ -127,5 +129,5 @@ object CoinUnit {
   \(BTC)
   \(CNY)
   \(Fen)
-  \(Fen_3)
+  \(Fen3)
 }

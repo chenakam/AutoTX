@@ -71,11 +71,17 @@ abstract class AbsExchange(val name: String, override val pricingToken: AbsToken
 
   protected final lazy val impl = coinTpeImpl[PriTCoin, PriCCoin]
 
+  /** @param token 必须包含在[[tokens]]里或是[[pricingToken]]；
+    * @param rate 必须是[[pricingCash]]。
+    */
   final def updateCashPricingRate(token: AbsTokenGroup#Unt, rate: AbsCashGroup#AbsCoin): Unit = {
     import impl._
     cashPriRateMap.put(requireSupports(token.group), rate)
   }
 
+  /** @param token 必须包含在[[tokens]]里或是[[pricingToken]]；
+    * @param rate 必须是[[pricingToken]]。
+    */
   final def updateTokenPricingRate(token: AbsTokenGroup#Unt, rate: AbsTokenGroup#AbsCoin): Unit = {
     import impl._
     tokenPriRateMap.put(requireSupports(token.group), rate)

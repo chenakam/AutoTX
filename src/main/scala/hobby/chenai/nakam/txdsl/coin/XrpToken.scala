@@ -23,35 +23,35 @@ import scala.math.BigInt.int2bigInt
 
 /**
   * @author Chenai Nakam(chenai.nakam@gmail.com)
-  * @version 1.0, 30/08/2020
+  * @version 1.0, 01/09/2020
   */
-object ZecToken extends AbsTokenGroup {
-  override type COIN = ZCash
+object XrpToken extends AbsTokenGroup {
+  override type COIN = Ripple
   override type UNIT = COIN with Unt
 
-  override def unitStd = ZEC
+  override def unitStd = XRP
 
-  override def make(count: BigInt, unt: UNIT) = new ZCash(count) {
+  override def make(count: BigInt, unt: UNIT) = new Ripple(count) {
     override def unit = unt
   }
 
-  abstract class ZCash private[ZecToken](count: BigInt) extends AbsCoin(count: BigInt) {
+  abstract class Ripple private[XrpToken] (count: BigInt) extends AbsCoin(count: BigInt) {
     override def equals(obj: Any) = obj match {
-      case that: ZCash => that.canEqual(this) && that.count == this.count
-      case _ => false
+      case that: Ripple => that.canEqual(this) && that.count == this.count
+      case _            => false
     }
 
-    override def canEqual(that: Any) = that.isInstanceOf[ZCash]
+    override def canEqual(that: Any) = that.isInstanceOf[Ripple]
   }
 
-  lazy val ZEC: UNIT = new ZCash(10.pow(8)) with Unt {
-    override val name = "ZEC"
+  lazy val XRP: UNIT = new Ripple(10.pow(8)) with Unt {
+    override val name = "XRP"
   }
 
   class DslImpl(count: BigDecimal) {
-    @inline def ZEC: COIN = ZecToken.ZEC * count
+    @inline def XRP: COIN = XrpToken.XRP * count
   }
 
-  @inline implicit def wrapZecNum(count: Double): DslImpl = new DslImpl(count)
-  @inline implicit def wrapZecNum(count: BigDecimal): DslImpl = new DslImpl(count)
+  @inline implicit def wrapXrpNum(count: Double): DslImpl     = new DslImpl(count)
+  @inline implicit def wrapXrpNum(count: BigDecimal): DslImpl = new DslImpl(count)
 }

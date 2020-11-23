@@ -17,7 +17,6 @@
 package hobby.chenai.nakam.txdsl.coin
 
 import hobby.chenai.nakam.txdsl.core.coin.AbsTokenGroup
-
 import scala.language.implicitConversions
 
 /**
@@ -35,6 +34,7 @@ object UsdtToken extends AbsTokenGroup {
   }
 
   abstract class USDT private[UsdtToken] (count: BigInt) extends AbsCoin(count: BigInt) {
+    override val isStable = true
 
     override def equals(obj: Any) = obj match {
       case that: USDT => that.canEqual(this) && that.count == this.count
@@ -45,35 +45,36 @@ object UsdtToken extends AbsTokenGroup {
   }
 
   private trait UST extends Unt {
-    override val decmlFmt: Int = super.decmlFmt - 3
+    override val decmlFmtFfd = super.decmlFmtFfd - 3
   }
 
-  lazy val UsFen_3: UNIT = new USDT(1) with Unt {
-    override val name = "UsFen-3"
+  lazy val USFen3: UNIT = new USDT(1) with Unt {
+    override val name = "UsFen3"
 
     override def nameFmt = USDT.nameFmt
 
-    override val decmlFmt: Int = decimals(USDT.count)
+    override def decmlFmtAdj = ONE / USDT.count
+    override val decmlFmtFfd = decimals(USDT.count)
   }
 
-  lazy val UsFen: UNIT = new USDT(1000) with UST {
+  lazy val USFen: UNIT = new USDT(1000) with Unt {
     override val name = "UsFen"
   }
 
-  lazy val USDT: UNIT = new USDT(100000) with UST {
+  lazy val USDT: UNIT = new USDT(100000) with Unt {
     override val name = "USDT"
   }
 
   class DslImpl(count: BigDecimal) {
-    @inline def UsFen_3: COIN = UsdtToken.UsFen_3 * count
-    @inline def UsFen: COIN   = UsdtToken.UsFen * count
-    @inline def USDT: COIN    = UsdtToken.USDT * count
+    @inline def UsFen3: COIN = UsdtToken.USFen3 * count
+    @inline def UsFen: COIN  = UsdtToken.USFen * count
+    @inline def USDT: COIN   = UsdtToken.USDT * count
   }
 
   class DslImplInt(count: Int) {
-    @inline def UsFen_3: COIN = UsdtToken.UsFen_3 * count
-    @inline def UsFen: COIN   = UsdtToken.UsFen * count
-    @inline def USDT: COIN    = UsdtToken.USDT * count
+    @inline def UsFen3: COIN = UsdtToken.USFen3 * count
+    @inline def UsFen: COIN  = UsdtToken.USFen * count
+    @inline def USDT: COIN   = UsdtToken.USDT * count
   }
 
   @inline implicit def wrapUsdtNum(count: Int): DslImplInt     = new DslImplInt(count)
