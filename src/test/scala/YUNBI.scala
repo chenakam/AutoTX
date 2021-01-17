@@ -14,14 +14,9 @@
  * limitations under the License.
  */
 
-package hobby.chenai.nakam.txdsl.core.exch
-
-import hobby.chenai.nakam.txdsl.coin.{BtcToken, CnyCash, EthToken}
+import hobby.chenai.nakam.txdsl.coin.{BtcToken, CnyCash, EthToken, _}
 import hobby.chenai.nakam.txdsl.core.coin._
-import hobby.chenai.nakam.txdsl.coin.BtcToken._
-import hobby.chenai.nakam.txdsl.coin.CnyCash._
-import hobby.chenai.nakam.txdsl.coin.EthToken._
-
+import hobby.chenai.nakam.txdsl.core.exch._
 import scala.language.postfixOps
 
 /**
@@ -36,7 +31,7 @@ object YUNBI extends AbsExchange("YUNBI", BtcToken, CnyCash, EthToken) {
 
   override def loadFfdRule(counterParty: (AbsTokenGroup, AbsCoinGroup)): FixedFracDigitsRule = counterParty match {
     case (EthToken, BtcToken) => new FixedFracDigitsRule(EthToken, 6, BtcToken, 8, false)
-    case (EthToken, CnyCash) => new FixedFracDigitsRule(EthToken, 6, CnyCash, 5, false)
-    case (BtcToken, CnyCash) => new FixedFracDigitsRule(BtcToken, 8, CnyCash, 5, false)
+    case (EthToken, CnyCash)  => new FixedFracDigitsRule(EthToken, 6, CnyCash, 5, false)
+    case (BtcToken, CnyCash)  => new FixedFracDigitsRule(BtcToken, 8, CnyCash, 5, false)
   }
 }

@@ -19,7 +19,6 @@ package hobby.chenai.nakam.txdsl.core.exch
 import hobby.chenai.nakam.lang.TypeBring.AsIs
 import hobby.chenai.nakam.tool.cache.{Delegate, LazyGet, Lru, Memoize}
 import hobby.chenai.nakam.txdsl.core.coin.{AbsCoinGroup, AbsTokenGroup, _}
-import hobby.chenai.nakam.txdsl.core.Fee
 import java.util.concurrent.ConcurrentHashMap
 import scala.language.postfixOps
 

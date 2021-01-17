@@ -19,7 +19,7 @@ import hobby.chenai.nakam.txdsl.coin.CnyCash
 import hobby.chenai.nakam.txdsl.coin.CnyCash._
 import hobby.chenai.nakam.txdsl.coin.EthToken._
 import hobby.chenai.nakam.txdsl.core.DSL._
-import hobby.chenai.nakam.txdsl.core.exch.{AbsExchange, YUNBI}
+import hobby.chenai.nakam.txdsl.core.exch.AbsExchange
 
 import scala.language.postfixOps
 

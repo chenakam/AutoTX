@@ -18,12 +18,10 @@ import hobby.chenai.nakam.txdsl.coin.BtcToken.{SAT, _}
 import hobby.chenai.nakam.txdsl.coin.CnyCash._
 import hobby.chenai.nakam.txdsl.coin.EthToken._
 import hobby.chenai.nakam.txdsl.core.DSL._
-import hobby.chenai.nakam.txdsl.core.Fee
 import hobby.chenai.nakam.txdsl.core.coin._
 import Syntax.{A, ABCD}
 import hobby.chenai.nakam.txdsl.coin.{BtcToken, CnyCash, EthToken}
-import hobby.chenai.nakam.txdsl.core.exch.{AbsExchange, YUNBI}
-
+import hobby.chenai.nakam.txdsl.core.exch.{AbsExchange, Fee}
 import scala.language.{implicitConversions, postfixOps}
 
 /**

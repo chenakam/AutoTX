@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-package hobby.chenai.nakam.txdsl.core
+package hobby.chenai.nakam.txdsl.core.exch
 
 import hobby.chenai.nakam.txdsl.core.coin.AbsCoinGroup
-import hobby.chenai.nakam.txdsl.core.exch.AbsExchange
 
 /**
   * @author Chenai Nakam(chenai.nakam@gmail.com)
