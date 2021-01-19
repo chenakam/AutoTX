@@ -136,7 +136,7 @@ abstract class CoinEx(val pricingToken: AbsTokenGroup, val pricingCash: AbsCashG
     * 有token(btc)定价则优先token, 否则强制法币定价（若没有则报错）。
     */
   private lazy val ex: (AbsCoinGroup#AbsCoin, AbsCoinGroup#AbsCoin, Boolean) PartialFunction AbsCoinGroup#AbsCoin = {
-    // pricingCash => pricingCash // 与token不同，cash就一种，不需要判断。
+    // pricingCash => pricingCash // 到这里不会出现两个不一样的法币。
     case (cash: AbsCashGroup#AbsCoin, dst: AbsCashGroup#AbsCoin, _) => dst.unit << cash
     // token => pricingCash
     case (token: AbsTokenGroup#AbsCoin, dst: AbsCashGroup#AbsCoin, promise) =>
@@ -154,7 +154,7 @@ abstract class CoinEx(val pricingToken: AbsTokenGroup, val pricingCash: AbsCashG
         import ffdRule.impl._
         dst.unit << buy(cash /*注意这里不是dst, cash表示有多少钱*/, getExRate(dst.group, token$cash = false))
       } else cash
-    // pricingToken => pricingToken
+    // pricingToken => pricingToken // 与token不同的是，cash（在一个本对象中）就一种，不需要判断。
     case (token: AbsTokenGroup#AbsCoin, dst: AbsTokenGroup#AbsCoin, _) if (token.group eq pricingToken) && (dst.group eq pricingToken) =>
       dst.unit << token
     // token => pricingToken
