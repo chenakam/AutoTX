@@ -64,9 +64,9 @@ abstract class AbsExchange(val name: String, override val pricingToken: AbsToken
   /** 从加密货币到比特币的汇率。 */
   private final lazy val tokenPriRateMap = new ConcurrentHashMap[AbsTokenGroup, PriTCoin]
 
-  override protected final def isCashExSupported(token: AbsTokenGroup) = cashPriRateMap.containsKey(token)
+  override final def isCashExSupported(token: AbsTokenGroup) = cashPriRateMap.containsKey(token)
 
-  override protected final def isTokenExSupported(token: AbsTokenGroup) = tokenPriRateMap.containsKey(token)
+  override final def isTokenExSupported(token: AbsTokenGroup) = tokenPriRateMap.containsKey(token)
 
   protected final lazy val impl = coinTpeImpl[PriTCoin, PriCCoin]
 
@@ -94,7 +94,7 @@ abstract class AbsExchange(val name: String, override val pricingToken: AbsToken
     tokenGroup
   }
 
-  override protected final def getExRate(tokenGroup: AbsTokenGroup, token$cash: Boolean) = {
+  override final def getExRate(tokenGroup: AbsTokenGroup, token$cash: Boolean) = {
     val rate = if (token$cash) tokenPriRateMap.get(tokenGroup) else cashPriRateMap.get(tokenGroup)
     require(
       rate != null && rate.value > 0,

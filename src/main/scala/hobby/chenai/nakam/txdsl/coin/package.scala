@@ -468,4 +468,6 @@ package object coin {
 
   lazy val ZERO_CNY = 0.CNY
   lazy val ONE_CNY  = 1.CNY
+
+  lazy val ZERO_USDT = 0.USDT
 }
