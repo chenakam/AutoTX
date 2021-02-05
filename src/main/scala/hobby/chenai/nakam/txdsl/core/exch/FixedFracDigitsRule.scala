@@ -48,7 +48,7 @@ class FixedFracDigitsRule(val tokenGroup: AbsCoinGroup, val ffd4Token: Int,
 
   def buy(cash: pricingCoinGroup.COIN, pricingExRate: pricingCoinGroup.COIN): tokenGroup.COIN = {
     val value = cut$(cash) / cut$(pricingExRate)
-    tokenGroup.unitStd * (if (cutTotal) NumFmt.cut2FixedFracDigits(value, ffd4Pricing) else value)
+    tokenGroup.unitStd * (if (cutTotal) NumFmt.cut2FixedFracDigits(value, ffd4Token) else value)
   }
 
   lazy val impl = coinTpeImpl[tokenGroup.COIN, pricingCoinGroup.COIN]

@@ -30,17 +30,21 @@ class Fee[+GT <: AbsCoinGroup, +GF <: AbsCoinGroup](val coinGroup: GT, val feeGr
     * @param quota      固定费用。注意方法 `costs()` 的返回值的单位与本单位相同。
     * @param percentage 按比例收取的费用。
     * @param baseline   费用基准线。
+    * @param ffd        计费精度（保留小数点后几位。不同于COIN`的固有精度）。`-1`表示不计精度（沿用`COIN`的固有精度）。
     */
-  class Rule(val quota: COIN, val percentage: BigDecimal, val baseline: COIN) {
+  class Rule(val quota: COIN, val percentage: BigDecimal, val baseline: COIN, ffd: Int = -1) {
     import quota.t2
 
     /** 计算交易费。
       *
       * @param amount 交易的数量
       * @param ex     交易所
-      * @return 交易总费用。注意单位 `unit` 将与 `baseline` 相同。
+      * @return 交易总费用。注意单位`unit`将与`baseline`相同。
       */
-    def costs(amount: coinGroup.COIN)(implicit ex: AbsExchange): COIN =
-      baseline max (quota + (amount to quota.unit) * percentage)
+    def costs(amount: coinGroup.COIN)(implicit ex: AbsExchange): COIN = {
+      // `amount`和`quota`可能是同一个币种，因此`to()`操作有可能不剪切精度(precision)，所以把精度独立计算。
+      val v = baseline max (quota + (amount to quota.unit) * percentage)
+      if (ffd < 0) v else v.unit << (v.std.unit * v.std.valueFfd(fixedFracDigits = ffd, round = true /*交易所总是希望多收点。*/ ))
+    }
   }
 }
