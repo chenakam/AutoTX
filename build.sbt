@@ -35,7 +35,7 @@ resolvers += "jitpack" at "https://jitpack.io"
 
 libraryDependencies ++= Seq(
   "com.github.dedge-space" % "scala-lang" % "ddfe2ea074",
-  "com.github.dedge-space" % "reflow" % "83d000b594",
+  "com.github.dedge-space" % "reflow" % "00d8849fb8",
 
   "junit" % "junit" % "[4.12,)" % Test,
   "org.scalatest" %% "scalatest" % "3.2.0-SNAP7" % Test
