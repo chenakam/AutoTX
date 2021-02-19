@@ -16,7 +16,7 @@
 
 package hobby.chenai.nakam.txdsl
 
-import hobby.chenai.nakam.txdsl.core.coin.AbsCoinGroup
+import hobby.chenai.nakam.txdsl.core.coin.{AbsCashGroup, AbsCoinGroup, AbsTokenGroup}
 import scala.language.{implicitConversions, postfixOps}
 
 /**
@@ -25,6 +25,10 @@ import scala.language.{implicitConversions, postfixOps}
   */
 package object coin {
   /*为了用一个`import`就能把所有功能导入，而不用许多个`import`。*/
+
+  type CoinUnt = AbsCoinGroup#Unt
+  type TokenUnt = AbsTokenGroup#Unt
+  type CashUnt = AbsCashGroup#Unt
 
   lazy val BTC                                             = BtcToken.BTC
   lazy val SAT                                             = BtcToken.SAT
