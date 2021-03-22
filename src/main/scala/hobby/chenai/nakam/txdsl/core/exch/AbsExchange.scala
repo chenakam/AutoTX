@@ -42,8 +42,6 @@ abstract class AbsExchange(val name: String, override val pricingToken: AbsToken
   // tokenPriRateMap（即token定价）是可选的，因此不put into Map.
   // supportTokens.foreach(tokenPriRateMap.put(_, zero))
 
-  println("init:" + toString)
-
   /** 不同交易所的规则不同。所以需要重写。 */
   protected def loadFfdRule(counterParty: (AbsTokenGroup, AbsCoinGroup)): FixedFracDigitsRule
 
@@ -94,13 +92,13 @@ abstract class AbsExchange(val name: String, override val pricingToken: AbsToken
     tokenGroup
   }
 
-  override final def getExRate(tokenGroup: AbsTokenGroup, token$cash: Boolean) = {
+  override final def getExRate[CG <: AbsCoinGroup](tokenGroup: AbsTokenGroup, token$cash: Boolean) = {
     val rate = if (token$cash) tokenPriRateMap.get(tokenGroup) else cashPriRateMap.get(tokenGroup)
     require(
       rate != null && rate.value > 0,
       s"rate of $tokenGroup(:${if (token$cash) pricingToken else pricingCash}) have not initialized on $name."
     )
-    rate
+    rate.as[CG#COIN]
   }
 
   override def toString = s"$name(priCash: $pricingCash | priTkn: $pricingToken)$supportTokenString"
@@ -120,7 +118,7 @@ abstract class CoinEx(val pricingToken: AbsTokenGroup, val pricingCash: AbsCashG
 
   protected def isCashExSupported(token: AbsTokenGroup): Boolean
 
-  protected def getExRate(tokenGroup: AbsTokenGroup, token$cash: Boolean): AbsCoinGroup#AbsCoin
+  protected def getExRate[CG <: AbsCoinGroup](tokenGroup: AbsTokenGroup, token$cash: Boolean): CG#COIN
 
   def applyExch(src: AbsCoinGroup#AbsCoin, dst: AbsCoinGroup#Unt): AbsCoinGroup#AbsCoin = {
     // pricingToken已经在supportTokens里面了

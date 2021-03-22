@@ -474,6 +474,7 @@ package object coin {
   lazy val ONE_CNY  = 1.CNY
 
   lazy val ZERO_USDT = 0.USDT
+  lazy val ONE_USDT  = 1.USDT
 
   lazy val DUST_ROUGH: BigDecimal = 0.00001
 }
