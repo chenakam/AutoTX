@@ -26,9 +26,9 @@ import scala.language.{implicitConversions, postfixOps}
 package object coin {
   /*为了用一个`import`就能把所有功能导入，而不用许多个`import`。*/
 
-  type CoinUnt = AbsCoinGroup#Unt
+  type CoinUnt  = AbsCoinGroup#Unt
   type TokenUnt = AbsTokenGroup#Unt
-  type CashUnt = AbsCashGroup#Unt
+  type CashUnt  = AbsCashGroup#Unt
 
   lazy val BTC                                             = BtcToken.BTC
   lazy val SAT                                             = BtcToken.SAT
@@ -474,4 +474,6 @@ package object coin {
   lazy val ONE_CNY  = 1.CNY
 
   lazy val ZERO_USDT = 0.USDT
+
+  lazy val DUST_ROUGH: BigDecimal = 0.00001
 }
