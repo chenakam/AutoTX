@@ -120,72 +120,72 @@ abstract class CoinEx(val pricingToken: AbsTokenGroup, val pricingCash: AbsCashG
 
   protected def getExRate[CG <: AbsCoinGroup](tokenGroup: AbsTokenGroup, token$cash: Boolean): CG#COIN
 
-  def applyExch(src: AbsCoinGroup#AbsCoin, dst: AbsCoinGroup#Unt): AbsCoinGroup#AbsCoin = {
+  def applyExch(src: AbsCoinGroup#AbsCoin, dst: AbsCoinGroup#Unt, ceiling: Boolean): AbsCoinGroup#AbsCoin = {
     // pricingToken已经在supportTokens里面了
     if (
       (if (src.isCash) src.group eq pricingCash else supportTokens.contains(src.group.as[AbsTokenGroup])) &&
       (if (dst.isCash) dst.group eq pricingCash else supportTokens.contains(dst.group.as[AbsTokenGroup]))
     ) {
-      ex.applyOrElse((src, dst, true), (x: (AbsCoinGroup#AbsCoin, _, _)) => x._1)
+      ex.applyOrElse((src, dst, ceiling, true), (x: (AbsCoinGroup#AbsCoin, _, _, _)) => x._1)
     } else src
   }
 
   /**
     * 有token(btc)定价则优先token, 否则强制法币定价（若没有则报错）。
     */
-  private lazy val ex: (AbsCoinGroup#AbsCoin, AbsCoinGroup#AbsCoin, Boolean) PartialFunction AbsCoinGroup#AbsCoin = {
+  private lazy val ex: (AbsCoinGroup#AbsCoin, AbsCoinGroup#AbsCoin, Boolean, Boolean) PartialFunction AbsCoinGroup#AbsCoin = {
     // pricingCash => pricingCash // 到这里不会出现两个不一样的法币。
-    case (cash: AbsCashGroup#AbsCoin, dst: AbsCashGroup#AbsCoin, _) => dst.unit << cash
+    case (cash: AbsCashGroup#AbsCoin, dst: AbsCashGroup#AbsCoin, _, _) => dst.unit << cash
     // token => pricingCash
-    case (token: AbsTokenGroup#AbsCoin, dst: AbsCashGroup#AbsCoin, promise) =>
+    case (token: AbsTokenGroup#AbsCoin, dst: AbsCashGroup#AbsCoin, ceiling, promise) =>
       if (promise /*注意这个promise不能把任务再转给pricingToken，不然会死递归*/ || isCashExSupported(token.group)) {
         val ffdRule = getFfdRule(token.group, dst.group)
         import ffdRule._
         import ffdRule.impl._
-        dst.unit << sell(token, getExRate(token.group, token$cash = false))
+        dst.unit << sell(token, getExRate(token.group, token$cash = false), ceiling)
       } else token
     // pricingCash => token
-    case (cash: AbsCashGroup#AbsCoin, dst: AbsTokenGroup#AbsCoin, promise) =>
+    case (cash: AbsCashGroup#AbsCoin, dst: AbsTokenGroup#AbsCoin, ceiling, promise) =>
       if (promise || isCashExSupported(dst.group)) {
         val ffdRule = getFfdRule(dst.group, cash.group)
         import ffdRule._
         import ffdRule.impl._
-        dst.unit << buy(cash /*注意这里不是dst, cash表示有多少钱*/, getExRate(dst.group, token$cash = false))
+        dst.unit << buy(cash /*注意这里不是dst, cash表示有多少钱*/, getExRate(dst.group, token$cash = false), ceiling)
       } else cash
     // pricingToken => pricingToken // 与token不同的是，cash（在一个本对象中）就一种，不需要判断。
-    case (token: AbsTokenGroup#AbsCoin, dst: AbsTokenGroup#AbsCoin, _) if (token.group eq pricingToken) && (dst.group eq pricingToken) =>
+    case (token: AbsTokenGroup#AbsCoin, dst: AbsTokenGroup#AbsCoin, _, _) if (token.group eq pricingToken) && (dst.group eq pricingToken) =>
       dst.unit << token
     // token => pricingToken
-    case (token: AbsTokenGroup#AbsCoin, dst: AbsTokenGroup#AbsCoin, promise) if dst.group eq pricingToken =>
+    case (token: AbsTokenGroup#AbsCoin, dst: AbsTokenGroup#AbsCoin, ceiling, promise) if dst.group eq pricingToken =>
       if (isTokenExSupported(token.group)) {
         val ffdRule = getFfdRule(token.group, dst.group)
         import ffdRule._
         import ffdRule.impl._
-        dst.unit << sell(token, getExRate(token.group, token$cash = true))
-      } else if (promise) ex.apply(ex.apply(token, pricingCash.unitStd, promise), dst, promise)
+        dst.unit << sell(token, getExRate(token.group, token$cash = true), ceiling)
+      } else if (promise) ex.apply(ex.apply(token, pricingCash.unitStd, ceiling, promise), dst, ceiling, promise)
       else token
     // pricingToken => token
-    case (token: AbsTokenGroup#AbsCoin, dst: AbsTokenGroup#AbsCoin, promise) if token.group eq pricingToken =>
+    case (token: AbsTokenGroup#AbsCoin, dst: AbsTokenGroup#AbsCoin, ceiling, promise) if token.group eq pricingToken =>
       if (isTokenExSupported(dst.group)) {
         val ffdRule = getFfdRule(dst.group, token.group)
         import ffdRule._
         import ffdRule.impl._
-        dst.unit << buy(token /*注意这里不是dst, token表示有多少钱*/, getExRate(dst.group, token$cash = true))
-      } else if (promise) ex.apply(ex.apply(token, pricingCash.unitStd, promise), dst, promise)
+        dst.unit << buy(token /*注意这里不是dst, token表示有多少钱*/, getExRate(dst.group, token$cash = true), ceiling)
+      } else if (promise) ex.apply(ex.apply(token, pricingCash.unitStd, ceiling, promise), dst, ceiling, promise)
       else token
     // token => token
-    case (src: AbsTokenGroup#AbsCoin, dst: AbsTokenGroup#AbsCoin, promise) =>
+    case (src: AbsTokenGroup#AbsCoin, dst: AbsTokenGroup#AbsCoin, ceiling, promise) =>
       if (dst.group == src.group) dst.unit << src
       else {
         val ptf = isTokenExSupported(src.group)
         val ptt = isTokenExSupported(dst.group)
         val cf  = isCashExSupported(src.group)
         val ct  = isCashExSupported(dst.group)
-        if (ptf && ptt) ex.apply(ex.apply(src, pricingToken.unitStd, false), dst, false)
-        else if (cf && ct) ex.apply(ex.apply(src, pricingCash.unitStd, false), dst, false)
+        if (ptf && ptt) ex.apply(ex.apply(src, pricingToken.unitStd, ceiling, false), dst, ceiling, false)
+        else if (cf && ct) ex.apply(ex.apply(src, pricingCash.unitStd, ceiling, false), dst, ceiling, false)
         else if (promise) {
-          if (ptf || ptt) ex.apply(ex.apply(src, pricingToken.unitStd, true), dst, true)
-          else ex.apply(ex.apply(src, pricingCash.unitStd, true), dst, true)
+          if (ptf || ptt) ex.apply(ex.apply(src, pricingToken.unitStd, ceiling, true), dst, ceiling, true)
+          else ex.apply(ex.apply(src, pricingCash.unitStd, ceiling, true), dst, ceiling, true)
         } else src
       }
   }

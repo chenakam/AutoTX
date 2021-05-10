@@ -44,7 +44,7 @@ class Fee[+GT <: AbsCoinGroup, +GF <: AbsCoinGroup](val coinGroup: GT, val feeGr
       // `amount`和`quota`可能是同一个币种，因此`to()`操作有可能不剪切精度(precision)，所以把精度独立计算。
       // 但鉴于实测结果为0的情况(1 BTC = 38580.95 USDT)，还是不根据精度进行四舍五入了。
       // [coinFfd]coin:0.0000175 BTC, result:0 BTC, ffd:4.
-      baseline max (quota + (amount to quota.unit) * percentage)
+      baseline max (quota + (amount to (quota.unit, true)) * percentage)
     }
   }
 }

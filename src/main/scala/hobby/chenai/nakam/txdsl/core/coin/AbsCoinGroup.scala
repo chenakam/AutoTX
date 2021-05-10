@@ -123,10 +123,10 @@ abstract class AbsCoinGroup {
       * @param exchange 交易平台。
       * @return 若兑换成功，则返回值与 `that` 同类型；若不成功，则直接返回本对象。因此返回值的类型不确定。
       */
-    def to(that: AbsCoinGroup#Unt)(implicit exchange: AbsExchange): AbsCoinGroup#AbsCoin =
-      if (that.group eq this.group) mod(that) else exchange.applyExch(this, that)
+    def to(that: AbsCoinGroup#Unt, ceiling: Boolean = false)(implicit exchange: AbsExchange): AbsCoinGroup#AbsCoin =
+      if (that.group eq this.group) mod(that) else exchange.applyExch(this, that, ceiling)
 
-    //    protected def format: String = value formatted s"%.${unit.decmlFmt}f"
+    //protected def format: String = value formatted s"%.${unit.decmlFmt}f"
 
     override final def toString = if (unit eq this) unit.name else formatted(-1, unit.decmlFmtAdj, unit.decmlFmtFfd)(null)
 
