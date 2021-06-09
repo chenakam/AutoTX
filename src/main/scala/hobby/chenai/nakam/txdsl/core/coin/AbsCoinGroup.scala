@@ -36,14 +36,15 @@ abstract class AbsCoinGroup {
   type GROUP <: AbsCoinGroup
 
   def unitStd: UNIT
-
   def make(count: BigInt, unit: UNIT): COIN
 
+  // 还是不要了，需要当值为`1.CNY`的时候输出成`1 CNY`而不是`CNY`。
+  //private def make$(count: BigInt, unit: UNIT): COIN = if (count == unit.count) unit else make(count, unit)
   override def toString = s"GROUP[${unitStd.name}]"
 
   abstract class AbsCoin(private[txdsl] val count: BigInt)
       extends NumFmt with Equals with Ordered[COIN] with TypeBring[UNIT, COIN, AbsCoinGroup#AbsCoin] {
-    require(count >= 0, s"[`Coin.count`溢出: $count].")
+    require(count >= 0, s"[`AbsCoin.count`溢出: $count].")
 
     /** 是否为法币（即：pricingCash），但不是 pricingToken。 */
     val isCash: Boolean
