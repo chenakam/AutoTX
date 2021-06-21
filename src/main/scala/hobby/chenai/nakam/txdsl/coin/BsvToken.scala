@@ -26,32 +26,33 @@ import scala.math.BigInt.int2bigInt
   * @version 1.0, 30/08/2020
   */
 object BsvToken extends AbsTokenGroup {
-  override type COIN = BitcoinCashSV
+  override type COIN = BitcoinSatoshiVersion
   override type UNIT = COIN with Unt
 
-  override def unitStd = BCHSV
+  override def unitStd = BSV
 
-  override def make(count: BigInt, unt: UNIT) = new BitcoinCashSV(count) {
+  override def make(count: BigInt, unt: UNIT) = new BitcoinSatoshiVersion(count) {
     override def unit = unt
   }
 
-  abstract class BitcoinCashSV private[BsvToken](count: BigInt) extends AbsCoin(count: BigInt) {
+  abstract class BitcoinSatoshiVersion private[BsvToken] (count: BigInt) extends AbsCoin(count: BigInt) {
+
     override def equals(obj: Any) = obj match {
-      case that: BitcoinCashSV => that.canEqual(this) && that.count == this.count
-      case _ => false
+      case that: BitcoinSatoshiVersion => that.canEqual(this) && that.count == this.count
+      case _                           => false
     }
 
-    override def canEqual(that: Any) = that.isInstanceOf[BitcoinCashSV]
+    override def canEqual(that: Any) = that.isInstanceOf[BitcoinSatoshiVersion]
   }
 
-  lazy val BCHSV: UNIT = new BitcoinCashSV(10.pow(8)) with Unt {
-    override val name = "BCHSV"
+  lazy val BSV: UNIT = new BitcoinSatoshiVersion(10.pow(8)) with Unt {
+    override val name = "BSV"
   }
 
   class DslImpl(count: BigDecimal) {
-    @inline def BCHSV: COIN = BsvToken.BCHSV * count
+    @inline def BSV: COIN = BsvToken.BSV * count
   }
 
-  @inline implicit def wrapBsvNum(count: Double): DslImpl = new DslImpl(count)
+  @inline implicit def wrapBsvNum(count: Double): DslImpl     = new DslImpl(count)
   @inline implicit def wrapBsvNum(count: BigDecimal): DslImpl = new DslImpl(count)
 }

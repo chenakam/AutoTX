@@ -104,7 +104,7 @@ package object coin {
   implicit lazy val _BCH_b: Double => BchToken.DslImpl     = BchToken.wrapBchNum
   implicit lazy val _BCH_d: BigDecimal => BchToken.DslImpl = BchToken.wrapBchNum
 
-  lazy val BCHSV                                           = BsvToken.BCHSV
+  lazy val BSV                                             = BsvToken.BSV
   implicit lazy val _BSV_i: Int => BsvToken.DslImpl        = _BSV_d(_)
   implicit lazy val _BSV_s: String => BsvToken.DslImpl     = _BSV_d(_)
   implicit lazy val _BSV_b: Double => BsvToken.DslImpl     = BsvToken.wrapBsvNum
@@ -382,7 +382,7 @@ package object coin {
       case AKRO.name   => coin._1 AKRO
       case AXIS.name   => coin._1 AXIS
       case BCH.name    => coin._1 BCH
-      case BCHSV.name  => coin._1 BCHSV
+      case BSV.name    => coin._1 BSV
       case CREDIT.name => coin._1 CREDIT
       case CRV.name    => coin._1 CRV
       case CS.name     => coin._1 CS
