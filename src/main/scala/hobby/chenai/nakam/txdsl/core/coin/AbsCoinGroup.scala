@@ -24,7 +24,8 @@ import hobby.chenai.nakam.util.NumFmt
 /**
   * @author Chenai Nakam(chenai.nakam@gmail.com)
   * @version 1.0, 25/05/2017;
-  *          2.0, 04/05/2020，修改`value`类型`Double => BigDecimal`。
+  *          2.0, 04/05/2020，修改`value`类型`Double => BigDecimal`;
+  *          2.1, 03/07/2021, 小改：增加`unitMin`、`stm`和`chg()`。
   */
 abstract class AbsCoinGroup {
   groupSelf =>
@@ -36,83 +37,63 @@ abstract class AbsCoinGroup {
   type GROUP <: AbsCoinGroup
 
   def unitStd: UNIT
+  def unitMin: UNIT = unitStd
   def make(count: BigInt, unit: UNIT): COIN
-
   // 还是不要了，需要当值为`1.CNY`的时候输出成`1 CNY`而不是`CNY`。
   //private def make$(count: BigInt, unit: UNIT): COIN = if (count == unit.count) unit else make(count, unit)
-  override def toString = s"GROUP[${unitStd.name}]"
+  override def toString = s"GROUP(${unitStd.name})"
 
-  abstract class AbsCoin(private[txdsl] val count: BigInt)
-      extends NumFmt with Equals with Ordered[COIN] with TypeBring[UNIT, COIN, AbsCoinGroup#AbsCoin] {
-    require(count >= 0, s"[`AbsCoin.count`溢出: $count].")
-
-    /** 是否为法币（即：pricingCash），但不是 pricingToken。 */
-    val isCash: Boolean
-
-    final def token: AbsTokenGroup#AbsCoin = {
-      assert(!isCash)
-      this.as[AbsTokenGroup#AbsCoin]
-    }
-
-    final def cash: AbsCashGroup#AbsCoin = {
-      assert(isCash)
-      this.as[AbsCashGroup#AbsCoin]
-    }
+  // format: off
+  abstract class AbsCoin(private[txdsl] val count: BigInt) extends NumFmt with Equals with Ordered[COIN] with TypeBring[UNIT, COIN, AbsCoinGroup#AbsCoin] { // format: on
+    require(count >= 0, s"`count` overflow: $count.")
 
     final val group: GROUP = groupSelf.as[GROUP]
 
-    def unit: UNIT
+    /** 是否为法币（即：pricingCash），但不是 pricingToken。 */
+    def isCash: Boolean
+    final def token: AbsTokenGroup#AbsCoin = this.ensuring(!isCash).as[AbsTokenGroup#AbsCoin]
+    final def cash: AbsCashGroup#AbsCoin   = this.ensuring(isCash).as[AbsCashGroup#AbsCoin]
 
+    def unit: UNIT
     override def value: BigDecimal = this / unit
 
     def +(that: COIN): COIN = make(this.count + that.count, unit)
-
     def -(that: COIN): COIN = make(this.count - that.count, unit)
 
     // 下面这段说明是对于v1.0而言（make(Long, UNIT)），但现在仍适用。
     // 由于toString.formatted也会进行round操作，如果这里再进行round会越算越多：
     // 例如6.45 FEN, round后的count = 65(给最低单位多保留了1位，即64.5, round(64.5) = 65),
     // 最终toString的时候round(6.5) = 7. 因此这里直接进行toLong舍弃小数。
-    def *(x: Double): COIN = make((BigDecimal(this.count) * BigDecimal(x /*会自动toString*/ )).toBigInt(), unit)
+    def *(x: Double): COIN     = make((BigDecimal(this.count) * BigDecimal(x /*会自动toString*/ )).toBigInt, unit)
+    def *(x: Int): COIN        = make(this.count * x, unit)
+    def *(x: BigDecimal): COIN = make((BigDecimal(this.count) * x).toBigInt, unit)
 
-    def *(x: Int): COIN = make(this.count * x, unit)
-
-    def *(x: BigDecimal): COIN = make((BigDecimal(this.count) * x).toBigInt(), unit)
-
-    def /(x: Double): COIN = make((BigDecimal(this.count) / BigDecimal(x)).toBigInt(), unit)
-
-    def /(x: Int): COIN = make(this.count / x, unit)
-
-    def /(x: BigDecimal): COIN = make((BigDecimal(this.count) / x).toBigInt(), unit)
-
+    def /(x: Double): COIN        = make((BigDecimal(this.count) / BigDecimal(x)).toBigInt, unit)
+    def /(x: Int): COIN           = make(this.count / x, unit)
+    def /(x: BigDecimal): COIN    = make((BigDecimal(this.count) / x).toBigInt, unit)
     def /(that: COIN): BigDecimal = BigDecimal(this.count) / BigDecimal(that.count)
 
     /**
       * 将单位标准化。由于某些预定义的[作为枚举的]常量将自己本身作为了标准单位。
       */
     def std: COIN = if (unit eq unitStd) this else mod(unitStd)
+    def stm: COIN = if (unit eq unitMin) this else mod(unitMin)
 
     /**
       * 转换到参数指定单位。
       */
     // 注意unit的参数类型，在某些情况下，即使我们知道是同一个对象（如CnyZone单例对象）下的路径依赖类型，
     // 但无法用类型参数进行规约，导致编译器无法认为是同一个路径依赖类型。
-    // 因此这里使用了更宽泛的类型并进行了类型转换，这意味着，如果在运行时类型确实不是同一个对象路径下的，那么会抛异常。
+    // 因此这里使用了更宽泛的类型并进行了转换，这意味着，如果在运行时类型确实不是同一个对象路径下的，那么会抛异常。
     def mod(unit: UNIT): COIN = if (unit eq this.unit) this else make(count, unit)
 
-    //    protected def requireGroupSame(unit: AbsCoinGroup#Unt): Unit = {
-    //      require(unit.group == group, s"unit group mismatch. require: $group, found: ${unit.group}")
-    //    }
+    /** （按比率）转换到指定的[[AbsCoinGroup]]，如果目标是本[[GROUP]]，则不转换。 */
+    def chg[G <: AbsCoinGroup](group: G, rate: BigDecimal = 1): G#COIN = if (group eq this.group) this.as[G#COIN] else group.unitStd * (std.value * rate)
 
     override def compare(that: COIN) = this.count compare that.count
 
-    def min(that: COIN): COIN = if (this < that) this else that.mod(unit)
-
-    def max(that: COIN): COIN = if (this > that) this else that.mod(unit)
-
-    // COIN 会被擦除，子类实现。
-    // override def equals(any: scala.Any)
-    // override def canEqual(that: Any)
+    def min(that: COIN): COIN = if (this < that) this else that
+    def max(that: COIN): COIN = if (this > that) this else that
 
     override def hashCode() = 41 * (41 + count.hashCode()) + group.hashCode
 
@@ -128,10 +109,8 @@ abstract class AbsCoinGroup {
       if (that.group eq this.group) mod(that) else exchange.applyExch(this, that, ceiling)
 
     //protected def format: String = value formatted s"%.${unit.decmlFmt}f"
-
-    override final def toString = if (unit eq this) unit.name else formatted(-1, unit.decmlFmtAdj, unit.decmlFmtFfd)(null)
-
-    override protected def unitNameFmt = unit.nameFmt
+    override final def toString    = if (unit eq this) unit.name else formatted(-1, unit.decmlFmtAdj, unit.decmlFmtFfd)(null)
+    override final def unitNameFmt = unit.nameFmt
   }
 
   trait Unt extends AbsCoin {

@@ -30,6 +30,7 @@ object BtcToken extends AbsTokenGroup {
   override type UNIT = COIN with Unt
 
   override def unitStd = BTC
+  override def unitMin = SAT
 
   override def make(count: BigInt, unt: UNIT) = new Bitcoin(count) {
     override def unit = unt

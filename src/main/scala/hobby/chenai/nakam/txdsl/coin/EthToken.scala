@@ -30,6 +30,7 @@ object EthToken extends AbsTokenGroup {
   override type UNIT = COIN with Unt
 
   override def unitStd = ETH
+  override def unitMin = Wei
 
   override def make(count: BigInt, unt: UNIT) = new Ethereum(count) {
     override def unit = unt

@@ -28,6 +28,7 @@ object UsdtToken extends AbsTokenGroup {
   override type UNIT = COIN with Unt
 
   override def unitStd = USDT
+  override def unitMin = USFen3
 
   override def make(count: BigInt, unt: UNIT) = new USDT(count) {
     override def unit = unt

@@ -27,7 +27,8 @@ object CnyCash extends AbsCashGroup {
   override type COIN = RMB
   override type UNIT = COIN with Unt
 
-  lazy override val unitStd = CNY
+  override def unitStd = CNY
+  override def unitMin = Fen3
 
   override def make(count: BigInt, unt: UNIT) = new RMB(
     count // if (unt == FEN_3) count else count / 1000 * 1000 // 可以这样重构FEN以上的精度
