@@ -20,6 +20,7 @@ import hobby.chenai.nakam.lang.TypeBring
 import hobby.chenai.nakam.lang.TypeBring.AsIs
 import hobby.chenai.nakam.txdsl.core.exch.AbsExchange
 import hobby.chenai.nakam.util.NumFmt
+import scala.annotation.tailrec
 
 /**
   * @author Chenai Nakam(chenai.nakam@gmail.com)
@@ -123,8 +124,8 @@ abstract class AbsCoinGroup {
     def decmlFmtAdj = BigDecimal(1)
     def decmlFmtFfd = decimals(count)
 
-    def decimals(n: BigInt = count): Int = if (n < 10) 0 else 1 + decimals(n / 10)
-
-    def <<(coin: AbsCoinGroup#AbsCoin): COIN = coin mod unit
+    @tailrec
+    final def decimals(n: BigInt = count, base: Int = 0): Int = if (n < 10) base else decimals(n / 10, 1 + base)
+    final def <<(coin: AbsCoinGroup#AbsCoin): COIN = coin mod unit
   }
 }
