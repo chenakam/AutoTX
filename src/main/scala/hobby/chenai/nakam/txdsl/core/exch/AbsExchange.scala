@@ -96,12 +96,12 @@ abstract class AbsExchange(val name: String, override val pricingToken: AbsToken
     val rate = if (token$cash) tokenPriRateMap.get(tokenGroup) else cashPriRateMap.get(tokenGroup)
     require(
       rate != null && rate.value > 0,
-      s"rate of $tokenGroup(:${if (token$cash) pricingToken else pricingCash}) have not initialized on $name."
+      s"rate of $tokenGroup(:${if (token$cash) pricingToken.unitStd else pricingCash.unitStd}) have not initialized on `$name`."
     )
     rate.as[CG#COIN]
   }
 
-  override def toString = s"$name(priCash: $pricingCash | priTkn: $pricingToken)$supportTokenString"
+  override def toString = s"`$name`(priCash: ${pricingCash.unitStd} | priTkn: ${pricingToken.unitStd})$supportTokenString"
 
   def supportTokenString = supportTokens.mkString("[", ", ", "]")
 }
