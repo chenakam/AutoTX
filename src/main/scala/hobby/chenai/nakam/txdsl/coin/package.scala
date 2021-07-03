@@ -467,8 +467,10 @@ package object coin {
 //  @inline implicit def double2BigDecimal(count: Double): BigDecimal = BigDecimal(count)
 //  @inline implicit def int2BigDecimal(count: Int): BigDecimal       = BigDecimal(count)
 
-  lazy val ZERO: BigDecimal = 0
-  lazy val ONE: BigDecimal  = 1
+  lazy val ZERO: BigDecimal    = 0
+  lazy val ONE: BigDecimal     = 1
+  lazy val ONE_e_8: BigDecimal = 1e-8
+  lazy val TEN: BigDecimal     = 10
 
   lazy val ZERO_CNY = 0.CNY
   lazy val ONE_CNY  = 1.CNY
