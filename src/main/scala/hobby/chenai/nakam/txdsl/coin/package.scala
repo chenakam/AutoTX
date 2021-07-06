@@ -16,6 +16,7 @@
 
 package hobby.chenai.nakam.txdsl
 
+import hobby.chenai.nakam.lang.J2S.NonNull
 import hobby.chenai.nakam.txdsl.core.coin.{AbsCashGroup, AbsCoinGroup, AbsTokenGroup}
 import scala.language.{implicitConversions, postfixOps}
 
@@ -362,70 +363,69 @@ package object coin {
   implicit lazy val _ZRX_b: Double => ZrxToken.DslImpl     = ZrxToken.wrapZrxNum
   implicit lazy val _ZRX_d: BigDecimal => ZrxToken.DslImpl = ZrxToken.wrapZrxNum
 
-  object Serializer extends (AbsCoinGroup#AbsCoin => (BigDecimal, String)) {
-
+  object Serializer extends (AbsCoinGroup#AbsCoin => (BigDecimal, String)) { // format: off
     def apply(coin: AbsCoinGroup#AbsCoin): (BigDecimal, String) = {
       val std = coin.std
       (std.value, std.unit.name)
     }
 
     //@throws[RuntimeException]
-    def unapply(coin: (BigDecimal, String)): Option[AbsCoinGroup#AbsCoin] = Option(coin._2 match {
-      case CNY.name    => coin._1 CNY
-      case USDT.name   => coin._1 USDT
-      case BTC.name    => coin._1 BTC
-      case ETH.name    => coin._1 ETH
-      case ADA.name    => coin._1 ADA
-      case ADEL.name   => coin._1 ADEL
-      case AE.name     => coin._1 AE
-      case ALGO.name   => coin._1 ALGO
-      case AKRO.name   => coin._1 AKRO
-      case AXIS.name   => coin._1 AXIS
-      case BCH.name    => coin._1 BCH
-      case BSV.name    => coin._1 BSV
-      case CREDIT.name => coin._1 CREDIT
-      case CRV.name    => coin._1 CRV
-      case CS.name     => coin._1 CS
-      case DDD.name    => coin._1 DDD
-      case DF.name     => coin._1 DF
-      case DKA.name    => coin._1 DKA
-      case DOGE.name   => coin._1 DOGE
-      case DOT.name    => coin._1 DOT
-      case ELF.name    => coin._1 ELF
-      case EOS.name    => coin._1 EOS
-      case FIL.name    => coin._1 FIL
-      case FIL6.name   => coin._1 FIL6
-      case GARD.name   => coin._1 GARD
-      case GT.name     => coin._1 GT
-      case INK.name    => coin._1 INK
-      case IOTA.name   => coin._1 IOTA
-      case IOTX.name   => coin._1 IOTX
-      case IRIS.name   => coin._1 IRIS
-      case KLAY.name   => coin._1 KLAY
-      case KSM.name    => coin._1 KSM
-      case LBA.name    => coin._1 LBA
-      case LTC.name    => coin._1 LTC
-      case MED.name    => coin._1 MED
-      case MINI.name   => coin._1 MINI
-      case NKN.name    => coin._1 NKN
-      case ONT.name    => coin._1 ONT
-      case QTUM.name   => coin._1 QTUM
-      case RDN.name    => coin._1 RDN
-      case RLC.name    => coin._1 RLC
-      case SALT.name   => coin._1 SALT
-      case SRM.name    => coin._1 SRM
-      case SUSHI.name  => coin._1 SUSHI
-      case TSL.name    => coin._1 TSL
-      case UMA.name    => coin._1 UMA
-      case WNXM.name   => coin._1 WNXM
-      case XRP.name    => coin._1 XRP
-      case YAMV2.name  => coin._1 YAMV2
-      case YFI.name    => coin._1 YFI
-      case YFII.name   => coin._1 YFII
-      case YFV.name    => coin._1 YFV
-      case ZEC.name    => coin._1 ZEC
-      case ZRX.name    => coin._1 ZRX
-      case _           => null // 交易所有很多币种，简单地抛出异常是不行的。 throw new RuntimeException(s"不存在指定的币种，或不是[标准]单位:$coin".tag)
+    def unapply(tuple: (BigDecimal, String)): Option[AbsCoinGroup#AbsCoin] = Option(tuple._2 match { // format: on
+      case CNY.name    => tuple._1 CNY
+      case USDT.name   => tuple._1 USDT
+      case BTC.name    => tuple._1 BTC
+      case ETH.name    => tuple._1 ETH
+      case ADA.name    => tuple._1 ADA
+      case ADEL.name   => tuple._1 ADEL
+      case AE.name     => tuple._1 AE
+      case ALGO.name   => tuple._1 ALGO
+      case AKRO.name   => tuple._1 AKRO
+      case AXIS.name   => tuple._1 AXIS
+      case BCH.name    => tuple._1 BCH
+      case BSV.name    => tuple._1 BSV
+      case CREDIT.name => tuple._1 CREDIT
+      case CRV.name    => tuple._1 CRV
+      case CS.name     => tuple._1 CS
+      case DDD.name    => tuple._1 DDD
+      case DF.name     => tuple._1 DF
+      case DKA.name    => tuple._1 DKA
+      case DOGE.name   => tuple._1 DOGE
+      case DOT.name    => tuple._1 DOT
+      case ELF.name    => tuple._1 ELF
+      case EOS.name    => tuple._1 EOS
+      case FIL.name    => tuple._1 FIL
+      case FIL6.name   => tuple._1 FIL6
+      case GARD.name   => tuple._1 GARD
+      case GT.name     => tuple._1 GT
+      case INK.name    => tuple._1 INK
+      case IOTA.name   => tuple._1 IOTA
+      case IOTX.name   => tuple._1 IOTX
+      case IRIS.name   => tuple._1 IRIS
+      case KLAY.name   => tuple._1 KLAY
+      case KSM.name    => tuple._1 KSM
+      case LBA.name    => tuple._1 LBA
+      case LTC.name    => tuple._1 LTC
+      case MED.name    => tuple._1 MED
+      case MINI.name   => tuple._1 MINI
+      case NKN.name    => tuple._1 NKN
+      case ONT.name    => tuple._1 ONT
+      case QTUM.name   => tuple._1 QTUM
+      case RDN.name    => tuple._1 RDN
+      case RLC.name    => tuple._1 RLC
+      case SALT.name   => tuple._1 SALT
+      case SRM.name    => tuple._1 SRM
+      case SUSHI.name  => tuple._1 SUSHI
+      case TSL.name    => tuple._1 TSL
+      case UMA.name    => tuple._1 UMA
+      case WNXM.name   => tuple._1 WNXM
+      case XRP.name    => tuple._1 XRP
+      case YAMV2.name  => tuple._1 YAMV2
+      case YFI.name    => tuple._1 YFI
+      case YFII.name   => tuple._1 YFII
+      case YFV.name    => tuple._1 YFV
+      case ZEC.name    => tuple._1 ZEC
+      case ZRX.name    => tuple._1 ZRX
+      case _           => null // 交易所的所有币种不可能都列出来，不能简单地抛出异常。throw new RuntimeException(s"不存在指定的币种，或不是[标准]单位:$coin".tag)
     })
   }
 
@@ -433,14 +433,12 @@ package object coin {
     def serialize: (BigDecimal, String) = Serializer(coin)
   }
 
-  implicit class Deserializable(coin: (BigDecimal, String)) {
-
-    //@throws[RuntimeException]
-    def desrl: Option[AbsCoinGroup#AbsCoin] = (coin /*: @unchecked*/ ) match {
-      case Serializer(tuple) => Some(tuple)
-      case _                 => None
+  implicit class Deserializable(tuple: (BigDecimal, String)) { // format: off
+    def desrl: Option[AbsCoinGroup#AbsCoin] = tuple match {
+      case Serializer(coin) => Some(coin.ensuring(_.nonNull)) // 相当于`case opt @ Serializer.unapply(tuple) if opt.isDefined =>`
+      case _                => None
     }
-  }
+  } // format: on
 
   implicit class Str2BigInt(count: String) {
     @inline def bigInt: BigInt = string2BigInt(count)
