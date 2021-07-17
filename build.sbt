@@ -34,8 +34,8 @@ publishArtifact in packageDoc := false
 resolvers += "jitpack" at "https://jitpack.io"
 
 libraryDependencies ++= Seq(
-  "com.github.dedge-space" % "scala-lang" % "59fa763793",
-  "com.github.dedge-space" % "reflow" % "d7d428cd6a",
+  "com.github.dedge-space" % "scala-lang" % "15e0ab6a79",
+  "com.github.dedge-space" % "reflow" % "75cdaafe0b",
 
   "junit" % "junit" % "[4.12,)" % Test,
   "org.scalatest" %% "scalatest" % "3.2.0-SNAP7" % Test
